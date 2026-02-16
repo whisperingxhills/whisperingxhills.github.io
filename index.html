@@ -187,8 +187,10 @@
     position: relative;
     min-width: 140px;
     text-decoration: none;
-    color: var(--cream);
+    color: var(--cream) !important;
     display: block;
+    opacity: 1 !important;
+    visibility: visible !important;
   }
   .platform::after {
     content: '';
@@ -494,13 +496,8 @@
     duration: 1.2,
     ease: 'power2.inOut'
   }, '-=0.2')
-  .from('.platform', {
-    y: 20,
-    opacity: 0,
-    duration: 0.6,
-    stagger: 0.15,
-    ease: 'power3.out'
-  }, '-=0.3')
+  // platforms visible immediately
+  gsap.set('.platform', { opacity: 1, y: 0 })
   .from('.scroll-hint', {
     opacity: 0,
     duration: 1,
