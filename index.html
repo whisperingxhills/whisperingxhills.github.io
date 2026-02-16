@@ -486,6 +486,26 @@
     .guide-inner { flex-direction: column; text-align: center; }
     .guide-text .section-label { text-align: center; }
     .guide-img { width: 160px; height: 160px; }
+
+    /* Shrink AM/PM toggle */
+    .mode-toggle { top: 16px; left: 16px; gap: 0.4rem; }
+    .mode-toggle .mode-label { font-size: 0.5rem; }
+    .mode-track { width: 40px; height: 16px; border-radius: 8px; }
+    .mode-track::after { top: 2px; left: 3px; width: 10px; height: 10px; }
+    .mode-toggle.pm .mode-track::after { transform: translateX(22px); }
+
+    /* Shrink audio toggle */
+    .audio-toggle { top: 16px; right: 36px; gap: 0.3rem; }
+    .audio-label { font-size: 0.45rem; }
+    .audio-bars { height: 12px; }
+    .bar { width: 2px; }
+    .bar:nth-child(1) { height: 4px; }
+    .bar:nth-child(2) { height: 8px; }
+    .bar:nth-child(3) { height: 5px; }
+    .bar:nth-child(4) { height: 10px; }
+
+    /* More breathing room for logo */
+    .border-frame { top: 10px; left: 10px; right: 10px; }
   }
 </style>
 </head>
