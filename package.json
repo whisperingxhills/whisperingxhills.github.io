@@ -1,0 +1,25 @@
+{
+  "name": "wxh-site",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/whisperingxhills/whisperingxhills.github.io.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/whisperingxhills/whisperingxhills.github.io/issues"
+  },
+  "homepage": "https://github.com/whisperingxhills/whisperingxhills.github.io#readme",
+  "devDependencies": {
+    "@lottiefiles/lottie-player": "^2.0.12",
+    "sharp": "^0.34.5"
+  }
+}

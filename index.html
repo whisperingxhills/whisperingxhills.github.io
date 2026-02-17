@@ -44,6 +44,48 @@
     position: relative;
   }
 
+  /* === TRAIN INTRO === */
+  #train-intro {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 300; background: #0a0908;
+  }
+  #tunnel-canvas {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 303;
+  }
+  #train-vignette {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 304;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 15%, rgba(10,9,8,0.3) 25%, rgba(10,9,8,0.7) 35%, rgba(10,9,8,0.95) 45%, rgba(10,9,8,1) 55%);
+  }
+  #door-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 302; opacity: 0; pointer-events: none; display: flex;
+  }
+  .door-panel {
+    width: 50%; height: 100%; position: relative;
+    background: linear-gradient(180deg, #4a4540 0%, #3e3a35 30%, #35312d 70%, #2a2724 100%);
+  }
+  .door-panel::before {
+    content: ''; position: absolute; top: 0; bottom: 0; width: 100%;
+    background: repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(255,255,255,0.015) 3px, rgba(255,255,255,0.015) 4px);
+    pointer-events: none;
+  }
+  .door-panel.left::after {
+    content: ''; position: absolute; top: 0; right: 0; width: 6px; height: 100%;
+    background: linear-gradient(180deg, #1a1816, #222019, #1a1816);
+    box-shadow: inset 1px 0 0 rgba(255,255,255,0.05);
+  }
+  .door-panel.right::after {
+    content: ''; position: absolute; top: 0; left: 0; width: 6px; height: 100%;
+    background: linear-gradient(180deg, #1a1816, #222019, #1a1816);
+    box-shadow: inset -1px 0 0 rgba(255,255,255,0.05);
+  }
+  #door-seam {
+    position: absolute; top: 0; left: 50%; width: 2px; height: 100%;
+    background: #111; z-index: 305; transform: translateX(-50%);
+    box-shadow: 0 0 4px rgba(0,0,0,0.8);
+  }
+
   /* === BORDER FRAME === */
   .border-frame {
     position: absolute;
@@ -106,6 +148,10 @@
     width: 100%; height: 100%;
     background: var(--red);
     animation: loadSlide 2s ease forwards;
+    animation-play-state: paused;
+  }
+  .preloader.active .arriving-line::after {
+    animation-play-state: running;
   }
 
   /* === HERO === */
@@ -377,7 +423,10 @@
     gap: 0.5rem;
     cursor: pointer;
     user-select: none;
+    opacity: 0;
+    pointer-events: none;
   }
+  .audio-toggle.visible { opacity: 1; pointer-events: auto; }
   .audio-label {
     font-family: 'Space Mono', monospace;
     font-size: 0.55rem;
@@ -425,7 +474,10 @@
     gap: 0.6rem;
     cursor: pointer;
     user-select: none;
+    opacity: 0;
+    pointer-events: none;
   }
+  .mode-toggle.visible { opacity: 1; pointer-events: auto; }
   .mode-toggle .mode-label {
     font-family: 'Space Mono', monospace;
     font-size: 0.9rem;
@@ -511,8 +563,20 @@
 </head>
 <body>
 
+<!-- === TRAIN INTRO (shown if 1hr+ since last visit) === -->
+<div id="train-intro" style="display:none">
+  <canvas id="tunnel-canvas"></canvas>
+  <div id="train-vignette"></div>
+  <div id="door-overlay">
+    <div class="door-panel left"></div>
+    <div class="door-panel right"></div>
+    <div id="door-seam"></div>
+  </div>
+</div>
+
 <div class="border-frame"></div>
-<!-- AMBIENT AUDIO TOGGLE -->
+
+<!-- AMBIENT AUDIO TOGGLE (hidden until site reveals) -->
 <div class="audio-toggle" id="audioToggle" onclick="toggleAudio()">
   <div class="audio-bars">
     <span class="bar"></span>
@@ -523,7 +587,7 @@
   <span class="audio-label" id="audioLabel">OFF</span>
 </div>
 
-<!-- MODE TOGGLE -->
+<!-- MODE TOGGLE (hidden until site reveals) -->
 <div class="mode-toggle" id="modeToggle" onclick="toggleMode()">
   <span class="mode-label active" id="labelAM">AM</span>
   <div class="mode-track"></div>
@@ -618,20 +682,96 @@
   <div class="copyright">© 2026 whisperingxhills</div>
 </footer>
 
+<!-- Three.js (only loaded if train intro plays) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <!-- GSAP -->
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/gsap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.7/dist/ScrollTrigger.min.js"></script>
 <script>
-  gsap.registerPlugin(ScrollTrigger);
+gsap.registerPlugin(ScrollTrigger);
 
-  const tl = gsap.timeline();
+// === SESSION TIMER: show train intro if 1hr+ since last visit ===
+const INTRO_COOLDOWN = 60 * 60 * 1000; // 1 hour in ms
+const lastVisit = parseInt(localStorage.getItem('wxh-lastVisit') || '0');
+const now = Date.now();
+const showTrain = (now - lastVisit) > INTRO_COOLDOWN;
+localStorage.setItem('wxh-lastVisit', now.toString());
 
-  tl.to('#preloader', {
+// === MODE TOGGLE ===
+function toggleMode() {
+  const toggle = document.getElementById('modeToggle');
+  const body = document.body;
+  const am = document.getElementById('labelAM');
+  const pm = document.getElementById('labelPM');
+  const isPM = toggle.classList.toggle('pm');
+  body.classList.toggle('pm-mode', isPM);
+  am.className = 'mode-label ' + (isPM ? 'inactive' : 'active');
+  pm.className = 'mode-label ' + (isPM ? 'active' : 'inactive');
+  localStorage.setItem('wxh-mode', isPM ? 'pm' : 'am');
+}
+window.toggleMode = toggleMode;
+
+// Restore mode preference
+if (localStorage.getItem('wxh-mode') === 'pm') {
+  document.getElementById('modeToggle').classList.add('pm');
+  document.body.classList.add('pm-mode');
+  document.getElementById('labelAM').className = 'mode-label inactive';
+  document.getElementById('labelPM').className = 'mode-label active';
+}
+
+// === AMBIENT AUDIO ===
+const ambientAM = new Audio('assets/ambient-am.mp3');
+const ambientPM = new Audio('assets/ambient-pm.mp3');
+ambientAM.loop = true;
+ambientPM.loop = true;
+ambientAM.volume = 0.3;
+ambientPM.volume = 0.3;
+let audioPlaying = false;
+
+function toggleAudio() {
+  const toggle = document.getElementById('audioToggle');
+  const label = document.getElementById('audioLabel');
+  const isPM = document.body.classList.contains('pm-mode');
+
+  if (audioPlaying) {
+    ambientAM.pause();
+    ambientPM.pause();
+    toggle.classList.remove('playing');
+    label.textContent = 'OFF';
+    audioPlaying = false;
+  } else {
+    const track = isPM ? ambientPM : ambientAM;
+    track.play().catch(() => {});
+    toggle.classList.add('playing');
+    label.textContent = 'ON';
+    audioPlaying = true;
+  }
+}
+window.toggleAudio = toggleAudio;
+
+// Switch ambient track when mode changes
+const _origToggle = toggleMode;
+window.toggleMode = function() {
+  _origToggle();
+  if (audioPlaying) {
+    const isPM = document.body.classList.contains('pm-mode');
+    if (isPM) { ambientAM.pause(); ambientPM.play().catch(() => {}); }
+    else { ambientPM.pause(); ambientAM.play().catch(() => {}); }
+  }
+};
+
+// === SITE REVEAL (preloader → hero) ===
+function revealSite() {
+  const preloader = document.getElementById('preloader');
+  preloader.classList.add('active'); // start the arriving bar animation
+
+  const siteTl = gsap.timeline({ delay: 2.2 });
+
+  siteTl.to('#preloader', {
     opacity: 0,
     duration: 0.6,
-    delay: 2.4,
     ease: 'power2.inOut',
-    onComplete: () => document.getElementById('preloader').style.display = 'none'
+    onComplete: () => { preloader.style.display = 'none'; }
   })
   .to('#hero', {
     opacity: 1,
@@ -666,113 +806,313 @@
     opacity: 0,
     duration: 1,
     ease: 'power2.out'
-  }, '-=0.2');
+  }, '-=0.2')
+  .call(() => {
+    // Show toggles
+    document.getElementById('audioToggle').classList.add('visible');
+    document.getElementById('modeToggle').classList.add('visible');
+  }, [], '-=0.5');
+}
 
-  // SCROLL ANIMATIONS
-  gsap.from('.trans-inner .section-label', {
-    scrollTrigger: { trigger: '.transmission', start: 'top 75%' },
-    y: 30, opacity: 0, duration: 0.8
-  });
+// === SCROLL ANIMATIONS ===
+gsap.from('.trans-inner .section-label', {
+  scrollTrigger: { trigger: '.transmission', start: 'top 75%' },
+  y: 30, opacity: 0, duration: 0.8
+});
 
-  gsap.from('.trans-inner p', {
-    scrollTrigger: { trigger: '.transmission', start: 'top 70%' },
-    y: 40, opacity: 0, duration: 0.8, stagger: 0.25
-  });
+gsap.from('.trans-inner p', {
+  scrollTrigger: { trigger: '.transmission', start: 'top 70%' },
+  y: 40, opacity: 0, duration: 0.8, stagger: 0.25
+});
 
-  gsap.from('.red-line-h', {
-    scrollTrigger: { trigger: '.red-line-h', start: 'top 80%' },
-    width: 0, duration: 1, ease: 'power2.inOut'
-  });
+gsap.from('.red-line-h', {
+  scrollTrigger: { trigger: '.red-line-h', start: 'top 80%' },
+  width: 0, duration: 1, ease: 'power2.inOut'
+});
 
-  gsap.to('#artifacts .section-label', {
-    scrollTrigger: { trigger: '#artifacts', start: 'top 80%' },
-    y: 0, opacity: 1, duration: 0.8
-  });
+gsap.to('#artifacts .section-label', {
+  scrollTrigger: { trigger: '#artifacts', start: 'top 80%' },
+  y: 0, opacity: 1, duration: 0.8
+});
 
-  gsap.to('#artifacts p', {
-    scrollTrigger: { trigger: '#artifacts', start: 'top 75%' },
-    y: 0, opacity: 1, duration: 0.8, stagger: 0.25
-  });
+gsap.to('#artifacts p', {
+  scrollTrigger: { trigger: '#artifacts', start: 'top 75%' },
+  y: 0, opacity: 1, duration: 0.8, stagger: 0.25
+});
 
-  gsap.to('.guide-img', {
-    scrollTrigger: { trigger: '.guide-section', start: 'top 80%' },
-    x: 0, opacity: 1, duration: 1.2, ease: 'power3.out'
-  });
+gsap.to('.guide-img', {
+  scrollTrigger: { trigger: '.guide-section', start: 'top 80%' },
+  x: 0, opacity: 1, duration: 1.2, ease: 'power3.out'
+});
 
-  gsap.to('.guide-text', {
-    scrollTrigger: { trigger: '.guide-section', start: 'top 75%' },
-    x: 0, opacity: 1, duration: 1.2, ease: 'power3.out', delay: 0.2
-  });
+gsap.to('.guide-text', {
+  scrollTrigger: { trigger: '.guide-section', start: 'top 75%' },
+  x: 0, opacity: 1, duration: 1.2, ease: 'power3.out', delay: 0.2
+});
 
-  // AMBIENT AUDIO
-  const ambientAM = new Audio('assets/ambient-am.mp3');
-  const ambientPM = new Audio('assets/ambient-pm.mp3');
-  ambientAM.loop = true;
-  ambientPM.loop = true;
-  ambientAM.volume = 0.3;
-  ambientPM.volume = 0.3;
-  let audioPlaying = false;
+// === TRAIN INTRO ===
+if (showTrain) {
+  // Show the train intro container
+  const trainIntro = document.getElementById('train-intro');
+  trainIntro.style.display = 'block';
 
-  function toggleAudio() {
-    const toggle = document.getElementById('audioToggle');
-    const label = document.getElementById('audioLabel');
-    const isPM = document.body.classList.contains('pm-mode');
+  (function() {
+    const canvas = document.getElementById('tunnel-canvas');
+    const doorOverlay = document.getElementById('door-overlay');
+    const doorSeam = document.getElementById('door-seam');
+    const leftPanel = doorOverlay.querySelector('.left');
+    const rightPanel = doorOverlay.querySelector('.right');
 
-    if (audioPlaying) {
-      ambientAM.pause();
-      ambientPM.pause();
-      toggle.classList.remove('playing');
-      label.textContent = 'OFF';
-      audioPlaying = false;
-    } else {
-      const track = isPM ? ambientPM : ambientAM;
-      track.play().catch(() => {});
-      toggle.classList.add('playing');
-      label.textContent = 'ON';
-      audioPlaying = true;
+    // Three.js Setup
+    const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false});
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 0.9;
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x0a0908);
+    scene.fog = new THREE.FogExp2(0x0a0908, 0.065);
+
+    const camera = new THREE.PerspectiveCamera(72, window.innerWidth/window.innerHeight, 0.1, 120);
+    camera.position.set(0, 0.3, 0);
+    camera.lookAt(0, 0.3, -1);
+
+    scene.add(new THREE.AmbientLight(0x1a1510, 0.3));
+
+    // Smoke Textures
+    function makeSmokeTex(color, alpha) {
+      const c = document.createElement('canvas');
+      c.width = 64; c.height = 64;
+      const ctx = c.getContext('2d');
+      const g = ctx.createRadialGradient(32,32,0,32,32,32);
+      g.addColorStop(0, `rgba(${color},${alpha})`);
+      g.addColorStop(0.4, `rgba(${color},${alpha*0.5})`);
+      g.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,64,64);
+      return new THREE.CanvasTexture(c);
     }
-  }
-  window.toggleAudio = toggleAudio;
+    const smokeTex1 = makeSmokeTex('180,170,155', 0.25);
+    const smokeTex2 = makeSmokeTex('200,160,100', 0.18);
 
-  // Switch ambient track when mode changes
-  const origToggleMode = window.toggleMode;
-  window.toggleMode = function() {
-    origToggleMode();
-    if (audioPlaying) {
-      const isPM = document.body.classList.contains('pm-mode');
-      if (isPM) { ambientAM.pause(); ambientPM.play().catch(() => {}); }
-      else { ambientPM.pause(); ambientAM.play().catch(() => {}); }
+    // Smoke Sprites
+    const smokes = [];
+    const SMOKE_COUNT = 200;
+    const SMOKE_DEPTH = 70;
+    for(let i=0; i<SMOKE_COUNT; i++) {
+      const tex = Math.random()>0.35 ? smokeTex1 : smokeTex2;
+      const mat = new THREE.SpriteMaterial({map:tex, transparent:true, opacity:0.6+Math.random()*0.4, depthWrite:false, blending:THREE.AdditiveBlending});
+      const s = new THREE.Sprite(mat);
+      const scale = 1.5 + Math.random()*4;
+      s.scale.set(scale, scale, 1);
+      s.position.set((Math.random()-0.5)*6, (Math.random()-0.5)*4, -Math.random()*SMOKE_DEPTH);
+      scene.add(s);
+      smokes.push({sprite:s, speed:0.8+Math.random()*0.4});
     }
-  };
 
-  // Refresh ScrollTrigger after everything loads
-  window.addEventListener('load', () => {
-    ScrollTrigger.refresh();
-  });
+    // Tunnel Lights
+    const lights = [];
+    const LIGHT_COUNT = 12;
+    const LIGHT_SPACING = 5.5;
+    for(let i=0; i<LIGHT_COUNT; i++) {
+      const g = new THREE.Group();
+      const barGeo = new THREE.BoxGeometry(1.8, 0.06, 0.15);
+      const barMat = new THREE.MeshStandardMaterial({color:0xfff5e0, emissive:0xffe8b0, emissiveIntensity:2.5});
+      const bar = new THREE.Mesh(barGeo, barMat);
+      bar.position.set(0, 2.8, 0);
+      g.add(bar);
 
-  // MODE TOGGLE
-  function toggleMode() {
-    const toggle = document.getElementById('modeToggle');
-    const body = document.body;
-    const am = document.getElementById('labelAM');
-    const pm = document.getElementById('labelPM');
-    const isPM = toggle.classList.toggle('pm');
-    body.classList.toggle('pm-mode', isPM);
-    am.className = 'mode-label ' + (isPM ? 'inactive' : 'active');
-    pm.className = 'mode-label ' + (isPM ? 'active' : 'inactive');
-    localStorage.setItem('wxh-mode', isPM ? 'pm' : 'am');
-  }
-  window.toggleMode = toggleMode;
+      const glowC = document.createElement('canvas');
+      glowC.width=64; glowC.height=64;
+      const gctx=glowC.getContext('2d');
+      const gg=gctx.createRadialGradient(32,32,0,32,32,32);
+      gg.addColorStop(0,'rgba(255,240,200,0.7)');
+      gg.addColorStop(0.3,'rgba(255,220,160,0.3)');
+      gg.addColorStop(1,'rgba(0,0,0,0)');
+      gctx.fillStyle=gg; gctx.fillRect(0,0,64,64);
+      const glowTex=new THREE.CanvasTexture(glowC);
+      const glowMat=new THREE.SpriteMaterial({map:glowTex, transparent:true, opacity:0.9, blending:THREE.AdditiveBlending, depthWrite:false});
+      const glow=new THREE.Sprite(glowMat);
+      glow.scale.set(3, 1.5, 1);
+      glow.position.set(0, 2.8, 0);
+      g.add(glow);
 
-  // Restore preference
-  if (localStorage.getItem('wxh-mode') === 'pm') {
-    document.getElementById('modeToggle').classList.add('pm');
-    document.body.classList.add('pm-mode');
-    document.getElementById('labelAM').className = 'mode-label inactive';
-    document.getElementById('labelPM').className = 'mode-label active';
-  }
+      const pl = new THREE.PointLight(0xffe0a0, 0.6, 8, 2);
+      pl.position.set(0, 2.6, 0);
+      g.add(pl);
+
+      g.position.z = -i * LIGHT_SPACING;
+      scene.add(g);
+      lights.push({group:g});
+    }
+
+    // 3D Door Wall
+    const DOOR_START_Z = -50;
+    const DOOR_STOP_Z = 0.3;
+    const doorGeo = new THREE.PlaneGeometry(5, 7);
+    const doorMat = new THREE.MeshStandardMaterial({color:0x1a1816, roughness:0.7, metalness:0.3});
+    const doorLeft3D = new THREE.Mesh(doorGeo, doorMat);
+    const doorRight3D = new THREE.Mesh(doorGeo, doorMat.clone());
+    doorLeft3D.position.set(-2.5, 0, 0);
+    doorRight3D.position.set(2.5, 0, 0);
+
+    const wallGeo = new THREE.PlaneGeometry(20, 14);
+    const wallMat = new THREE.MeshStandardMaterial({color:0x1a1816, roughness:0.9, metalness:0.1});
+    const wall3D = new THREE.Mesh(wallGeo, wallMat);
+    wall3D.position.z = -0.01;
+
+    const seamGeo = new THREE.PlaneGeometry(0.03, 7);
+    const seamMat = new THREE.MeshBasicMaterial({color:0x111111});
+    const seam3D = new THREE.Mesh(seamGeo, seamMat);
+    seam3D.position.z = 0.02;
+
+    const doorLight3D = new THREE.PointLight(0xffe0a0, 0.3, 8, 2);
+    doorLight3D.position.set(0, 2.5, 6);
+
+    const blackoutGeo = new THREE.PlaneGeometry(100, 80);
+    const blackoutMat = new THREE.MeshBasicMaterial({color:0x0a0908, side:THREE.DoubleSide});
+    const blackout = new THREE.Mesh(blackoutGeo, blackoutMat);
+    blackout.position.z = -0.5;
+
+    const doorGroup = new THREE.Group();
+    doorGroup.add(doorLeft3D, doorRight3D, wall3D, seam3D, doorLight3D, blackout);
+    doorGroup.position.set(0, 0.3, DOOR_START_Z);
+    scene.add(doorGroup);
+
+    // Animation State
+    const state = {speed: 1.0, lightOpacity: 1.0};
+    const FULL_SPEED = 18;
+
+    // Audio
+    const tunnelAudio = new Audio('assets/tunnel-ambient.mp3');
+    tunnelAudio.loop = true;
+    tunnelAudio.volume = 0.7;
+    const brakeAudio = new Audio('assets/brake.mp3');
+    brakeAudio.volume = 0.8;
+    const doorHissAudio = new Audio('assets/door-hiss.mp3');
+    doorHissAudio.volume = 0.9;
+    const chimeAudio = new Audio('assets/station-chime.mp3');
+    chimeAudio.volume = 0.85;
+
+    // GSAP Train Timeline
+    const trainTl = gsap.timeline({paused: true});
+
+    // Phase 1: Full speed (0-2s)
+    trainTl.to(state, {duration:2, speed:1, ease:'none'}, 0);
+
+    // Phase 2: Deceleration (2-5.5s)
+    trainTl.call(() => { brakeAudio.play(); }, [], 2);
+    trainTl.to(state, {duration:3.5, speed:0, ease:'power2.out'}, 2);
+    trainTl.to(doorGroup.position, {duration:3.2, z:DOOR_STOP_Z, ease:'power2.out'}, 2.3);
+    trainTl.to(tunnelAudio, {duration:3.5, volume:0.1, ease:'power2.out'}, 2);
+    trainTl.to(state, {duration:1, lightOpacity:0, ease:'power1.out'}, 4);
+
+    // Phase 3: Crossfade to CSS doors
+    trainTl.to(doorOverlay, {duration:0.01, opacity:1, ease:'none'}, 6);
+    trainTl.to(canvas, {duration:0.25, opacity:0, ease:'none'}, 6);
+    trainTl.to('#train-vignette', {duration:0.5, opacity:0, ease:'power1.out'}, 6);
+
+    // Phase 4: Door hiss + doors open
+    trainTl.call(() => { doorHissAudio.play(); }, [], 6.2);
+    trainTl.to(leftPanel, {duration:1.4, x:'-100%', ease:'power2.inOut'}, 6.3);
+    trainTl.to(rightPanel, {duration:1.4, x:'100%', ease:'power2.inOut'}, 6.3);
+    trainTl.to(doorSeam, {duration:0.3, opacity:0, ease:'none'}, 6.3);
+
+    // Phase 5: Station chime
+    trainTl.call(() => { chimeAudio.play(); }, [], 6.9);
+
+    // Phase 6: Cleanup + hand off to arriving bar
+    trainTl.call(() => {
+      tunnelAudio.pause();
+      renderer.dispose();
+      // Remove train intro elements
+      setTimeout(() => {
+        trainIntro.remove();
+        // Now trigger the arriving bar → site reveal
+        revealSite();
+      }, 400);
+    }, [], 7.8);
+
+    // Render Loop
+    let lastTime = 0;
+    let running = true;
+
+    function animate(time) {
+      if (!running) return;
+      requestAnimationFrame(animate);
+
+      const dt = lastTime ? Math.min((time-lastTime)/1000, 0.05) : 0.016;
+      lastTime = time;
+
+      const currentSpeed = state.speed * FULL_SPEED;
+      const dz = currentSpeed * dt;
+
+      // Move smoke
+      for (const s of smokes) {
+        s.sprite.position.z += dz;
+        if (s.sprite.position.z > 3) {
+          s.sprite.position.z = -SMOKE_DEPTH + Math.random()*5;
+          s.sprite.position.x = (Math.random()-0.5)*6;
+          s.sprite.position.y = (Math.random()-0.5)*4;
+        }
+        s.sprite.material.rotation += dt * 0.3 * s.speed;
+      }
+
+      // Move lights + fade
+      for (const l of lights) {
+        l.group.position.z += dz;
+        if (l.group.position.z > 5) {
+          l.group.position.z -= LIGHT_COUNT * LIGHT_SPACING;
+        }
+        l.group.visible = state.lightOpacity > 0.01;
+        l.group.children.forEach(c => {
+          if (c.material) c.material.opacity = state.lightOpacity;
+        });
+      }
+
+      // Thin fog as doors approach
+      const doorProgress = (doorGroup.position.z - DOOR_START_Z) / (DOOR_STOP_Z - DOOR_START_Z);
+      scene.fog.density = 0.035 * (1 - Math.max(0, doorProgress) * 0.6);
+
+      renderer.render(scene, camera);
+    }
+
+    requestAnimationFrame(animate);
+
+    // Start on click/tap (browsers require interaction for audio)
+    function startTrain() {
+      tunnelAudio.play();
+      trainTl.play();
+      document.removeEventListener('click', startTrain);
+      document.removeEventListener('touchstart', startTrain);
+    }
+
+    tunnelAudio.play().then(() => {
+      trainTl.play();
+    }).catch(() => {
+      document.addEventListener('click', startTrain);
+      document.addEventListener('touchstart', startTrain);
+    });
+
+    // Resize
+    window.addEventListener('resize', () => {
+      camera.aspect = window.innerWidth/window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    });
+  })();
+
+} else {
+  // No train intro — skip straight to arriving bar
+  revealSite();
+}
+
+// Refresh ScrollTrigger after everything loads
+window.addEventListener('load', () => {
+  ScrollTrigger.refresh();
+});
 
 </script>
-
 </body>
 </html>
