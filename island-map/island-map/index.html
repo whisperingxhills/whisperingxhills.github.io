@@ -869,11 +869,13 @@ function showPreview(e, item, cat) {
   const pin = e.currentTarget;
   const pinRect = pin.getBoundingClientRect();
 
-  let imgHtml;
-  if (item.img) {
-    imgHtml = `<img class="iw-preview-img" src="${item.img}" alt="${item.name}">`;
-  } else {
-    imgHtml = `<div class="iw-preview-img">📷 Photo coming soon</div>`;
+  let imgHtml = '';
+  if (cat !== 'amenity') {
+    if (item.img) {
+      imgHtml = `<img class="iw-preview-img" src="${item.img}" alt="${item.name}">`;
+    } else {
+      imgHtml = `<div class="iw-preview-img">📷 Photo coming soon</div>`;
+    }
   }
 
   preview.innerHTML = `
@@ -911,11 +913,13 @@ function openPanel(item, cat) {
 
   let html = '';
 
-  // Image
-  if (item.img) {
-    html += `<img class="iw-panel-img" src="${item.img}" alt="${item.name}">`;
-  } else {
-    html += `<div class="iw-panel-img">📷 Photo coming soon</div>`;
+  // Image (skip for amenities)
+  if (cat !== 'amenity') {
+    if (item.img) {
+      html += `<img class="iw-panel-img" src="${item.img}" alt="${item.name}">`;
+    } else {
+      html += `<div class="iw-panel-img">📷 Photo coming soon</div>`;
+    }
   }
 
   // Tag
