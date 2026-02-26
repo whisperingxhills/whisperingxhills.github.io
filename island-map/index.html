@@ -628,6 +628,15 @@ body {
   color: var(--iw-gray-light);
 }
 
+/* ── Safety Rules Collapsible ── */
+.rules-open ul {
+  max-height: 800px !important;
+}
+
+.rules-open .rules-chevron {
+  transform: rotate(180deg);
+}
+
 /* ── Zoom Controls ── */
 .iw-zoom {
   position: absolute;
@@ -736,14 +745,125 @@ body {
    ================================================================ */
 const MAP_DATA = {
   attractions: [
-    { id:1, name:"Nature's Furies", type:"Tube Slide", height:'42"', x:16.70, y:68.53, thrill:5, riders:"Single & Double", weightLimit:"400 lbs", desc:"Twist and turn through massive enclosed tube slides — choose single or double tubes and hold on tight as you snake through colorful flumes high above the park.", img:"images/natures-furies.png" },
-    { id:2, name:"Hawaiian Adventures", type:"Water Slide", height:'48"', x:17.77, y:45.79, thrill:4, riders:"Single Rider", weightLimit:"300 lbs", desc:"High-speed body slides with thrilling drops and curves. Ride feet first on your back through multiple colorful flumes — yellow, green, teal, and purple — each with its own twists.", img:"images/hawaiian-adventures.png" },
-    { id:3, name:"Tsunami", type:"Water Slide", height:'42"', x:41.55, y:17.53, thrill:5, riders:"Up to 4", weightLimit:"1,000 lbs", desc:"Grab the family and climb aboard the giant raft for the park's most massive slide. Twist through the enclosed red flume before splashing down into the pool below.", img:"images/tsunami.png" },
-    { id:4, name:"Tidal Wave", type:"Wave Pool", height:"N/A", x:49.71, y:31.60, thrill:3, riders:"N/A", weightLimit:"N/A", desc:"The park's massive wave pool — from gentle swells near the beach entry to big waves in the deep end. No tubes or flotation devices allowed. Guests under 48\" must wear a life vest.", img:"images/tidal-wave.png" },
-    { id:5, name:"Thrills of Fiji", type:"Water Slide", height:'48"', x:60.74, y:17.65, thrill:6, riders:"Single Rider", weightLimit:"300 lbs", desc:"The fastest, tallest slide in the park. Plunge down the open-air speed slide and feel the rush. This is the one that makes your stomach drop. Not for the faint of heart.", img:"images/thrills-of-fiji.png" },
-    { id:6, name:"Bora Bora Racers", type:"Mat Slide", height:'42"', x:65.67, y:18.40, thrill:3, riders:"Single Rider", weightLimit:"300 lbs", desc:"Grab a mat and race head-first down multi-lane pink slides. Compete side-by-side with friends to see who hits the bottom first.", img:"images/bora-bora-racers.png" },
-    { id:7, name:"Bayou River Tours", type:"Lazy River", height:"N/A", x:60.06, y:59.23, thrill:1, riders:"N/A", weightLimit:"N/A", desc:"Float along the winding lazy river shaded by palm trees and lush greenery. Single and double rental tubes available. The perfect way to relax between slides.", img:"images/bayou-river-tours.png" },
-    { id:8, name:"'Ohana Bay", type:"Water Slide / Splash Pad", height:'36"–40"', x:41.46, y:62.94, thrill:1, riders:"Single Rider", weightLimit:"200–300 lbs", desc:"The heart of the park for younger guests — a massive splash zone with four different colored slides (green, yellow, purple, orange), sprayers, water cannons, and the giant bucket dump. Each slide has its own height and weight requirements.", img:"images/ohana-bay.png" },
+    { id:1, name:"Nature's Furies", type:"Tube Slide", height:'42"', x:16.70, y:68.53, thrill:5, riders:"Single & Double", weightLimit:"400 lbs", desc:"Twist and turn through massive enclosed tube slides — choose single or double tubes and hold on tight as you snake through colorful flumes high above the park.", img:"images/natures-furies.png", rules:[
+      "Park-provided single or double tube required. No lap riders.",
+      "One tube to enter the flume at a time.",
+      "Wait for the attendant's start signal before starting the ride.",
+      "Ride seated in your tube facing forward and holding the handles at all times.",
+      "Do not rock, stop, or slow the tube.",
+      "If you accidentally fall from the tube, continue down the flume without it and exit normally.",
+      "Keep arms and hands inside the flumes at all times.",
+      "Secure eyeglasses with a head strap, if worn.",
+      "Loose items (t-shirts, cameras, wallets, hats, etc.) should be left with a non-rider or secured.",
+      "Never form chains, dive, run, sit up, stand, kneel, stop, or rotate in the slide.",
+      "Leave splash pool quickly and orderly. Do not block the end of the slide.",
+      "No swimming or floating allowed in the splash pool.",
+      "Exposed zippers, buckles, rivets, or metal ornamentation are not allowed.",
+      "No food or drink is allowed on the slides."
+    ]},
+    { id:2, name:"Hawaiian Adventures", type:"Water Slide", height:'48"', x:17.77, y:45.79, thrill:4, riders:"Single Rider", weightLimit:"300 lbs", desc:"High-speed body slides with thrilling drops and curves. Ride feet first on your back through multiple colorful flumes — yellow, green, teal, and purple — each with its own twists.", img:"images/hawaiian-adventures.png", rules:[
+      "No shoes, sandals, or water shoes allowed.",
+      "For safety reasons, life jackets are not allowed on the attraction.",
+      "Proper swimwear required — no cotton permitted.",
+      "No swimming or flotation devices allowed in splash pool.",
+      "Only one rider to enter the flume at a time. No lap riders.",
+      "Wait for the attendant's start signal before starting the ride.",
+      "Ride feet first lying on your back, legs straight and firmly crossed at the ankles, arms folded across the chest.",
+      "Do not uncross your legs or attempt to sit up until you come to a stop in the pool.",
+      "Secure eyeglasses with a head strap, if worn.",
+      "Loose items should be left with a non-rider or secured.",
+      "Never form chains, dive, run, sit up, stand, kneel, stop, or rotate in the slide.",
+      "Obey all instructions by splash pool attendant and exit quickly. Do not block the end of the slide.",
+      "No swimming or floating allowed in the splash pool.",
+      "Exposed zippers, buckles, rivets, or metal ornamentation are not allowed.",
+      "No food or drink is allowed on the slides."
+    ]},
+    { id:3, name:"Tsunami", type:"Water Slide", height:'42"', x:41.55, y:17.53, thrill:5, riders:"Up to 4", weightLimit:"1,000 lbs", desc:"Grab the family and climb aboard the giant raft for the park's most massive slide. Twist through the enclosed red flume before splashing down into the pool below.", img:"images/tsunami.png", rules:[
+      "Specific, park-provided multi-rider raft must be used.",
+      "Only one raft to enter the flume at a time.",
+      "Wait for the attendant's start signal before starting the ride.",
+      "Step into the raft carefully. Ride fully seated facing the center of the raft with your back against the tube and holding the handles with both hands at all times.",
+      "If you accidentally fall from the raft, continue down the flume without it and exit normally.",
+      "Secure eyeglasses with a head strap, if worn.",
+      "Loose items (t-shirts, cameras, wallets, hats, etc.) should be left with a non-rider or secured.",
+      "Never form chains, dive, run, sit up, stand, kneel, stop, or rotate in the slide.",
+      "At the end of the slide, remain in raft until directed by attendant to exit.",
+      "Step carefully from the raft — do not jump or dive from the raft into the pool.",
+      "No swimming or floating allowed in the splash pool.",
+      "Exposed zippers, buckles, rivets, or metal ornamentation are not allowed.",
+      "No food or drink is allowed on the slide."
+    ]},
+    { id:4, name:"Tidal Wave", type:"Wave Pool", height:"N/A", x:49.71, y:31.60, thrill:3, riders:"N/A", weightLimit:"N/A", desc:"The park's massive wave pool — from gentle swells near the beach entry to big waves in the deep end. No tubes or flotation devices allowed. Guests under 48\" must wear a life vest.", img:"images/tidal-wave.png", rules:[
+      "NO TUBES OR FLOTATION DEVICES ALLOWED.",
+      "All guests under 48″ must be accompanied by an adult and wear a US Coast Guard approved life vest.",
+      "Diaper dependent guests must wear a swim diaper or waterproof diaper cover.",
+      "Enter and exit at beach entry points. Pool ladders are for emergency use only.",
+      "Do not cross rope barriers.",
+      "Absolutely no jumping or diving into the pool.",
+      "Keep your head above water when the waves are on.",
+      "Do not swim past the red line. Stay 3′ away from rope.",
+      "No food or drink is allowed in the pool."
+    ]},
+    { id:5, name:"Thrills of Fiji", type:"Water Slide", height:'48"', x:60.74, y:17.65, thrill:6, riders:"Single Rider", weightLimit:"300 lbs", desc:"The fastest, tallest slide in the park. Plunge down the open-air speed slide and feel the rush. This is the one that makes your stomach drop. Not for the faint of heart.", img:"images/thrills-of-fiji.png", rules:[
+      "For safety reasons, life jackets are not allowed on the attraction.",
+      "No shoes, sandals, or water shoes are allowed.",
+      "Proper swimwear required — no cotton permitted.",
+      "Only one rider to enter the flume at a time. No lap riders.",
+      "Wait for the attendant's start signal before starting the ride.",
+      "Ride feet first lying on your back, legs straight and firmly crossed at the ankles, arms folded across the chest.",
+      "Do not uncross your legs or attempt to sit up until you come to a stop in the pool.",
+      "Secure eyeglasses with a head strap, if worn.",
+      "Loose items should be left with a non-rider or secured.",
+      "Never form chains. Do not run, dive, stand, kneel, rotate, or stop in the slide.",
+      "Obey all instructions by splash pool attendant and exit quickly. Do not block the end of the slide.",
+      "Leave the shutdown lane quickly and orderly.",
+      "No swimming or flotation devices allowed in the shutdown lane.",
+      "Exposed zippers, buckles, rivets, or metal ornamentation are not allowed.",
+      "No food or drink is allowed on the slides."
+    ]},
+    { id:6, name:"Bora Bora Racers", type:"Mat Slide", height:'42"', x:65.67, y:18.40, thrill:3, riders:"Single Rider", weightLimit:"300 lbs", desc:"Grab a mat and race head-first down multi-lane pink slides. Compete side-by-side with friends to see who hits the bottom first.", img:"images/bora-bora-racers.png", rules:[
+      "Park-provided riding mat must be used on this attraction.",
+      "For safety reasons, life jackets are not allowed on the attraction.",
+      "Only one rider is allowed per lane.",
+      "Wait for the attendant's start signal before starting the ride.",
+      "Ride with your stomach on the mat, lying down, head first with your elbows tucked in.",
+      "Hold on to the handles of the mat with a firm grip at all times.",
+      "Keep arms and hands inside the flumes at all times.",
+      "Secure eyeglasses with a head strap, if worn.",
+      "Never form chains, run, sit up, stand, kneel, stop, or rotate in the slide.",
+      "At the end, obey all instructions by splash pool attendant and exit quickly by walking to the end of your lane.",
+      "Do not cross the lanes on exit. Do not block the end of the slide.",
+      "Be cautious walking — surface is slippery.",
+      "Exposed zippers, buckles, rivets, or metal ornamentation are not allowed.",
+      "No food or drink is allowed on the slides."
+    ]},
+    { id:7, name:"Bayou River Tours", type:"Lazy River", height:"N/A", x:60.06, y:59.23, thrill:1, riders:"N/A", weightLimit:"N/A", desc:"Float along the winding lazy river shaded by palm trees and lush greenery. Single and double rental tubes available. The perfect way to relax between slides.", img:"images/bayou-river-tours.png", rules:[
+      "Air-filled infant flotation devices are not allowed. Foam-based, non-inflatable swim rings are permitted for infant use.",
+      "Diaper dependent guests must wear a swim diaper or waterproof diaper cover.",
+      "Proper swimwear is required to enjoy the Lazy River.",
+      "Enter and exit at marked areas only. Do not cross rope barriers.",
+      "Absolutely no jumping or diving into the river.",
+      "Single and double rental tubes are permitted but not required. Use by designed capacity only.",
+      "No standing or kneeling on tubes. No personal pool toys or floats.",
+      "Do not form chains of more than three.",
+      "Do not swim underwater. Do not stack tubes.",
+      "No food or drink is allowed in the pool."
+    ]},
+    { id:8, name:"'Ohana Bay", type:"Water Slide / Splash Pad", height:'36"–40"', x:41.46, y:62.94, thrill:1, riders:"Single Rider", weightLimit:"200–300 lbs", desc:"The heart of the park for younger guests — a massive splash zone with four different colored slides (green, yellow, purple, orange), sprayers, water cannons, and the giant bucket dump. Each slide has its own height and weight requirements.", img:"images/ohana-bay.png", rules:[
+      "Green Slide: Max 300 lbs, min 40\". Yellow Slide: Max 300 lbs, min 40\".",
+      "Purple Slide: Max 200 lbs, min 36\". Orange Slide: Max 200 lbs, min 36\".",
+      "Children under 6 years of age must be accompanied by an adult.",
+      "Single riders only. Only one rider to enter the flume at a time. Never form chains.",
+      "Slide must be ridden feet first lying on your back, legs crossed at ankles, arms folded across chest.",
+      "Orange Slide: may also be ridden sitting up (sit up to go slower, lie down to go faster).",
+      "Wait for the attendant's start signal before starting the ride.",
+      "Do not uncross your legs or attempt to sit up until you come to a stop.",
+      "Do not run, dive, stand, kneel, rotate, or stop in the slide.",
+      "Secure eyeglasses with a head strap. No exposed zippers, buckles, rivets, or metal ornamentation.",
+      "Obey all instructions by attendant and exit quickly.",
+      "Orange Slide: do not cross lanes on exit — surface is very slippery.",
+      "Pregnant women and persons with heart conditions should not ride."
+    ]},
     { id:9, name:"Tide Pool", type:"Relaxing", height:"N/A", x:69.43, y:57.22, thrill:1, riders:"N/A", weightLimit:"N/A", desc:"A calm, relaxing pool to cool off and unwind.", img:"" }
   ],
   food: [
@@ -1044,6 +1164,20 @@ function openPanel(item, cat) {
       html += `<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Weight Limit</span><span class="iw-panel-meta-value">${item.weightLimit}</span></div>`;
     }
     html += `</div>`;
+  }
+
+  // Safety rules
+  if (item.rules && item.rules.length) {
+    html += `<div style="margin-top:16px;">`;
+    html += `<div onclick="this.parentElement.classList.toggle('rules-open')" style="display:flex;align-items:center;justify-content:space-between;cursor:pointer;padding:10px 0;">`;
+    html += `<span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--iw-dark);">⚠️ Safety Rules</span>`;
+    html += `<span style="font-size:11px;color:var(--iw-gray-light);transition:transform 0.2s;" class="rules-chevron">▼</span>`;
+    html += `</div>`;
+    html += `<ul style="max-height:0;overflow:hidden;transition:max-height 0.3s ease;padding-left:18px;margin:0;">`;
+    item.rules.forEach(r => {
+      html += `<li style="font-size:12px;color:var(--iw-gray);line-height:1.6;margin-bottom:4px;">${r}</li>`;
+    });
+    html += `</ul></div>`;
   }
 
   body.innerHTML = html;
