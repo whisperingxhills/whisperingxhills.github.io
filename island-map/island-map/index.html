@@ -3,87 +3,266 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Island Waterpark - Interactive Map</title>
+<title>Island Waterpark - Park Map</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
   --iw-blue: #0EA5E9;
   --iw-blue-dark: #0284C7;
+  --iw-blue-light: #E0F2FE;
   --iw-orange: #F97316;
+  --iw-orange-light: #FFF7ED;
   --iw-green: #22C55E;
-  --iw-red: #EF4444;
+  --iw-green-light: #F0FDF4;
   --iw-purple: #8B5CF6;
+  --iw-purple-light: #F5F3FF;
   --iw-dark: #1E293B;
   --iw-darker: #0F172A;
   --iw-light: #F8FAFC;
   --iw-gray: #64748B;
+  --iw-gray-light: #94A3B8;
   --iw-border: #E2E8F0;
+  --sidebar-width: 320px;
 }
+
+html, body { height: 100%; overflow: hidden; }
 
 body {
   font-family: 'Inter', sans-serif;
-  background: var(--iw-light);
+  background: var(--iw-dark);
   color: var(--iw-dark);
-  overflow: hidden;
+  display: flex;
 }
 
-/* ── Filter Bar ── */
-.iw-filters {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  z-index: 20;
+/* ── Sidebar ── */
+.iw-sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: white;
+  border-right: 1px solid var(--iw-border);
   display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 30;
+  transition: transform 0.3s ease;
 }
 
-.iw-filter-btn {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  padding: 6px 12px;
-  border: none;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-  text-transform: uppercase;
+.iw-sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--iw-border);
+  background: var(--iw-darker);
+}
+
+.iw-sidebar-header h1 {
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
   letter-spacing: 0.5px;
 }
 
-.iw-filter-btn.active { opacity: 1; }
-.iw-filter-btn:not(.active) { opacity: 0.5; }
-.iw-filter-btn:hover { transform: scale(1.05); }
+.iw-sidebar-header p {
+  font-size: 11px;
+  color: var(--iw-gray-light);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
 
-.iw-filter-btn[data-cat="attraction"] { background: var(--iw-blue); color: white; }
-.iw-filter-btn[data-cat="food"] { background: var(--iw-orange); color: white; }
-.iw-filter-btn[data-cat="service"] { background: var(--iw-green); color: white; }
-.iw-filter-btn[data-cat="amenity"] { background: var(--iw-purple); color: white; }
-.iw-filter-btn[data-cat="cabana"] { background: var(--iw-red); color: white; }
+.iw-sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
 
-/* ── Map Container ── */
-.iw-map-wrapper {
+.iw-sidebar-body::-webkit-scrollbar { width: 4px; }
+.iw-sidebar-body::-webkit-scrollbar-thumb { background: var(--iw-border); border-radius: 4px; }
+
+/* Category sections */
+.iw-cat-section {
+  border-bottom: 1px solid var(--iw-border);
+}
+
+.iw-cat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.iw-cat-header:hover { background: var(--iw-light); }
+
+.iw-cat-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iw-cat-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: white;
+  flex-shrink: 0;
+}
+
+.iw-cat-icon.attraction { background: var(--iw-blue); }
+.iw-cat-icon.food { background: var(--iw-orange); }
+.iw-cat-icon.service { background: var(--iw-green); }
+.iw-cat-icon.amenity { background: var(--iw-purple); }
+
+.iw-cat-name {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--iw-dark);
+}
+
+.iw-cat-count {
+  font-size: 11px;
+  color: var(--iw-gray-light);
+  background: var(--iw-light);
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.iw-cat-chevron {
+  font-size: 12px;
+  color: var(--iw-gray-light);
+  transition: transform 0.2s;
+}
+
+.iw-cat-section.open .iw-cat-chevron { transform: rotate(180deg); }
+
+.iw-cat-items {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.iw-cat-section.open .iw-cat-items {
+  max-height: 1000px;
+}
+
+.iw-cat-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 20px 10px 58px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-top: 1px solid rgba(0,0,0,0.03);
+}
+
+.iw-cat-item:hover { background: var(--iw-light); }
+.iw-cat-item.active { background: var(--iw-blue-light); }
+
+.iw-cat-item-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.iw-cat-item-dot.attraction { background: var(--iw-blue); }
+.iw-cat-item-dot.food { background: var(--iw-orange); }
+.iw-cat-item-dot.service { background: var(--iw-green); }
+.iw-cat-item-dot.amenity { background: var(--iw-purple); }
+
+.iw-cat-item-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.iw-cat-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--iw-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.iw-cat-item-type {
+  font-size: 11px;
+  color: var(--iw-gray);
+  margin-top: 1px;
+}
+
+/* Toggle visibility */
+.iw-cat-toggle {
+  width: 36px;
+  height: 20px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
   position: relative;
-  width: 100vw;
-  height: 100vh;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.iw-cat-toggle.on { background: var(--iw-blue); }
+.iw-cat-toggle.off { background: var(--iw-border); }
+
+.iw-cat-toggle::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: white;
+  top: 2px;
+  transition: left 0.2s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.iw-cat-toggle.on::after { left: 18px; }
+.iw-cat-toggle.off::after { left: 2px; }
+
+/* Mobile sidebar toggle */
+.iw-sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Map Area ── */
+.iw-map-area {
+  flex: 1;
+  position: relative;
   overflow: hidden;
   background: #87CEEB;
   cursor: grab;
 }
 
-.iw-map-wrapper.grabbing { cursor: grabbing; }
+.iw-map-area.grabbing { cursor: grabbing; }
 
 .iw-map-inner {
   position: absolute;
   transform-origin: 0 0;
-  transition: transform 0.1s ease-out;
 }
 
 .iw-map-inner img {
@@ -95,140 +274,172 @@ body {
 /* ── Pins ── */
 .iw-pin {
   position: absolute;
-  transform: translate(-50%, -50%);
+  transform: translate(-50%, -100%);
   cursor: pointer;
   z-index: 10;
-  transition: transform 0.2s, filter 0.2s;
+  transition: transform 0.2s, filter 0.2s, opacity 0.3s;
 }
 
 .iw-pin:hover {
-  transform: translate(-50%, -50%) scale(1.3);
-  filter: brightness(1.1);
+  transform: translate(-50%, -100%) scale(1.2);
   z-index: 15;
+}
+
+.iw-pin.hidden { opacity: 0; pointer-events: none; }
+.iw-pin.highlight .iw-pin-marker { animation: iw-bounce 0.6s ease; }
+
+@keyframes iw-bounce {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-12px); }
+  60% { transform: translateY(-4px); }
+}
+
+.iw-pin-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .iw-pin-dot {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 11px;
-  font-weight: 700;
   color: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-  border: 2px solid rgba(255,255,255,0.8);
-  position: relative;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.9);
 }
 
-.iw-pin-dot::after {
-  content: '';
-  position: absolute;
-  bottom: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 0;
-  height: 0;
-  border-left: 5px solid transparent;
-  border-right: 5px solid transparent;
+.iw-pin-dot span {
+  transform: rotate(45deg);
+  font-size: 11px;
+  font-weight: 700;
 }
 
 .iw-pin[data-cat="attraction"] .iw-pin-dot { background: var(--iw-blue); }
-.iw-pin[data-cat="attraction"] .iw-pin-dot::after { border-top: 6px solid var(--iw-blue); }
 .iw-pin[data-cat="food"] .iw-pin-dot { background: var(--iw-orange); }
-.iw-pin[data-cat="food"] .iw-pin-dot::after { border-top: 6px solid var(--iw-orange); }
 .iw-pin[data-cat="service"] .iw-pin-dot { background: var(--iw-green); }
-.iw-pin[data-cat="service"] .iw-pin-dot::after { border-top: 6px solid var(--iw-green); }
 .iw-pin[data-cat="amenity"] .iw-pin-dot { background: var(--iw-purple); }
-.iw-pin[data-cat="amenity"] .iw-pin-dot::after { border-top: 6px solid var(--iw-purple); }
 
-/* ── Cabana Overlays ── */
-.iw-cabana {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  width: 18px;
-  height: 18px;
-  border-radius: 3px;
-  background: var(--iw-red);
-  border: 1.5px solid rgba(255,255,255,0.7);
-  cursor: pointer;
-  z-index: 8;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 7px;
-  font-weight: 700;
-  color: white;
-  transition: all 0.2s;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
-}
-
-.iw-cabana:hover {
-  transform: translate(-50%, -50%) scale(1.4);
-  z-index: 15;
-  box-shadow: 0 2px 12px rgba(239,68,68,0.5);
-}
-
-.iw-cabana.booked {
-  background: var(--iw-gray);
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-/* ── Tooltip ── */
-.iw-tooltip {
-  position: absolute;
-  z-index: 30;
-  background: var(--iw-darker);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.15s;
-  white-space: nowrap;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-  transform: translate(-50%, -100%);
-  margin-top: -12px;
-}
-
-.iw-tooltip.visible { opacity: 1; }
-
-.iw-tooltip-type {
-  font-size: 10px;
-  color: var(--iw-gray);
-  display: block;
+.iw-pin-shadow {
+  width: 12px;
+  height: 4px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
   margin-top: 2px;
 }
 
-/* ── Side Panel ── */
+/* ── Hover Preview Card ── */
+.iw-preview {
+  position: absolute;
+  z-index: 50;
+  width: 260px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  transform: translate(-50%, -100%);
+  margin-top: -20px;
+}
+
+.iw-preview.visible { opacity: 1; }
+
+.iw-preview-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  background: var(--iw-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--iw-gray-light);
+  font-size: 12px;
+}
+
+.iw-preview-body {
+  padding: 12px 14px;
+}
+
+.iw-preview-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 6px;
+}
+
+.iw-preview-tag.attraction { background: var(--iw-blue-light); color: var(--iw-blue-dark); }
+.iw-preview-tag.food { background: var(--iw-orange-light); color: #C2410C; }
+.iw-preview-tag.service { background: var(--iw-green-light); color: #15803D; }
+.iw-preview-tag.amenity { background: var(--iw-purple-light); color: #6D28D9; }
+
+.iw-preview-name {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--iw-dark);
+}
+
+.iw-preview-type {
+  font-size: 12px;
+  color: var(--iw-gray);
+  margin-top: 2px;
+}
+
+.iw-preview-detail {
+  font-size: 11px;
+  color: var(--iw-gray-light);
+  margin-top: 6px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.iw-preview-arrow {
+  width: 12px;
+  height: 12px;
+  background: white;
+  transform: rotate(45deg);
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  margin-left: -6px;
+  box-shadow: 2px 2px 4px rgba(0,0,0,0.05);
+}
+
+/* ── Detail Panel (click) ── */
 .iw-panel-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.3);
-  z-index: 40;
+  z-index: 60;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s;
 }
 
-.iw-panel-backdrop.open {
-  opacity: 1;
-  pointer-events: auto;
-}
+.iw-panel-backdrop.open { opacity: 1; pointer-events: auto; }
 
 .iw-panel {
   position: fixed;
   top: 0;
   right: 0;
-  width: 380px;
+  width: 400px;
   max-width: 90vw;
   height: 100vh;
   background: white;
-  z-index: 50;
+  z-index: 70;
   transform: translateX(100%);
   transition: transform 0.3s ease;
   display: flex;
@@ -239,16 +450,18 @@ body {
 .iw-panel.open { transform: translateX(0); }
 
 .iw-panel-header {
-  padding: 20px;
+  padding: 20px 20px 16px;
   border-bottom: 1px solid var(--iw-border);
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: 12px;
 }
 
 .iw-panel-header h2 {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
 }
 
 .iw-panel-close {
@@ -261,9 +474,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
+  font-size: 16px;
   color: var(--iw-gray);
   transition: all 0.2s;
+  flex-shrink: 0;
 }
 
 .iw-panel-close:hover { background: var(--iw-border); color: var(--iw-dark); }
@@ -274,63 +488,61 @@ body {
   padding: 20px;
 }
 
+.iw-panel-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+  background: var(--iw-border);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--iw-gray-light);
+  font-size: 12px;
+}
+
 .iw-panel-tag {
   display: inline-block;
-  padding: 3px 10px;
-  border-radius: 12px;
+  padding: 4px 12px;
+  border-radius: 6px;
   font-size: 11px;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.iw-panel-tag.attraction { background: var(--iw-blue-light); color: var(--iw-blue-dark); }
+.iw-panel-tag.food { background: var(--iw-orange-light); color: #C2410C; }
+.iw-panel-tag.service { background: var(--iw-green-light); color: #15803D; }
+.iw-panel-tag.amenity { background: var(--iw-purple-light); color: #6D28D9; }
+
+.iw-panel-desc {
+  font-size: 14px;
+  color: var(--iw-gray);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.iw-panel-meta {
+  padding: 12px 16px;
+  background: var(--iw-light);
+  border-radius: 8px;
   margin-bottom: 12px;
 }
 
-.iw-panel-tag.attraction { background: #E0F2FE; color: var(--iw-blue-dark); }
-.iw-panel-tag.food { background: #FFF7ED; color: #C2410C; }
-.iw-panel-tag.service { background: #F0FDF4; color: #15803D; }
-.iw-panel-tag.amenity { background: #F5F3FF; color: #6D28D9; }
-.iw-panel-tag.cabana { background: #FEF2F2; color: #DC2626; }
-
-.iw-panel-detail {
-  margin-top: 12px;
-  padding: 12px;
-  background: var(--iw-light);
-  border-radius: 8px;
+.iw-panel-meta-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
   font-size: 13px;
-  color: var(--iw-gray);
-  line-height: 1.6;
 }
 
-.iw-panel-detail strong { color: var(--iw-dark); }
+.iw-panel-meta-row:not(:last-child) { border-bottom: 1px solid var(--iw-border); }
 
-.iw-panel-btn {
-  display: block;
-  width: 100%;
-  margin-top: 16px;
-  padding: 12px;
-  background: var(--iw-blue);
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  text-align: center;
-  text-decoration: none;
-}
-
-.iw-panel-btn:hover { background: var(--iw-blue-dark); }
-.iw-panel-btn.cabana-btn { background: var(--iw-red); }
-.iw-panel-btn.cabana-btn:hover { background: #DC2626; }
-
-.iw-panel-iframe {
-  width: 100%;
-  height: 400px;
-  border: 1px solid var(--iw-border);
-  border-radius: 8px;
-  margin-top: 16px;
-}
+.iw-panel-meta-label { color: var(--iw-gray); }
+.iw-panel-meta-value { font-weight: 600; color: var(--iw-dark); }
 
 /* ── Zoom Controls ── */
 .iw-zoom {
@@ -344,14 +556,14 @@ body {
 }
 
 .iw-zoom button {
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   border: none;
   background: white;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
   cursor: pointer;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: var(--iw-dark);
   display: flex;
@@ -360,60 +572,70 @@ body {
   transition: all 0.2s;
 }
 
-.iw-zoom button:hover { background: var(--iw-light); }
-
-/* ── Hidden ── */
-.iw-hidden { display: none !important; }
+.iw-zoom button:hover { background: var(--iw-light); transform: scale(1.05); }
 
 /* ── Mobile ── */
-@media (max-width: 640px) {
+@media (max-width: 768px) {
+  .iw-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    transform: translateX(-100%);
+    z-index: 50;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  }
+  .iw-sidebar.open { transform: translateX(0); }
+  .iw-sidebar-toggle { display: flex; }
   .iw-panel {
     width: 100vw;
     max-width: 100vw;
     top: auto;
     bottom: 0;
-    height: 60vh;
+    height: 65vh;
     transform: translateY(100%);
     border-radius: 16px 16px 0 0;
   }
   .iw-panel.open { transform: translateY(0); }
-  .iw-filters { gap: 4px; }
-  .iw-filter-btn { padding: 5px 8px; font-size: 10px; }
-  .iw-pin-dot { width: 24px; height: 24px; font-size: 10px; }
-  .iw-cabana { width: 14px; height: 14px; font-size: 6px; }
+  .iw-preview { width: 200px; }
+  .iw-preview-img { height: 80px; }
 }
 </style>
 </head>
 <body>
 
-<!-- Filter Bar -->
-<div class="iw-filters">
-  <button class="iw-filter-btn active" data-cat="attraction" onclick="toggleFilter('attraction')">🎢 Rides</button>
-  <button class="iw-filter-btn active" data-cat="food" onclick="toggleFilter('food')">🍔 Food</button>
-  <button class="iw-filter-btn active" data-cat="service" onclick="toggleFilter('service')">ℹ️ Services</button>
-  <button class="iw-filter-btn active" data-cat="amenity" onclick="toggleFilter('amenity')">🚻 Amenities</button>
-  <button class="iw-filter-btn active" data-cat="cabana" onclick="toggleFilter('cabana')">🏖️ Cabanas</button>
-</div>
+<!-- Mobile sidebar toggle -->
+<button class="iw-sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">☰</button>
 
-<!-- Zoom Controls -->
-<div class="iw-zoom">
-  <button onclick="zoomMap(1)">+</button>
-  <button onclick="zoomMap(-1)">−</button>
-  <button onclick="resetMap()" style="font-size:12px;">⟲</button>
-</div>
+<!-- Sidebar -->
+<aside class="iw-sidebar" id="sidebar">
+  <div class="iw-sidebar-header">
+    <h1>🏝️ Island Waterpark</h1>
+    <p>Park Map</p>
+  </div>
+  <div class="iw-sidebar-body" id="sidebarBody">
+    <!-- Injected by JS -->
+  </div>
+</aside>
 
-<!-- Tooltip -->
-<div class="iw-tooltip" id="tooltip"></div>
+<!-- Map Area -->
+<div class="iw-map-area" id="mapArea">
+  <!-- Zoom Controls -->
+  <div class="iw-zoom">
+    <button onclick="zoomMap(1)">+</button>
+    <button onclick="zoomMap(-1)">−</button>
+    <button onclick="resetMap()" style="font-size:14px;">⟲</button>
+  </div>
 
-<!-- Map -->
-<div class="iw-map-wrapper" id="mapWrapper">
+  <!-- Hover Preview -->
+  <div class="iw-preview" id="preview"></div>
+
+  <!-- Map -->
   <div class="iw-map-inner" id="mapInner">
     <img src="map-base.png" id="mapImg" draggable="false">
-    <!-- Pins injected by JS -->
   </div>
 </div>
 
-<!-- Side Panel -->
+<!-- Detail Panel -->
 <div class="iw-panel-backdrop" id="panelBackdrop" onclick="closePanel()"></div>
 <div class="iw-panel" id="panel">
   <div class="iw-panel-header">
@@ -425,36 +647,36 @@ body {
 
 <script>
 /* ================================================================
-   DATA
+   DATA — Image: 2048 x 1592
+   Coords: x% = px/2048*100, y% = px/1592*100
    ================================================================ */
 const MAP_DATA = {
-  // Image: 2048 x 1592 — all coords converted: x% = px/2048*100, y% = px/1592*100
   attractions: [
-    { id:1, name:"Nature's Furies", type:"Tube Slides", height:"42\"*", x:16.70, y:68.53, desc:"Twist and turn through enclosed tube slides. Multiple lanes for racing your friends!" },
-    { id:2, name:"Hawaiian Adventures", type:"Body Slides", height:"42\"*", x:17.77, y:45.79, desc:"High-speed body slides with thrilling drops and curves. Feel the rush!" },
-    { id:3, name:"Tsunami", type:"Family Raft", height:"42\"", x:41.55, y:17.53, desc:"Grab the family and ride the giant red raft slide together. The biggest thrill in the park!" },
-    { id:4, name:"Tidal Wave", type:"Wave Pool", height:"N/A", x:49.71, y:31.60, desc:"Our massive wave pool — from gentle swells near the shore to big waves in the deep end." },
-    { id:5, name:"Thrills of Fiji", type:"High Speed", height:"48\"*", x:60.74, y:17.65, desc:"The fastest slides in the park. Not for the faint of heart!" },
-    { id:6, name:"Bora Bora Racers", type:"Mat Sliders", height:"42\"*", x:65.67, y:18.40, desc:"Grab a mat and race head-first down multi-lane slides. Who's the fastest?" },
-    { id:7, name:"Waimea River", type:"Relaxing", height:"N/A", x:60.06, y:59.23, desc:"Float along our lazy river and take in the sights. Tubes available for rental." },
-    { id:8, name:"Ohana Bay", type:"Various", height:"N/A", x:41.46, y:62.94, desc:"The heart of the park — interactive splash zone with slides, sprayers, and the giant bucket dump!" },
-    { id:9, name:"Tide Pool", type:"Relaxing", height:"N/A", x:69.43, y:57.22, desc:"A calm, relaxing pool to cool off and unwind." }
+    { id:1, name:"Nature's Furies", type:"Tube Slides", height:'42"*', x:16.70, y:68.53, desc:"Twist and turn through enclosed tube slides. Multiple lanes for racing your friends!", img:"" },
+    { id:2, name:"Hawaiian Adventures", type:"Body Slides", height:'42"*', x:17.77, y:45.79, desc:"High-speed body slides with thrilling drops and curves. Feel the rush!", img:"" },
+    { id:3, name:"Tsunami", type:"Family Raft", height:'42"', x:41.55, y:17.53, desc:"Grab the family and ride the giant red raft slide together. The biggest thrill in the park!", img:"" },
+    { id:4, name:"Tidal Wave", type:"Wave Pool", height:"N/A", x:49.71, y:31.60, desc:"Our massive wave pool — from gentle swells near the shore to big waves in the deep end.", img:"" },
+    { id:5, name:"Thrills of Fiji", type:"High Speed", height:'48"*', x:60.74, y:17.65, desc:"The fastest slides in the park. Not for the faint of heart!", img:"" },
+    { id:6, name:"Bora Bora Racers", type:"Mat Sliders", height:'42"*', x:65.67, y:18.40, desc:"Grab a mat and race head-first down multi-lane slides. Who's the fastest?", img:"" },
+    { id:7, name:"Bayou River Tours", type:"Relaxing", height:"N/A", x:60.06, y:59.23, desc:"Float along our lazy river and take in the sights. Tubes available for rental.", img:"" },
+    { id:8, name:"Ohana Bay", type:"Various", height:"N/A", x:41.46, y:62.94, desc:"The heart of the park — interactive splash zone with slides, sprayers, and the giant bucket dump!", img:"" },
+    { id:9, name:"Tide Pool", type:"Relaxing", height:"N/A", x:69.43, y:57.22, desc:"A calm, relaxing pool to cool off and unwind.", img:"" }
   ],
   food: [
-    { id:10, name:"Aloha Cafe", x:28.61, y:78.33, desc:"Full menu — burgers, chicken, fries, and more." },
-    { id:11, name:"Funnel Cakes", x:31.79, y:78.77, desc:"Classic funnel cakes with your choice of toppings." },
-    { id:12, name:"Sandbar", x:38.38, y:81.47, desc:"Quick bites and snacks near the center of the park." },
-    { id:13, name:"Sharky's", x:49.51, y:53.20, desc:"Grab a bite right in the middle of the action." },
-    { id:14, name:"Drink Station", x:51.42, y:55.65, desc:"Sodas, water, slushies, and refills." },
-    { id:15, name:"Waikiki Willies Bar", x:55.62, y:50.63, desc:"Adult beverages and tropical drinks. 21+ with valid ID." }
+    { id:10, name:"Aloha Cafe", x:28.61, y:78.33, desc:"Full menu — burgers, chicken, fries, and more.", img:"" },
+    { id:11, name:"Funnel Cakes", x:31.79, y:78.77, desc:"Classic funnel cakes with your choice of toppings.", img:"" },
+    { id:12, name:"Sandbar", x:38.38, y:81.47, desc:"Quick bites and snacks near the center of the park.", img:"" },
+    { id:13, name:"Sharky's", x:49.51, y:53.20, desc:"Grab a bite right in the middle of the action.", img:"" },
+    { id:14, name:"Drink Station", x:51.42, y:55.65, desc:"Sodas, water, slushies, and refills.", img:"" },
+    { id:15, name:"Waikiki Willies Bar", x:55.62, y:50.63, desc:"Adult beverages and tropical drinks. 21+ with valid ID.", img:"" }
   ],
   services: [
-    { id:16, name:"Guest Relations", x:40.82, y:84.17, desc:"Questions, lost & found, and guest assistance." },
-    { id:17, name:"Ticket Booth", x:39.70, y:93.28, desc:"Purchase tickets, season passes, and upgrades." },
-    { id:18, name:"Gift Shop", x:45.65, y:80.21, desc:"Souvenirs, sunscreen, swimwear, and more." },
-    { id:19, name:"Tube Rentals", x:62.01, y:78.64, desc:"Rent tubes for the lazy river and select attractions." },
-    { id:20, name:"Group Pavilions", x:71.97, y:81.53, desc:"Reserve covered pavilions for birthday parties and group events." },
-    { id:21, name:"BBQ Cove", x:9.42, y:47.17, desc:"Reserved BBQ area for groups. Grills and picnic tables available." }
+    { id:16, name:"Guest Relations", x:40.82, y:84.17, desc:"Questions, lost & found, and guest assistance.", img:"" },
+    { id:17, name:"Ticket Booth", x:39.70, y:93.28, desc:"Purchase tickets, season passes, and upgrades.", img:"" },
+    { id:18, name:"Gift Shop", x:45.65, y:80.21, desc:"Souvenirs, sunscreen, swimwear, and more.", img:"" },
+    { id:19, name:"Tube Rentals", x:62.01, y:78.64, desc:"Rent tubes for the lazy river and select attractions.", img:"" },
+    { id:20, name:"Group Pavilions", x:71.97, y:81.53, desc:"Reserve covered pavilions for birthday parties and group events.", img:"" },
+    { id:21, name:"BBQ Cove", x:9.42, y:47.17, desc:"Reserved BBQ area for groups. Grills and picnic tables available.", img:"" }
   ],
   amenities: [
     { name:"Lockers", icon:"🔒", x:38.38, y:74.94 },
@@ -468,56 +690,40 @@ const MAP_DATA = {
     { name:"Restrooms", icon:"🚻", x:77.59, y:43.09 },
     { name:"Smoking Area", icon:"🚬", x:81.20, y:44.03 },
     { name:"Smoking Area", icon:"🚬", x:23.10, y:43.15 }
-  ],
-  cabanas: [
-    // Placeholder — Teddy will provide precise cabana coordinates next
-    // Left side cluster (red umbrella tables visible on map)
-    { id:1, x:5.0, y:28 }, { id:2, x:7.0, y:28 },
-    { id:3, x:5.0, y:31 }, { id:4, x:7.0, y:31 }, { id:5, x:9.0, y:31 },
-    { id:6, x:5.0, y:34 }, { id:7, x:7.0, y:34 }, { id:8, x:9.0, y:34 },
-    { id:9, x:4.0, y:37 }, { id:10, x:6.0, y:37 },
-    { id:11, x:4.0, y:40 }, { id:12, x:6.0, y:40 },
-    { id:13, x:3.5, y:43 }, { id:14, x:5.5, y:43 },
-    { id:15, x:3.5, y:46 }, { id:16, x:5.5, y:46 },
-    { id:17, x:3.5, y:49 }, { id:18, x:5.5, y:49 },
-    { id:19, x:3.5, y:52 }, { id:20, x:5.5, y:52 },
-    { id:21, x:3.5, y:55 }, { id:22, x:5.5, y:55 },
-    { id:23, x:3.5, y:58 }, { id:24, x:5.5, y:58 },
-    { id:25, x:4.0, y:61 }, { id:26, x:6.0, y:61 },
-    { id:27, x:4.0, y:64 }, { id:28, x:6.0, y:64 },
-    { id:29, x:4.0, y:67 }, { id:30, x:6.0, y:67 },
   ]
 };
+
+const CATEGORIES = [
+  { key: 'attraction', label: 'Attractions', icon: '🎢', color: 'attraction', data: MAP_DATA.attractions },
+  { key: 'food', label: 'Food & Drinks', icon: '🍔', color: 'food', data: MAP_DATA.food },
+  { key: 'service', label: 'Services', icon: 'ℹ️', color: 'service', data: MAP_DATA.services },
+  { key: 'amenity', label: 'Amenities', icon: '🚻', color: 'amenity', data: MAP_DATA.amenities },
+];
 
 /* ================================================================
    STATE
    ================================================================ */
-const filters = { attraction:true, food:true, service:true, amenity:true, cabana:true };
+const filters = { attraction:true, food:true, service:true, amenity:true };
 let scale = 1, panX = 0, panY = 0;
 let isDragging = false, dragStartX = 0, dragStartY = 0, startPanX = 0, startPanY = 0;
 let imgW = 0, imgH = 0;
+let activeItemId = null;
 
 /* ================================================================
    INIT
    ================================================================ */
 const mapImg = document.getElementById('mapImg');
 const mapInner = document.getElementById('mapInner');
-const mapWrapper = document.getElementById('mapWrapper');
-const tooltip = document.getElementById('tooltip');
+const mapArea = document.getElementById('mapArea');
+const preview = document.getElementById('preview');
 
 mapImg.onload = function() {
   imgW = mapImg.naturalWidth;
   imgH = mapImg.naturalHeight;
   mapImg.style.width = imgW + 'px';
   mapImg.style.height = imgH + 'px';
-
-  // Fit map to viewport
-  const ww = mapWrapper.clientWidth;
-  const wh = mapWrapper.clientHeight;
-  scale = Math.min(ww / imgW, wh / imgH);
-  panX = (ww - imgW * scale) / 2;
-  panY = (wh - imgH * scale) / 2;
-  updateTransform();
+  resetMap();
+  renderSidebar();
   renderPins();
 };
 
@@ -526,16 +732,234 @@ function updateTransform() {
 }
 
 /* ================================================================
+   SIDEBAR
+   ================================================================ */
+function renderSidebar() {
+  const body = document.getElementById('sidebarBody');
+  let html = '';
+
+  CATEGORIES.forEach(cat => {
+    const items = cat.data;
+    html += `<div class="iw-cat-section open" data-cat="${cat.key}">`;
+    html += `<div class="iw-cat-header" onclick="toggleCategory('${cat.key}')">`;
+    html += `<div class="iw-cat-header-left">`;
+    html += `<div class="iw-cat-icon ${cat.color}">${cat.icon}</div>`;
+    html += `<span class="iw-cat-name">${cat.label}</span>`;
+    html += `</div>`;
+    html += `<div style="display:flex;align-items:center;gap:8px;">`;
+    html += `<span class="iw-cat-count">${items.length}</span>`;
+    html += `<button class="iw-cat-toggle on" data-cat="${cat.key}" onclick="event.stopPropagation();toggleFilter('${cat.key}',this)"></button>`;
+    html += `<span class="iw-cat-chevron">▼</span>`;
+    html += `</div>`;
+    html += `</div>`;
+    html += `<div class="iw-cat-items">`;
+
+    items.forEach((item, i) => {
+      const itemId = `${cat.key}-${i}`;
+      const name = item.name || item.icon + ' ' + (item.name || '');
+      const type = item.type || '';
+      html += `<div class="iw-cat-item" data-item-id="${itemId}" onclick="flyToItem('${cat.key}', ${i})">`;
+      html += `<div class="iw-cat-item-dot ${cat.color}"></div>`;
+      html += `<div class="iw-cat-item-info">`;
+      html += `<div class="iw-cat-item-name">${item.name}</div>`;
+      if (type) html += `<div class="iw-cat-item-type">${type}</div>`;
+      html += `</div>`;
+      html += `</div>`;
+    });
+
+    html += `</div></div>`;
+  });
+
+  body.innerHTML = html;
+}
+
+function toggleCategory(key) {
+  const section = document.querySelector(`.iw-cat-section[data-cat="${key}"]`);
+  section.classList.toggle('open');
+}
+
+function toggleFilter(key, btn) {
+  filters[key] = !filters[key];
+  btn.className = `iw-cat-toggle ${filters[key] ? 'on' : 'off'}`;
+  applyFilters();
+}
+
+function applyFilters() {
+  mapInner.querySelectorAll('.iw-pin').forEach(el => {
+    const cat = el.dataset.cat;
+    el.classList.toggle('hidden', !filters[cat]);
+  });
+}
+
+function flyToItem(catKey, index) {
+  const cat = CATEGORIES.find(c => c.key === catKey);
+  const item = cat.data[index];
+
+  // Highlight sidebar item
+  document.querySelectorAll('.iw-cat-item').forEach(el => el.classList.remove('active'));
+  const itemId = `${catKey}-${index}`;
+  document.querySelector(`[data-item-id="${itemId}"]`)?.classList.add('active');
+
+  // Zoom and pan to pin
+  const ww = mapArea.clientWidth;
+  const wh = mapArea.clientHeight;
+  scale = 1.5;
+  panX = ww / 2 - (item.x / 100 * imgW) * scale;
+  panY = wh / 2 - (item.y / 100 * imgH) * scale;
+  mapInner.style.transition = 'transform 0.5s ease';
+  updateTransform();
+  setTimeout(() => { mapInner.style.transition = ''; }, 500);
+
+  // Bounce the pin
+  const pin = mapInner.querySelector(`[data-pin-id="${itemId}"]`);
+  if (pin) {
+    pin.classList.remove('highlight');
+    void pin.offsetWidth; // reflow
+    pin.classList.add('highlight');
+  }
+
+  // Open detail panel
+  openPanel(item, catKey);
+
+  // Close mobile sidebar
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+/* ================================================================
+   RENDER PINS
+   ================================================================ */
+function renderPins() {
+  CATEGORIES.forEach(cat => {
+    cat.data.forEach((item, i) => {
+      const pin = document.createElement('div');
+      pin.className = 'iw-pin';
+      pin.dataset.cat = cat.key;
+      pin.dataset.pinId = `${cat.key}-${i}`;
+      pin.style.left = item.x + '%';
+      pin.style.top = item.y + '%';
+
+      if (cat.key === 'amenity') {
+        pin.innerHTML = `<div class="iw-pin-marker"><div class="iw-pin-dot"><span>${item.icon}</span></div><div class="iw-pin-shadow"></div></div>`;
+      } else {
+        pin.innerHTML = `<div class="iw-pin-marker"><div class="iw-pin-dot"><span>${item.id}</span></div><div class="iw-pin-shadow"></div></div>`;
+      }
+
+      pin.addEventListener('mouseenter', e => showPreview(e, item, cat.key));
+      pin.addEventListener('mouseleave', hidePreview);
+      pin.addEventListener('click', () => {
+        openPanel(item, cat.key);
+        // Highlight sidebar
+        document.querySelectorAll('.iw-cat-item').forEach(el => el.classList.remove('active'));
+        document.querySelector(`[data-item-id="${cat.key}-${i}"]`)?.classList.add('active');
+      });
+
+      mapInner.appendChild(pin);
+    });
+  });
+}
+
+/* ================================================================
+   HOVER PREVIEW
+   ================================================================ */
+function showPreview(e, item, cat) {
+  const rect = mapArea.getBoundingClientRect();
+  const pin = e.currentTarget;
+  const pinRect = pin.getBoundingClientRect();
+
+  let imgHtml;
+  if (item.img) {
+    imgHtml = `<img class="iw-preview-img" src="${item.img}" alt="${item.name}">`;
+  } else {
+    imgHtml = `<div class="iw-preview-img">📷 Photo coming soon</div>`;
+  }
+
+  preview.innerHTML = `
+    ${imgHtml}
+    <div class="iw-preview-body">
+      <span class="iw-preview-tag ${cat}">${cat}</span>
+      <div class="iw-preview-name">${item.name}</div>
+      ${item.type ? `<div class="iw-preview-type">${item.type}${item.height && item.height !== 'N/A' ? ' · ' + item.height + ' min height' : ''}</div>` : ''}
+      ${item.desc ? `<div class="iw-preview-detail">${item.desc}</div>` : ''}
+    </div>
+    <div class="iw-preview-arrow"></div>
+  `;
+
+  const px = pinRect.left + pinRect.width / 2 - rect.left;
+  const py = pinRect.top - rect.top;
+  preview.style.left = px + 'px';
+  preview.style.top = py + 'px';
+  preview.classList.add('visible');
+}
+
+function hidePreview() {
+  preview.classList.remove('visible');
+}
+
+/* ================================================================
+   DETAIL PANEL
+   ================================================================ */
+function openPanel(item, cat) {
+  const panel = document.getElementById('panel');
+  const backdrop = document.getElementById('panelBackdrop');
+  const title = document.getElementById('panelTitle');
+  const body = document.getElementById('panelBody');
+
+  title.textContent = item.name;
+
+  let html = '';
+
+  // Image
+  if (item.img) {
+    html += `<img class="iw-panel-img" src="${item.img}" alt="${item.name}">`;
+  } else {
+    html += `<div class="iw-panel-img">📷 Photo coming soon</div>`;
+  }
+
+  // Tag
+  html += `<span class="iw-panel-tag ${cat}">${cat === 'food' ? 'Food & Drinks' : cat === 'service' ? 'Service' : cat === 'amenity' ? 'Amenity' : 'Attraction'}</span>`;
+
+  // Description
+  if (item.desc) {
+    html += `<p class="iw-panel-desc">${item.desc}</p>`;
+  }
+
+  // Meta info
+  if (item.type || item.height) {
+    html += `<div class="iw-panel-meta">`;
+    if (item.type) {
+      html += `<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Type</span><span class="iw-panel-meta-value">${item.type}</span></div>`;
+    }
+    if (item.height && item.height !== 'N/A') {
+      html += `<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Height Requirement</span><span class="iw-panel-meta-value">${item.height}</span></div>`;
+    }
+    html += `</div>`;
+  }
+
+  body.innerHTML = html;
+  panel.classList.add('open');
+  backdrop.classList.add('open');
+  hidePreview();
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('panelBackdrop').classList.remove('open');
+  document.querySelectorAll('.iw-cat-item').forEach(el => el.classList.remove('active'));
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+
+/* ================================================================
    PAN & ZOOM
    ================================================================ */
-mapWrapper.addEventListener('mousedown', e => {
-  if (e.target.closest('.iw-pin, .iw-cabana')) return;
+mapArea.addEventListener('mousedown', e => {
+  if (e.target.closest('.iw-pin')) return;
   isDragging = true;
   dragStartX = e.clientX;
   dragStartY = e.clientY;
   startPanX = panX;
   startPanY = panY;
-  mapWrapper.classList.add('grabbing');
+  mapArea.classList.add('grabbing');
 });
 
 window.addEventListener('mousemove', e => {
@@ -543,16 +967,17 @@ window.addEventListener('mousemove', e => {
   panX = startPanX + (e.clientX - dragStartX);
   panY = startPanY + (e.clientY - dragStartY);
   updateTransform();
+  hidePreview();
 });
 
 window.addEventListener('mouseup', () => {
   isDragging = false;
-  mapWrapper.classList.remove('grabbing');
+  mapArea.classList.remove('grabbing');
 });
 
-// Touch support
+// Touch
 let lastTouchDist = 0;
-mapWrapper.addEventListener('touchstart', e => {
+mapArea.addEventListener('touchstart', e => {
   if (e.touches.length === 1) {
     isDragging = true;
     dragStartX = e.touches[0].clientX;
@@ -561,51 +986,43 @@ mapWrapper.addEventListener('touchstart', e => {
     startPanY = panY;
   } else if (e.touches.length === 2) {
     isDragging = false;
-    lastTouchDist = Math.hypot(
-      e.touches[0].clientX - e.touches[1].clientX,
-      e.touches[0].clientY - e.touches[1].clientY
-    );
+    lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
   }
 }, { passive: true });
 
-mapWrapper.addEventListener('touchmove', e => {
+mapArea.addEventListener('touchmove', e => {
   if (e.touches.length === 1 && isDragging) {
     panX = startPanX + (e.touches[0].clientX - dragStartX);
     panY = startPanY + (e.touches[0].clientY - dragStartY);
     updateTransform();
   } else if (e.touches.length === 2) {
-    const dist = Math.hypot(
-      e.touches[0].clientX - e.touches[1].clientX,
-      e.touches[0].clientY - e.touches[1].clientY
-    );
-    const delta = dist - lastTouchDist;
-    scale = Math.max(0.3, Math.min(3, scale + delta * 0.003));
+    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    scale = Math.max(0.3, Math.min(3, scale + (dist - lastTouchDist) * 0.003));
     lastTouchDist = dist;
     updateTransform();
   }
 }, { passive: true });
 
-mapWrapper.addEventListener('touchend', () => { isDragging = false; });
+mapArea.addEventListener('touchend', () => { isDragging = false; });
 
-// Mouse wheel zoom
-mapWrapper.addEventListener('wheel', e => {
+mapArea.addEventListener('wheel', e => {
   e.preventDefault();
-  const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-  const rect = mapWrapper.getBoundingClientRect();
+  const factor = e.deltaY > 0 ? 0.9 : 1.1;
+  const rect = mapArea.getBoundingClientRect();
   const mx = e.clientX - rect.left;
   const my = e.clientY - rect.top;
-
-  const newScale = Math.max(0.3, Math.min(3, scale * zoomFactor));
+  const newScale = Math.max(0.3, Math.min(3, scale * factor));
   panX = mx - (mx - panX) * (newScale / scale);
   panY = my - (my - panY) * (newScale / scale);
   scale = newScale;
   updateTransform();
+  hidePreview();
 }, { passive: false });
 
 function zoomMap(dir) {
-  const factor = dir > 0 ? 1.2 : 0.8;
-  const ww = mapWrapper.clientWidth / 2;
-  const wh = mapWrapper.clientHeight / 2;
+  const factor = dir > 0 ? 1.25 : 0.8;
+  const ww = mapArea.clientWidth / 2;
+  const wh = mapArea.clientHeight / 2;
   const newScale = Math.max(0.3, Math.min(3, scale * factor));
   panX = ww - (ww - panX) * (newScale / scale);
   panY = wh - (wh - panY) * (newScale / scale);
@@ -614,8 +1031,8 @@ function zoomMap(dir) {
 }
 
 function resetMap() {
-  const ww = mapWrapper.clientWidth;
-  const wh = mapWrapper.clientHeight;
+  const ww = mapArea.clientWidth;
+  const wh = mapArea.clientHeight;
   scale = Math.min(ww / imgW, wh / imgH);
   panX = (ww - imgW * scale) / 2;
   panY = (wh - imgH * scale) / 2;
@@ -623,172 +1040,11 @@ function resetMap() {
 }
 
 /* ================================================================
-   RENDER PINS
+   MOBILE SIDEBAR
    ================================================================ */
-function renderPins() {
-  // Clear existing
-  mapInner.querySelectorAll('.iw-pin, .iw-cabana').forEach(el => el.remove());
-
-  // Attractions
-  MAP_DATA.attractions.forEach(a => {
-    const pin = makePin(a.id, a.name, a.type, a.x, a.y, 'attraction', a);
-    mapInner.appendChild(pin);
-  });
-
-  // Food
-  MAP_DATA.food.forEach(f => {
-    const pin = makePin(f.id, f.name, 'Food & Drinks', f.x, f.y, 'food', f);
-    mapInner.appendChild(pin);
-  });
-
-  // Services
-  MAP_DATA.services.forEach(s => {
-    const pin = makePin(s.id, s.name, 'Service', s.x, s.y, 'service', s);
-    mapInner.appendChild(pin);
-  });
-
-  // Amenities
-  MAP_DATA.amenities.forEach((a, i) => {
-    const pin = document.createElement('div');
-    pin.className = 'iw-pin';
-    pin.dataset.cat = 'amenity';
-    pin.style.left = a.x + '%';
-    pin.style.top = a.y + '%';
-    pin.innerHTML = `<div class="iw-pin-dot" style="font-size:14px;">${a.icon}</div>`;
-    pin.addEventListener('mouseenter', e => showTooltip(e, a.name, ''));
-    pin.addEventListener('mouseleave', hideTooltip);
-    pin.addEventListener('click', () => openPanel({
-      name: a.name, category: 'amenity', desc: a.name + ' location'
-    }));
-    mapInner.appendChild(pin);
-  });
-
-  // Cabanas
-  MAP_DATA.cabanas.forEach(c => {
-    const el = document.createElement('div');
-    el.className = 'iw-cabana';
-    el.dataset.cat = 'cabana';
-    el.style.left = c.x + '%';
-    el.style.top = c.y + '%';
-    el.textContent = c.id;
-    el.addEventListener('mouseenter', e => showTooltip(e, `Cabana #${c.id}`, 'Click to reserve'));
-    el.addEventListener('mouseleave', hideTooltip);
-    el.addEventListener('click', () => openPanel({
-      name: `Cabana #${c.id}`,
-      category: 'cabana',
-      desc: `Reserve Cabana #${c.id} for your group. Includes shaded seating, table, and locker access.`,
-      cabanaId: c.id
-    }));
-    mapInner.appendChild(el);
-  });
-
-  applyFilters();
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
 }
-
-function makePin(id, name, type, x, y, cat, data) {
-  const pin = document.createElement('div');
-  pin.className = 'iw-pin';
-  pin.dataset.cat = cat;
-  pin.style.left = x + '%';
-  pin.style.top = y + '%';
-  pin.innerHTML = `<div class="iw-pin-dot">${id}</div>`;
-  pin.addEventListener('mouseenter', e => showTooltip(e, name, type));
-  pin.addEventListener('mouseleave', hideTooltip);
-  pin.addEventListener('click', () => openPanel({
-    name, type, category: cat, ...data
-  }));
-  return pin;
-}
-
-/* ================================================================
-   FILTERS
-   ================================================================ */
-function toggleFilter(cat) {
-  filters[cat] = !filters[cat];
-  document.querySelector(`.iw-filter-btn[data-cat="${cat}"]`).classList.toggle('active');
-  applyFilters();
-}
-
-function applyFilters() {
-  mapInner.querySelectorAll('.iw-pin, .iw-cabana').forEach(el => {
-    const cat = el.dataset.cat;
-    if (filters[cat]) {
-      el.classList.remove('iw-hidden');
-    } else {
-      el.classList.add('iw-hidden');
-    }
-  });
-}
-
-/* ================================================================
-   TOOLTIP
-   ================================================================ */
-function showTooltip(e, name, subtitle) {
-  const rect = mapWrapper.getBoundingClientRect();
-  const pin = e.currentTarget;
-  const pinRect = pin.getBoundingClientRect();
-
-  tooltip.innerHTML = name + (subtitle ? `<span class="iw-tooltip-type">${subtitle}</span>` : '');
-  tooltip.style.left = (pinRect.left + pinRect.width/2 - rect.left) + 'px';
-  tooltip.style.top = (pinRect.top - rect.top - 8) + 'px';
-  tooltip.classList.add('visible');
-}
-
-function hideTooltip() {
-  tooltip.classList.remove('visible');
-}
-
-/* ================================================================
-   PANEL
-   ================================================================ */
-function openPanel(data) {
-  const panel = document.getElementById('panel');
-  const backdrop = document.getElementById('panelBackdrop');
-  const title = document.getElementById('panelTitle');
-  const body = document.getElementById('panelBody');
-
-  title.textContent = data.name;
-
-  let html = `<span class="iw-panel-tag ${data.category}">${data.category}</span>`;
-
-  if (data.type) {
-    html += `<div class="iw-panel-detail"><strong>Type:</strong> ${data.type}</div>`;
-  }
-  if (data.height && data.height !== 'N/A') {
-    html += `<div class="iw-panel-detail"><strong>Height Requirement:</strong> ${data.height}</div>`;
-  }
-  if (data.desc) {
-    html += `<div class="iw-panel-detail">${data.desc}</div>`;
-  }
-
-  if (data.category === 'cabana') {
-    html += `<button class="iw-panel-btn cabana-btn" onclick="bookCabana(${data.cabanaId})">Reserve This Cabana</button>`;
-  }
-
-  // Placeholder for iframe booking
-  if (data.url) {
-    html += `<iframe class="iw-panel-iframe" src="${data.url}" frameborder="0"></iframe>`;
-  }
-
-  body.innerHTML = html;
-  panel.classList.add('open');
-  backdrop.classList.add('open');
-}
-
-function closePanel() {
-  document.getElementById('panel').classList.remove('open');
-  document.getElementById('panelBackdrop').classList.remove('open');
-}
-
-function bookCabana(id) {
-  // Placeholder — will open ticketing iframe here
-  alert('Booking for Cabana #' + id + ' — ticketing URL will be wired here.');
-}
-
-// ESC to close
-document.addEventListener('keydown', e => {
-  if (e.key === 'Escape') closePanel();
-});
 </script>
 
 </body>
