@@ -583,9 +583,12 @@ body {
   transition: background 0.2s;
 }
 
-.iw-thrill-pill.filled {
-  background: var(--iw-red);
-}
+.iw-thrill-pill.filled.t1 { background: #22C55E; }
+.iw-thrill-pill.filled.t2 { background: #84CC16; }
+.iw-thrill-pill.filled.t3 { background: #EAB308; }
+.iw-thrill-pill.filled.t4 { background: #F97316; }
+.iw-thrill-pill.filled.t5 { background: #EF4444; }
+.iw-thrill-pill.filled.t6 { background: #DC2626; }
 
 .iw-thrill-value {
   font-size: 12px;
@@ -613,9 +616,12 @@ body {
   background: var(--iw-border);
 }
 
-.iw-preview-thrill-pill.filled {
-  background: var(--iw-red);
-}
+.iw-preview-thrill-pill.filled.t1 { background: #22C55E; }
+.iw-preview-thrill-pill.filled.t2 { background: #84CC16; }
+.iw-preview-thrill-pill.filled.t3 { background: #EAB308; }
+.iw-preview-thrill-pill.filled.t4 { background: #F97316; }
+.iw-preview-thrill-pill.filled.t5 { background: #EF4444; }
+.iw-preview-thrill-pill.filled.t6 { background: #DC2626; }
 
 .iw-preview-thrill-label {
   font-size: 10px;
@@ -963,7 +969,7 @@ function showPreview(e, item, cat) {
       <div class="iw-preview-name">${item.name}</div>
       ${item.type ? `<div class="iw-preview-type">${item.type}${item.height && item.height !== 'N/A' ? ' · ' + item.height + ' min height' : ''}</div>` : ''}
       ${item.desc ? `<div class="iw-preview-detail">${item.desc}</div>` : ''}
-      ${item.thrill != null ? `<div class="iw-preview-thrill"><div class="iw-preview-thrill-pills">${Array.from({length:6},(_,i)=>`<div class="iw-preview-thrill-pill${i<item.thrill?' filled':''}"></div>`).join('')}</div><span class="iw-preview-thrill-label">${item.thrill}/6</span></div>` : ''}
+      ${item.thrill != null ? `<div class="iw-preview-thrill"><div class="iw-preview-thrill-pills">${Array.from({length:6},(_,i)=>`<div class="iw-preview-thrill-pill${i<item.thrill?` filled t${i+1}`:''}"></div>`).join('')}</div><span class="iw-preview-thrill-label">${item.thrill}/6</span></div>` : ''}
     </div>
     <div class="iw-preview-arrow"></div>
   `;
@@ -1010,7 +1016,7 @@ function openPanel(item, cat) {
     html += `<span class="iw-thrill-label">Thrill</span>`;
     html += `<div class="iw-thrill-pills">`;
     for (let i = 0; i < 6; i++) {
-      html += `<div class="iw-thrill-pill${i < item.thrill ? ' filled' : ''}"></div>`;
+      html += `<div class="iw-thrill-pill${i < item.thrill ? ` filled t${i+1}` : ''}"></div>`;
     }
     html += `</div>`;
     html += `<span class="iw-thrill-value">${item.thrill}/6</span>`;
