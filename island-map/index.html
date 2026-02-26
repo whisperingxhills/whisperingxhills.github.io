@@ -120,6 +120,7 @@ body {
 .iw-cat-icon.food { background: var(--iw-orange); }
 .iw-cat-icon.service { background: var(--iw-green); }
 .iw-cat-icon.amenity { background: var(--iw-purple); }
+.iw-cat-icon.cabana { background: var(--iw-red); }
 
 .iw-cat-name {
   font-size: 13px;
@@ -179,6 +180,7 @@ body {
 .iw-cat-item-dot.food { background: var(--iw-orange); }
 .iw-cat-item-dot.service { background: var(--iw-green); }
 .iw-cat-item-dot.amenity { background: var(--iw-purple); }
+.iw-cat-item-dot.cabana { background: var(--iw-red); }
 
 .iw-cat-item-info {
   flex: 1;
@@ -326,6 +328,7 @@ body {
 .iw-pin[data-cat="food"] .iw-pin-dot { background: var(--iw-orange); }
 .iw-pin[data-cat="service"] .iw-pin-dot { background: var(--iw-green); }
 .iw-pin[data-cat="amenity"] .iw-pin-dot { background: var(--iw-purple); }
+.iw-pin[data-cat="cabana"] .iw-pin-dot { background: var(--iw-red); }
 
 .iw-pin-shadow {
   width: 12px;
@@ -384,6 +387,7 @@ body {
 .iw-preview-tag.food { background: var(--iw-orange-light); color: #C2410C; }
 .iw-preview-tag.service { background: var(--iw-green-light); color: #15803D; }
 .iw-preview-tag.amenity { background: var(--iw-purple-light); color: #6D28D9; }
+.iw-preview-tag.cabana { background: #FEF2F2; color: #DC2626; }
 
 .iw-preview-name {
   font-size: 15px;
@@ -519,6 +523,7 @@ body {
 .iw-panel-tag.food { background: var(--iw-orange-light); color: #C2410C; }
 .iw-panel-tag.service { background: var(--iw-green-light); color: #15803D; }
 .iw-panel-tag.amenity { background: var(--iw-purple-light); color: #6D28D9; }
+.iw-panel-tag.cabana { background: #FEF2F2; color: #DC2626; }
 
 .iw-panel-desc {
   font-size: 14px;
@@ -678,6 +683,8 @@ const MAP_DATA = {
     { id:18, name:"Gift Shop", x:45.65, y:80.21, desc:"Souvenirs, sunscreen, swimwear, and more.", img:"" },
     { id:19, name:"Tube Rentals", x:62.01, y:78.64, desc:"Rent tubes for the lazy river and select attractions.", img:"" },
     { id:20, name:"Group Pavilions", x:71.97, y:81.53, desc:"Reserve covered pavilions for birthday parties and group events.", img:"" },
+  ],
+  cabanas: [
     { id:21, name:"BBQ Cove", x:9.42, y:47.17, desc:"Reserved BBQ area for groups. Grills and picnic tables available.", img:"" }
   ],
   amenities: [
@@ -700,12 +707,13 @@ const CATEGORIES = [
   { key: 'food', label: 'Food & Drinks', icon: '🍔', color: 'food', data: MAP_DATA.food },
   { key: 'service', label: 'Services', icon: 'ℹ️', color: 'service', data: MAP_DATA.services },
   { key: 'amenity', label: 'Amenities', icon: '🚻', color: 'amenity', data: MAP_DATA.amenities },
+  { key: 'cabana', label: 'Cabanas', icon: '🏖️', color: 'cabana', data: MAP_DATA.cabanas },
 ];
 
 /* ================================================================
    STATE
    ================================================================ */
-const filters = { attraction:true, food:true, service:true, amenity:true };
+const filters = { attraction:true, food:true, service:true, amenity:true, cabana:true };
 let scale = 1, panX = 0, panY = 0;
 let isDragging = false, dragStartX = 0, dragStartY = 0, startPanX = 0, startPanY = 0;
 let imgW = 0, imgH = 0;
