@@ -230,7 +230,7 @@ body {
 .iw-cat-toggle.on::after { left: 18px; }
 .iw-cat-toggle.off::after { left: 2px; }
 
-/* Mobile sidebar toggle */
+/* Sidebar toggle — always visible when sidebar is closed */
 .iw-sidebar-toggle {
   display: none;
   position: fixed;
@@ -248,6 +248,8 @@ body {
   align-items: center;
   justify-content: center;
 }
+
+.iw-sidebar-toggle.visible { display: flex; }
 
 /* ── Map Area ── */
 .iw-map-area {
@@ -580,11 +582,9 @@ body {
     position: fixed;
     left: 0;
     top: 0;
-    transform: translateX(-100%);
     z-index: 50;
     box-shadow: 4px 0 24px rgba(0,0,0,0.15);
   }
-  .iw-sidebar.open { transform: translateX(0); }
   .iw-sidebar-toggle { display: flex; }
   .iw-panel {
     width: 100vw;
@@ -608,9 +608,12 @@ body {
 
 <!-- Sidebar -->
 <aside class="iw-sidebar" id="sidebar">
-  <div class="iw-sidebar-header">
-    <h1>🏝️ Island Waterpark</h1>
-    <p>Park Map</p>
+  <div class="iw-sidebar-header" style="display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <h1>🏝️ Island Waterpark</h1>
+      <p>Park Map</p>
+    </div>
+    <button onclick="collapseSidebar()" style="background:rgba(255,255,255,0.15);border:none;color:white;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Hide sidebar">✕</button>
   </div>
   <div class="iw-sidebar-body" id="sidebarBody">
     <!-- Injected by JS -->
@@ -1043,7 +1046,19 @@ function resetMap() {
    MOBILE SIDEBAR
    ================================================================ */
 function toggleSidebar() {
-  document.getElementById('sidebar').classList.toggle('open');
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  sidebar.classList.add('open');
+  sidebar.style.transform = '';
+  toggle.classList.remove('visible');
+}
+
+function collapseSidebar() {
+  const sidebar = document.getElementById('sidebar');
+  const toggle = document.getElementById('sidebarToggle');
+  sidebar.classList.remove('open');
+  sidebar.style.transform = 'translateX(-100%)';
+  toggle.classList.add('visible');
 }
 </script>
 
