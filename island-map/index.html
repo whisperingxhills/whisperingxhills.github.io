@@ -981,7 +981,16 @@ const MAP_DATA = {
     { id:20, name:"Group Pavilions", x:71.97, y:81.53, desc:"Reserve covered pavilions for birthday parties and group events.", img:"" },
   ],
   cabanas: [
-    { id:21, name:"BBQ Cove", x:9.42, y:47.17, desc:"Reserved BBQ area for groups. Grills and picnic tables available.", img:"", video:"yiR3TFMfBg0" }
+    { id:21, name:"BBQ Cove", x:9.42, y:47.17, desc:"12' x 12' covered pavilion with corrugated metal roof, concrete pad, 2 large picnic tables, and a hibachi style BBQ with adjustable cooking surface. Surrounded by grass. Guests can bring multiple shade structures and additional seating for up to 40 people.", img:"", video:"yiR3TFMfBg0",
+      size:'12\' x 12\'', capacity:"Up to 40", seating:"2 Large Picnic Tables",
+      pricing:[
+        {days:"Mon, Tue, Thu", price:"$50"},
+        {days:"Wednesday", price:"$29"},
+        {days:"Friday", price:"$50"},
+        {days:"Weekend", price:"$149"},
+        {days:"July 3rd/4th", price:"$199"}
+      ]
+    }
   ],
   amenities: [
     { name:"Lockers", icon:"🔒", x:38.38, y:74.94 },
@@ -1270,6 +1279,26 @@ function openPanel(item, cat) {
       html += `<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Weight Limit</span><span class="iw-panel-meta-value">${item.weightLimit}</span></div>`;
     }
     html += `</div>`;
+  }
+
+  // Cabana/pavilion details
+  if (item.size || item.capacity || item.seating) {
+    html += `<div class="iw-panel-meta">`;
+    if (item.size) html += `<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Size</span><span class="iw-panel-meta-value">${item.size}</span></div>`;
+    if (item.capacity) html += `<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Capacity</span><span class="iw-panel-meta-value">${item.capacity}</span></div>`;
+    if (item.seating) html += `<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Seating</span><span class="iw-panel-meta-value">${item.seating}</span></div>`;
+    html += `</div>`;
+  }
+
+  // Pricing table
+  if (item.pricing && item.pricing.length) {
+    html += `<div style="margin-top:12px;margin-bottom:16px;">`;
+    html += `<div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--iw-dark);margin-bottom:8px;">💰 Pricing</div>`;
+    html += `<div class="iw-panel-meta">`;
+    item.pricing.forEach(p => {
+      html += `<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">${p.days}</span><span class="iw-panel-meta-value">${p.price}</span></div>`;
+    });
+    html += `</div></div>`;
   }
 
   // Safety rules
