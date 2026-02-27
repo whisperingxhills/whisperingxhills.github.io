@@ -637,6 +637,105 @@ body {
   transform: rotate(180deg);
 }
 
+/* ── Video Thumbnail ── */
+.iw-video-thumb {
+  position: relative;
+  width: 100%;
+  height: 180px;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 16px;
+  background: #000;
+}
+
+.iw-video-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.iw-video-thumb .iw-play-btn {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60px;
+  height: 60px;
+  background: rgba(0,0,0,0.7);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+}
+
+.iw-video-thumb:hover .iw-play-btn {
+  background: var(--iw-red);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+
+.iw-play-btn::after {
+  content: '';
+  display: block;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 10px 0 10px 18px;
+  border-color: transparent transparent transparent white;
+  margin-left: 3px;
+}
+
+/* ── Video Modal ── */
+.iw-video-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0,0,0,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.iw-video-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.iw-video-modal-inner {
+  position: relative;
+  width: 90vw;
+  max-width: 800px;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+}
+
+.iw-video-modal-inner iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.iw-video-modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 28px;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.iw-video-modal-close:hover { opacity: 1; }
+
 /* ── Zoom Controls ── */
 .iw-zoom {
   position: absolute;
@@ -882,7 +981,7 @@ const MAP_DATA = {
     { id:20, name:"Group Pavilions", x:71.97, y:81.53, desc:"Reserve covered pavilions for birthday parties and group events.", img:"" },
   ],
   cabanas: [
-    { id:21, name:"BBQ Cove", x:9.42, y:47.17, desc:"Reserved BBQ area for groups. Grills and picnic tables available.", img:"" }
+    { id:21, name:"BBQ Cove", x:9.42, y:47.17, desc:"Reserved BBQ area for groups. Grills and picnic tables available.", img:"", video:"yiR3TFMfBg0" }
   ],
   amenities: [
     { name:"Lockers", icon:"🔒", x:38.38, y:74.94 },
@@ -1075,7 +1174,9 @@ function showPreview(e, item, cat) {
 
   let imgHtml = '';
   if (cat !== 'amenity') {
-    if (item.img) {
+    if (item.video) {
+      imgHtml = `<img class="iw-preview-img" src="https://img.youtube.com/vi/${item.video}/hqdefault.jpg" alt="${item.name}" style="object-fit:cover;">`;
+    } else if (item.img) {
       imgHtml = `<img class="iw-preview-img" src="${item.img}" alt="${item.name}">`;
     } else {
       imgHtml = `<div class="iw-preview-img">📷 Photo coming soon</div>`;
@@ -1118,9 +1219,14 @@ function openPanel(item, cat) {
 
   let html = '';
 
-  // Image (skip for amenities)
+  // Image or Video (skip for amenities)
   if (cat !== 'amenity') {
-    if (item.img) {
+    if (item.video) {
+      html += `<div class="iw-video-thumb" onclick="openVideo('${item.video}')">`;
+      html += `<img src="https://img.youtube.com/vi/${item.video}/hqdefault.jpg" alt="${item.name}">`;
+      html += `<div class="iw-play-btn"></div>`;
+      html += `</div>`;
+    } else if (item.img) {
       html += `<img class="iw-panel-img" src="${item.img}" alt="${item.name}">`;
     } else {
       html += `<div class="iw-panel-img">📷 Photo coming soon</div>`;
@@ -1293,6 +1399,31 @@ function toggleSidebar() {
   sidebar.classList.add('open');
   sidebar.style.transform = '';
   toggle.classList.remove('visible');
+}
+
+/* ================================================================
+   VIDEO PLAYER
+   ================================================================ */
+function openVideo(videoId) {
+  let modal = document.getElementById('videoModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'videoModal';
+    modal.className = 'iw-video-modal';
+    modal.innerHTML = `<div class="iw-video-modal-inner"><button class="iw-video-modal-close" onclick="closeVideo()">✕</button><iframe id="videoFrame" allowfullscreen allow="autoplay"></iframe></div>`;
+    modal.addEventListener('click', e => { if (e.target === modal) closeVideo(); });
+    document.body.appendChild(modal);
+  }
+  document.getElementById('videoFrame').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+  modal.classList.add('open');
+}
+
+function closeVideo() {
+  const modal = document.getElementById('videoModal');
+  if (modal) {
+    modal.classList.remove('open');
+    document.getElementById('videoFrame').src = '';
+  }
 }
 
 function collapseSidebar() {
