@@ -1243,7 +1243,7 @@ function openPanel(item, cat) {
   }
 
   // Tag
-  html += `<span class="iw-panel-tag ${cat}">${cat === 'food' ? 'Food & Drinks' : cat === 'service' ? 'Service' : cat === 'amenity' ? 'Amenity' : 'Attraction'}</span>`;
+  html += `<span class="iw-panel-tag ${cat}">${cat === 'food' ? 'Food & Drinks' : cat === 'service' ? 'Service' : cat === 'amenity' ? 'Amenity' : cat === 'cabana' ? 'Cabana' : 'Attraction'}</span>`;
 
   // Thrill meter
   if (item.thrill != null) {
