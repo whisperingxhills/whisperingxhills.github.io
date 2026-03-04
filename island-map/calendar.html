@@ -262,7 +262,6 @@ body {
 .cal-tag--fireworks { background: #FECDD3; color: #BE123C; }
 .cal-tag--univision { background: #FFE4E6; color: #9F1239; }
 .cal-tag--holiday { background: #FED7AA; color: #C2410C; }
-.cal-tag--school { background: #E0E7FF; color: #3730A3; }
 .cal-tag--buyout { background: #F3E8FF; color: #6B21A8; }
 .cal-tag--employee { background: #CCFBF1; color: #115E59; }
 .cal-tag--extended { background: #F0FDFA; color: #0F766E; font-size: 7px; }
@@ -533,7 +532,6 @@ const EVENT_TYPES = {
   'fireworks': { label: 'Fireworks',      cls: 'cal-tag--fireworks',  emoji: '🎆', desc: 'Independence Day fireworks celebration' },
   'univision': { label: 'Univision',      cls: 'cal-tag--univision',  emoji: '📺', desc: 'Univision community celebration day' },
   'holiday':   { label: 'Holiday',        cls: 'cal-tag--holiday',    emoji: '🎊', desc: 'Special holiday celebration' },
-  'school':    { label: 'Schools',        cls: 'cal-tag--school',     emoji: '🏫', desc: 'Private school group event' },
   'buyout':    { label: 'Buyout',         cls: 'cal-tag--buyout',     emoji: '🔒', desc: 'Private park buyout (not open to public)' },
   'employee':  { label: 'Employee Day',   cls: 'cal-tag--employee',   emoji: '⭐', desc: 'Employee appreciation day' },
 };
@@ -544,19 +542,11 @@ const EVENT_TYPES = {
 const CALENDAR = [
   // ── MAY ──
   // May 1-22: CLOSED (pre-season)
-  // School days early May
-  [4, 4, '9:00–3:00', ['school','buyout'], {note:'End of School Party Buyout'}],
-  [4, 11, '11:00–6:00', ['school'], {note:'School Event'}],
-  [4, 12, '11:00–6:00', ['school'], {note:'School Event'}],
-  [4, 13, '11:00–6:00', ['school'], {note:'School Event'}],
-  [4, 14, '11:00–6:00', ['school'], {note:'School Event'}],
-  [4, 15, '11:00–6:00', ['school'], {note:'School Event'}],
+  // May 4, 11-15: CLOSED (private events)
   [4, 23, '11:00–6:00', ['holiday'], {holiday:'Memorial Day Weekend'}],
   [4, 24, '11:00–6:00', ['holiday'], {holiday:'Memorial Day Weekend'}],
   [4, 25, '11:00–6:00', ['holiday'], {holiday:'Memorial Day'}],
-  [4, 27, '9:00–3:00', ['school'], {note:'School Event'}],
-  [4, 29, '9:00–3:00', ['school'], {note:'School Event'}],
-  [4, 30, '9:00–4:30', ['school','buyout'], {note:'School Buyout'}],
+  // May 27, 29, 30: CLOSED (private events)
   [4, 31, '11:00–6:00', [], {}],
 
   // ── JUNE ──
