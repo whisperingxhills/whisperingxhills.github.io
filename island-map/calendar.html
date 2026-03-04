@@ -262,7 +262,6 @@ body {
 .cal-tag--fireworks { background: #FECDD3; color: #BE123C; }
 .cal-tag--univision { background: #FFE4E6; color: #9F1239; }
 .cal-tag--holiday { background: #FED7AA; color: #C2410C; }
-.cal-tag--employee { background: #CCFBF1; color: #115E59; }
 .cal-tag--extended { background: #F0FDFA; color: #0F766E; font-size: 7px; }
 
 /* ── Event Detail Popup ── */
@@ -473,7 +472,7 @@ body {
   <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#E9D5FF;border:1px solid #C4B5FD"></div>Adult Swim</div>
   <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FEF08A;border:1px solid #FDE047"></div>Neon Night</div>
   <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FECDD3;border:1px solid #FDA4AF"></div>Fireworks</div>
-  <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FED7AA;border:1px solid #FDBA74"></div>Holiday</div>
+  <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#FED7AA;border:1px solid #FDBA74"></div>Holidays</div>
 </div>
 
 <!-- Filters -->
@@ -530,8 +529,11 @@ const EVENT_TYPES = {
   'neon':      { label: 'Neon Night',     cls: 'cal-tag--neon',      emoji: '💡', desc: 'Glow in the dark party with neon lights and music' },
   'fireworks': { label: 'Fireworks',      cls: 'cal-tag--fireworks',  emoji: '🎆', desc: 'Independence Day fireworks celebration' },
   'univision': { label: 'Univision',      cls: 'cal-tag--univision',  emoji: '📺', desc: 'Univision community celebration day' },
-  'holiday':   { label: 'Holiday',        cls: 'cal-tag--holiday',    emoji: '🎊', desc: 'Special holiday celebration' },
-  'employee':  { label: 'Employee Day',   cls: 'cal-tag--employee',   emoji: '⭐', desc: 'Employee appreciation day' },
+  'memorial':  { label: 'Memorial Day',   cls: 'cal-tag--holiday',    emoji: '🇺🇸', desc: 'Memorial Day Weekend' },
+  'juneteenth':{ label: 'Juneteenth',     cls: 'cal-tag--holiday',    emoji: '✊', desc: 'Juneteenth' },
+  'fathers':   { label: "Father's Day",   cls: 'cal-tag--holiday',    emoji: '👔', desc: "Father's Day" },
+  'july4':     { label: 'July 4th',       cls: 'cal-tag--holiday',    emoji: '🇺🇸', desc: 'Independence Day' },
+  'laborday':  { label: 'Labor Day',      cls: 'cal-tag--holiday',    emoji: '🇺🇸', desc: 'Labor Day' },
 };
 
 // Full calendar data: [month (0-indexed), day, hours, [events], eventExtras]
@@ -541,9 +543,9 @@ const CALENDAR = [
   // ── MAY ──
   // May 1-22: CLOSED (pre-season)
   // May 4, 11-15: CLOSED (private events)
-  [4, 23, '11:00–6:00', ['holiday'], {holiday:'Memorial Day Weekend'}],
-  [4, 24, '11:00–6:00', ['holiday'], {holiday:'Memorial Day Weekend'}],
-  [4, 25, '11:00–6:00', ['holiday'], {holiday:'Memorial Day'}],
+  [4, 23, '11:00–6:00', ['memorial'], {}],
+  [4, 24, '11:00–6:00', ['memorial'], {}],
+  [4, 25, '11:00–6:00', ['memorial'], {}],
   // May 27, 29, 30: CLOSED (private events)
   [4, 31, '11:00–6:00', [], {}],
 
@@ -561,8 +563,8 @@ const CALENDAR = [
   [5, 11, '11:00–6:00', ['wavy'], {}],
   [5, 12, '11:00–6:00', [], {}],
   [5, 13, '11:00–6:00', [], {}],
-  [5, 14, '11:00–8:00', ['family'], {note:'Family Night 6–10 PM / Juneteenth', holiday:'Juneteenth'}],
-  [5, 15, '11:00–7:00', ['holiday'], {holiday:"Father's Day"}],
+  [5, 14, '11:00–8:00', ['family','juneteenth'], {note:'Family Night 6–10 PM'}],
+  [5, 15, '11:00–7:00', ['fathers'], {}],
   [5, 16, '11:00–6:00', [], {}],
   [5, 17, '11:00–6:00', ['2for'], {}],
   [5, 18, '11:00–6:00', ['wavy'], {}],
@@ -583,7 +585,7 @@ const CALENDAR = [
   [6, 1, '11:00–6:00', ['wavy'], {}],
   [6, 2, '11:00–6:00', ['fireworks'], {note:'Independence Day Fireworks'}],
   [6, 3, '10:30–9:00', ['fireworks'], {note:'Independence Day Fireworks'}],
-  [6, 4, '10:30–8:00', ['adult'], {note:'Adult Swim 7–11 PM', holiday:'Independence Day'}],
+  [6, 4, '10:30–8:00', ['adult','july4'], {note:'Adult Swim 7–11 PM'}],
   [6, 5, '10:30–8:00', [], {}],
   [6, 6, '11:00–7:00', [], {}],
   [6, 7, '11:00–6:00', ['2for'], {}],
@@ -641,9 +643,9 @@ const CALENDAR = [
 
   // ── SEPTEMBER ──
   // Sep 1-4: CLOSED
-  [8, 5, '11:00–6:00', ['holiday'], {holiday:'Labor Day Weekend'}],
-  [8, 6, '11:00–6:00', ['employee','holiday'], {holiday:'Labor Day Weekend', note:'Employee Appreciation Day'}],
-  [8, 7, '11:00–6:00', ['holiday'], {holiday:'Labor Day'}],
+  [8, 5, '11:00–6:00', [], {}],
+  [8, 6, '11:00–6:00', [], {}],
+  [8, 7, '11:00–6:00', ['laborday'], {}],
 ];
 
 // Build lookup: key = "M-D" → entry
@@ -681,7 +683,7 @@ function renderCalendar() {
       for (let d = 1; d <= daysInMonth; d++) {
         const entry = calLookup[m+'-'+d];
         if (entry && entry[3].includes(activeFilter)) { monthHasFilterMatch = true; break; }
-        if (activeFilter === 'holiday' && entry && entry[4] && entry[4].holiday) { monthHasFilterMatch = true; break; }
+        if (activeFilter === 'holiday' && entry && entry[3].some(e => ['memorial','juneteenth','fathers','july4','laborday'].includes(e))) { monthHasFilterMatch = true; break; }
       }
     }
     if (!monthHasFilterMatch) { monthEl.style.display = 'none'; }
@@ -728,7 +730,7 @@ function renderCalendar() {
       let dimmed = false;
       if (activeFilter !== 'all' && entry) {
         const hasMatch = entry[3].includes(activeFilter) ||
-          (activeFilter === 'holiday' && entry[4] && entry[4].holiday);
+          (activeFilter === 'holiday' && entry[3].some(e => ['memorial','juneteenth','fathers','july4','laborday'].includes(e)));
         if (!hasMatch) dimmed = true;
       }
       if (dimmed) cell.style.opacity = '0.3';
@@ -759,9 +761,6 @@ function renderCalendar() {
           tag.textContent = t.label;
           tagWrap.appendChild(tag);
         });
-        // Holiday name
-        if (entry[4] && entry[4].holiday && !entry[3].includes('holiday')) {
-          // Show holiday inline if it has a name
         }
         cell.appendChild(tagWrap);
       }
@@ -807,7 +806,7 @@ function renderUpcoming() {
     item.className = 'cal-upcoming-item';
 
     const eventNames = s.events.map(e => EVENT_TYPES[e]?.label || e).join(', ');
-    const note = s.extras?.note || s.extras?.holiday || eventNames;
+    const note = s.extras?.note || eventNames;
 
     item.innerHTML = `
       <div class="cal-upcoming-date">
@@ -885,17 +884,6 @@ function showPopup(month, day, entry) {
 
   // Note / Holiday
   if (entry[4]) {
-    if (entry[4].holiday) {
-      bodyHTML += `
-        <div class="cal-popup-row">
-          <span class="cal-popup-icon">🎊</span>
-          <div>
-            <div class="cal-popup-label">Holiday</div>
-            <div class="cal-popup-value">${entry[4].holiday}</div>
-          </div>
-        </div>
-      `;
-    }
     if (entry[4].note) {
       bodyHTML += `
         <div class="cal-popup-row">
