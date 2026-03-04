@@ -65,15 +65,13 @@ body {
               radial-gradient(circle at 70% 30%, rgba(255,255,255,0.05) 0%, transparent 50%);
   pointer-events: none;
 }
-.cal-header h1 {
-  font-size: 22px;
-  font-weight: 900;
-  color: white;
-  letter-spacing: 1px;
-  text-transform: uppercase;
+.cal-header-logo {
+  height: 50px;
+  width: auto;
   position: relative;
+  display: block;
+  margin: 0 auto;
 }
-.cal-header h1 span { color: var(--iw-orange); }
 .cal-header p {
   font-size: 11px;
   color: rgba(255,255,255,0.6);
@@ -416,8 +414,8 @@ body {
 
 <!-- Header -->
 <div class="cal-header">
-  <h1>🌊 Island Waterpark <span>2026</span></h1>
-  <p>Special Events &amp; Operating Calendar</p>
+  <img src="iw-logo.png" alt="Island Waterpark" class="cal-header-logo">
+  <p>2026 Special Events &amp; Operating Calendar</p>
 </div>
 
 <!-- Month Navigation -->
