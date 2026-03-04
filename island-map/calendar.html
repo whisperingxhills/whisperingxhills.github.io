@@ -528,7 +528,7 @@ const EVENT_TYPES = {
   'adult':     { label: 'Adult Swim',     cls: 'cal-tag--adult',     emoji: '🍹', desc: '21+ event with late night hours, 7:00–11:00 PM' },
   'neon':      { label: 'Neon Night',     cls: 'cal-tag--neon',      emoji: '💡', desc: 'Glow in the dark party with neon lights and music' },
   'fireworks': { label: 'Fireworks',      cls: 'cal-tag--fireworks',  emoji: '🎆', desc: 'Independence Day fireworks celebration' },
-  'univision': { label: 'Univision',      cls: 'cal-tag--univision',  emoji: '📺', desc: 'Univision community celebration day' },
+  'univision': { label: 'Univision Day',   cls: 'cal-tag--univision',  emoji: '📺', desc: 'Univision community celebration day' },
   'memorial':  { label: 'Memorial Day',   cls: 'cal-tag--holiday',    emoji: '🇺🇸', desc: 'Memorial Day Weekend' },
   'juneteenth':{ label: 'Juneteenth',     cls: 'cal-tag--holiday',    emoji: '✊', desc: 'Juneteenth' },
   'fathers':   { label: "Father's Day",   cls: 'cal-tag--holiday',    emoji: '👔', desc: "Father's Day" },
@@ -545,12 +545,14 @@ const CALENDAR = [
   // May 4, 11-15: CLOSED (private events)
   [4, 23, '11:00–6:00', ['memorial'], {}],
   [4, 24, '11:00–6:00', ['memorial'], {}],
-  [4, 25, '11:00–6:00', ['memorial'], {}],
+  [4, 25, '11:00–6:00', [], {}],
   // May 27, 29, 30: CLOSED (private events)
   [4, 31, '11:00–6:00', [], {}],
 
-  // ── JUNE ── (Jun 1 = Mon; Jun 1–6 CLOSED to public)
-  // Week 2 (park opens to public Jun 7)
+  // ── JUNE ── (Jun 1 = Mon; Jun 1–4 CLOSED to public)
+  [5, 5, '4:00–9:00', [], {}],
+  // Jun 6: CLOSED
+  // Week 2
   [5, 7, '11:00–7:00', [], {}],
   [5, 8, '11:00–6:00', [], {}],
   [5, 9, '11:00–6:00', ['2for'], {}],
@@ -582,9 +584,9 @@ const CALENDAR = [
   // ── JULY ── (Jul 1 = Wed)
   // Week 1
   [6, 1, '11:00–6:00', ['wavy'], {}],
-  [6, 2, '11:00–6:00', ['fireworks'], {note:'Independence Day Fireworks'}],
-  [6, 3, '11:00–10:00', ['fireworks','family'], {note:'Fireworks + Family Night 6–10 PM'}],
-  [6, 4, '10:30–9:00', ['july4'], {}],
+  [6, 2, '11:00–6:00', [], {}],
+  [6, 3, '11:00–10:00', ['family'], {note:'Family Night 6–10 PM'}],
+  [6, 4, '10:30–9:00', ['fireworks','july4'], {note:'Independence Day Fireworks'}],
   // Week 2
   [6, 5, '11:00–7:00', ['univision'], {note:'Univision Community Day'}],
   [6, 6, '11:00–7:00', [], {}],
@@ -618,16 +620,20 @@ const CALENDAR = [
   [6, 31, '11:00–10:00', ['family'], {note:'Family Night 6–10 PM'}],
 
   // ── AUGUST ── (Aug 1 = Sat)
-  [7, 1, '10:30–8:00', ['adult'], {note:'Adult Swim 7–11 PM'}],
+  [7, 1, '10:30–8:00', [], {}],
   // Week 2
   [7, 2, '11:00–7:00', [], {}],
   [7, 3, '11:00–6:00', [], {}],
   [7, 4, '11:00–6:00', ['2for'], {}],
-  // Aug 5 (Wed) – 7 (Fri): CLOSED
-  [7, 8, '11:00–7:00', [], {}],
+  [7, 5, '11:00–6:00', ['wavy'], {}],
+  [7, 6, '11:00–6:00', [], {}],
+  [7, 7, '11:00–11:00', ['adult'], {note:'Adult Swim 7–11 PM'}],
+  [7, 8, '10:30–8:00', [], {}],
   // Week 3
   [7, 9, '11:00–7:00', [], {}],
-  // Aug 10 (Mon) – 14 (Fri): CLOSED
+  [7, 10, '11:00–6:00', ['2for'], {}],
+  [7, 11, '11:00–6:00', ['wavy'], {}],
+  // Aug 12 (Thu) – 14 (Sat): CLOSED
   [7, 15, '11:00–6:00', [], {}],
   // Week 4
   [7, 16, '11:00–6:00', [], {}],
@@ -635,8 +641,10 @@ const CALENDAR = [
   [7, 22, '11:00–6:00', [], {}],
   // Week 5
   [7, 23, '11:00–6:00', [], {}],
-  // Aug 24 (Mon) – 29: CLOSED / end of season
-  // Aug 30–31: CLOSED
+  // Aug 24 (Mon) – 28: CLOSED
+  [7, 29, '11:00–6:00', [], {}],
+  [7, 30, '11:00–6:00', [], {}],
+  // Aug 31: CLOSED
 
   // ── SEPTEMBER ──
   // Sep 1-4: CLOSED
