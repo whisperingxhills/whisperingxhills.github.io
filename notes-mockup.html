@@ -335,9 +335,14 @@
     border-color: #D42B2B;
   }
 
-  .template-chip.locked::after {
-    content: ' 🔒';
-    font-size: 9px;
+  .template-chip.locked {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  .template-chip.locked:hover {
+    color: #777;
+    border-color: #2a2a2a;
   }
 
   /* Input bar */
@@ -477,6 +482,26 @@
     font-size: 10px;
     color: #666;
     margin-left: auto;
+  }
+
+  /* Back button */
+  .back-btn {
+    font-size: 11px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    color: #D42B2B;
+    background: none;
+    border: 1px solid #D42B2B44;
+    border-radius: 5px;
+    padding: 4px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .back-btn:hover {
+    background: #D42B2B22;
+    border-color: #D42B2B;
   }
 
   /* Checklist template */
@@ -709,19 +734,76 @@
 
   <!-- Templates -->
   <div class="template-row">
-    <div class="template-chip">+ New Note</div>
-    <div class="template-chip active-chip">Mix Checklist</div>
-    <div class="template-chip locked">Mastering Prep</div>
-    <div class="template-chip locked">Session Goals</div>
-    <div class="template-chip locked">Client Feedback</div>
+    <div class="template-chip" id="chip-notes" onclick="showNotes()">+ Notes</div>
+    <div class="template-chip" id="chip-checklist" onclick="showChecklist()">Mix Checklist</div>
+    <div class="template-chip locked">Mastering Prep 🔒</div>
+    <div class="template-chip locked">Session Goals 🔒</div>
+    <div class="template-chip locked">Client Feedback 🔒</div>
   </div>
 
   <!-- Note area -->
   <div class="note-area">
     <div class="note-content">
 
-      <!-- Mix Checklist Template -->
+      <!-- NOTES VIEW -->
+      <div id="notes-view">
+
+      <!-- Note 1 -->
+      <div class="note-entry">
+        <div class="note-tag-indicator red"></div>
+        <div class="note-timestamp">2:14pm</div>
+        <div class="note-user user-red">TEDDY</div>
+        <div class="note-text"><span class="note-stamp"><span class="stamp-icon">⏱</span> Bar 16 | 0:42.3</span> Verse 2 vocals need warmth. Client wants more <span class="highlight">air above 12k</span>. Don't touch the ad libs, those are locked.</div>
+      </div>
+
+      <!-- Note 2 -->
+      <div class="note-entry">
+        <div class="note-tag-indicator yellow"></div>
+        <div class="note-timestamp">2:31pm</div>
+        <div class="note-user user-red">TEDDY</div>
+        <div class="note-text"><span class="note-stamp"><span class="stamp-icon">⏱</span> Bar 32 | Beat 3</span> 808 pattern feels stiff here. Try swinging the hats 60% and pulling the kick back 10ms. Might open it up.</div>
+      </div>
+
+      <!-- Note 3 — reply from collaborator -->
+      <div class="note-entry note-reply">
+        <div class="note-tag-indicator green"></div>
+        <div class="note-timestamp">3:45pm</div>
+        <div class="note-user user-blue">ANTHONY</div>
+        <div class="note-text">Swung the hats, pulled kick back. Way better. Also boosted 12k shelf +2dB on vox per your note. Check it.</div>
+      </div>
+
+      <!-- Note 4 -->
+      <div class="note-entry">
+        <div class="note-tag-indicator blue"></div>
+        <div class="note-timestamp">4:02pm</div>
+        <div class="note-user user-green">CLIENT</div>
+        <div class="note-text">Love the direction. Can we get a version with the bridge doubled? Also the intro feels 4 bars too long.</div>
+      </div>
+
+      <!-- Note 5 — recall log -->
+      <div class="note-entry">
+        <div class="note-tag-indicator red"></div>
+        <div class="note-timestamp">4:18pm</div>
+        <div class="note-user user-red">TEDDY</div>
+        <div class="note-text"><span class="note-stamp"><span class="stamp-icon">⏱</span> 1:18:04</span> <strong>Recall:</strong> Vox chain: Sit Down! PUNCH 65% BODY 40% → R-Vox → Pro-Q3 cut 300hz -3dB → Wet-N-Wide! SMOOTH 50% ✓</div>
+      </div>
+
+      <!-- Note 6 -->
+      <div class="note-entry">
+        <div class="note-tag-indicator yellow"></div>
+        <div class="note-timestamp">4:30pm</div>
+        <div class="note-user user-red">TEDDY</div>
+        <div class="note-text">TODO: bounce stems for client by Friday. Need: vox, inst, 808+kick, full mix, TV mix (no vox). Export as 48k/24bit WAV.</div>
+      </div>
+
+      </div>
+      <!-- END NOTES VIEW -->
+
+      <!-- CHECKLIST VIEW -->
+      <div id="checklist-view" style="display:none;">
+
       <div class="template-header">
+        <button class="back-btn" onclick="showNotes()">← Back</button>
         <div class="template-title">📋 Mix Checklist</div>
         <div class="template-meta">R&B / Pop Template</div>
       </div>
@@ -782,6 +864,9 @@
         <div class="checklist-item"><span class="check">○</span> Bounce and listen fresh tomorrow before sending</div>
       </div>
 
+      </div>
+      <!-- END CHECKLIST VIEW -->
+
     </div>
   </div>
 
@@ -799,5 +884,32 @@
   </div>
 </div>
 
+<script>
+  function showNotes() {
+    document.getElementById('notes-view').style.display = 'block';
+    document.getElementById('checklist-view').style.display = 'none';
+    document.getElementById('chip-notes').classList.add('active-chip');
+    document.getElementById('chip-checklist').classList.remove('active-chip');
+  }
+
+  function showChecklist() {
+    document.getElementById('notes-view').style.display = 'none';
+    document.getElementById('checklist-view').style.display = 'block';
+    document.getElementById('chip-checklist').classList.add('active-chip');
+    document.getElementById('chip-notes').classList.remove('active-chip');
+  }
+
+  // Clickable checklist items
+  document.querySelectorAll('.checklist-item').forEach(item => {
+    item.addEventListener('click', () => {
+      item.classList.toggle('done');
+      const check = item.querySelector('.check');
+      check.textContent = item.classList.contains('done') ? '✓' : '○';
+    });
+  });
+
+  // Default: notes view active
+  showNotes();
+</script>
 </body>
 </html>
