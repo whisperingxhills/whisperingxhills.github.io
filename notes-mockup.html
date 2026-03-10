@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notes! — hillsxdsp Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .plugin-frame {
+    width: 420px;
+    height: 620px;
+    background: #141414;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Noise texture overlay */
+  .plugin-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* Header bar */
+  .header {
+    background: #1a1a1a;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #2a2a2a;
+    flex-shrink: 0;
+  }
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .logo-text {
+    font-size: 16px;
+    font-weight: 800;
+    color: #F5E6D3;
+    letter-spacing: 0.5px;
+  }
+
+  .logo-text span {
+    color: #D42B2B;
+  }
+
+  .brand-sub {
+    font-size: 9px;
+    color: #666;
+    font-weight: 500;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .view-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: 1px solid #333;
+    background: #1e1e1e;
+    color: #888;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .view-btn:hover {
+    border-color: #D42B2B;
+    color: #F5E6D3;
+  }
+
+  .view-btn.active {
+    background: #D42B2B;
+    border-color: #D42B2B;
+    color: #fff;
+  }
+
+  /* Session info bar */
+  .session-bar {
+    background: #181818;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-bottom: 1px solid #222;
+    flex-shrink: 0;
+  }
+
+  .session-tag {
+    font-size: 10px;
+    font-weight: 600;
+    color: #999;
+    background: #222;
+    padding: 3px 8px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .session-tag.bpm { color: #D42B2B; border: 1px solid #D42B2B33; background: #D42B2B11; }
+  .session-tag.key { color: #4A9EFF; border: 1px solid #4A9EFF33; background: #4A9EFF11; }
+  .session-tag.rate { color: #888; }
+  .session-tag.date { color: #888; margin-left: auto; }
+
+  /* Toolbar */
+  .toolbar {
+    background: #161616;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid #222;
+    flex-shrink: 0;
+  }
+
+  .tool-btn {
+    height: 30px;
+    padding: 0 10px;
+    border-radius: 6px;
+    border: 1px solid #2a2a2a;
+    background: #1c1c1c;
+    color: #999;
+    font-size: 11px;
+    font-weight: 500;
+    font-family: 'Inter', sans-serif;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .tool-btn:hover {
+    border-color: #D42B2B;
+    color: #F5E6D3;
+    background: #D42B2B15;
+  }
+
+  .tool-btn .icon {
+    font-size: 13px;
+  }
+
+  .tool-divider {
+    width: 1px;
+    height: 20px;
+    background: #2a2a2a;
+    margin: 0 4px;
+  }
+
+  /* Tag dots */
+  .tag-row {
+    display: flex;
+    gap: 6px;
+    margin-left: auto;
+  }
+
+  .tag-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s;
+    opacity: 0.5;
+  }
+
+  .tag-dot:hover { opacity: 1; transform: scale(1.2); }
+  .tag-dot.active { opacity: 1; border-color: #F5E6D3; }
+  .tag-dot.red { background: #D42B2B; }
+  .tag-dot.yellow { background: #E8B931; }
+  .tag-dot.green { background: #2BD44A; }
+  .tag-dot.blue { background: #4A9EFF; }
+
+  /* Note area */
+  .note-area {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+  }
+
+  .note-content {
+    padding: 16px;
+    min-height: 100%;
+    background:
+      linear-gradient(180deg, #1e1c19 0%, #1a1814 100%);
+    position: relative;
+  }
+
+  /* Subtle ruled lines */
+  .note-content::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      180deg,
+      transparent,
+      transparent 31px,
+      #2a261f 31px,
+      #2a261f 32px
+    );
+    pointer-events: none;
+    opacity: 0.3;
+  }
+
+  .note-entry {
+    position: relative;
+    padding: 4px 0 4px 24px;
+    min-height: 32px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .note-tag-indicator {
+    position: absolute;
+    left: 4px;
+    top: 9px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .note-tag-indicator.red { background: #D42B2B; }
+  .note-tag-indicator.yellow { background: #E8B931; }
+  .note-tag-indicator.green { background: #2BD44A; }
+  .note-tag-indicator.blue { background: #4A9EFF; }
+
+  .note-timestamp {
+    font-size: 10px;
+    color: #555;
+    font-weight: 500;
+    white-space: nowrap;
+    padding-top: 2px;
+    min-width: 44px;
+  }
+
+  .note-user {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 1px 6px;
+    border-radius: 3px;
+    white-space: nowrap;
+  }
+
+  .note-user.user-red { color: #D42B2B; background: #D42B2B18; }
+  .note-user.user-blue { color: #4A9EFF; background: #4A9EFF18; }
+  .note-user.user-green { color: #2BD44A; background: #2BD44A18; }
+
+  .note-text {
+    font-size: 13px;
+    color: #F5E6D3;
+    line-height: 1.5;
+    flex: 1;
+  }
+
+  .note-text .highlight {
+    background: #D42B2B25;
+    color: #FF6B6B;
+    padding: 0 3px;
+    border-radius: 2px;
+  }
+
+  .note-reply {
+    margin-left: 48px;
+    padding-left: 12px;
+    border-left: 2px solid #333;
+  }
+
+  /* Template chips */
+  .template-row {
+    padding: 8px 16px;
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    border-bottom: 1px solid #222;
+    flex-shrink: 0;
+    background: #161616;
+  }
+
+  .template-chip {
+    font-size: 10px;
+    font-weight: 600;
+    color: #777;
+    background: #1e1e1e;
+    border: 1px solid #2a2a2a;
+    padding: 4px 10px;
+    border-radius: 12px;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+
+  .template-chip:hover {
+    color: #F5E6D3;
+    border-color: #D42B2B;
+  }
+
+  .template-chip.locked::after {
+    content: ' 🔒';
+    font-size: 9px;
+  }
+
+  /* Input bar */
+  .input-bar {
+    background: #1a1a1a;
+    padding: 10px 16px;
+    border-top: 1px solid #2a2a2a;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .input-field {
+    flex: 1;
+    height: 36px;
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 0 12px;
+    color: #F5E6D3;
+    font-size: 12px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .input-field:focus {
+    border-color: #D42B2B;
+  }
+
+  .input-field::placeholder {
+    color: #555;
+  }
+
+  .send-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: none;
+    background: #D42B2B;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .send-btn:hover {
+    background: #e63333;
+    transform: scale(1.05);
+  }
+
+  .mic-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid #333;
+    background: #1e1e1e;
+    color: #888;
+    font-size: 14px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .mic-btn:hover {
+    border-color: #D42B2B;
+    color: #D42B2B;
+  }
+
+  .mic-btn.locked {
+    opacity: 0.4;
+    cursor: default;
+  }
+
+  /* Footer */
+  .footer {
+    background: #121212;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+  }
+
+  .footer-text {
+    font-size: 9px;
+    color: #444;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-unlock {
+    font-size: 9px;
+    color: #D42B2B;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+  }
+
+  .footer-unlock:hover {
+    text-decoration: underline;
+  }
+
+  /* Track scope indicator */
+  .track-scope {
+    background: #161616;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #222;
+    flex-shrink: 0;
+  }
+
+  .scope-label {
+    font-size: 10px;
+    color: #555;
+    font-weight: 500;
+  }
+
+  .scope-name {
+    font-size: 11px;
+    color: #F5E6D3;
+    font-weight: 700;
+    background: #D42B2B22;
+    border: 1px solid #D42B2B44;
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .scope-count {
+    font-size: 10px;
+    color: #666;
+    margin-left: auto;
+  }
+
+  /* Scrollbar */
+  .note-area::-webkit-scrollbar { width: 4px; }
+  .note-area::-webkit-scrollbar-track { background: transparent; }
+  .note-area::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+  .note-area::-webkit-scrollbar-thumb:hover { background: #555; }
+</style>
+</head>
+<body>
+
+<div class="plugin-frame">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div>
+        <div class="logo-text">NOTES<span>!</span></div>
+        <div class="brand-sub">hillsxdsp</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div class="view-btn active" title="Expanded">▦</div>
+      <div class="view-btn" title="Compact / Sticky">▬</div>
+      <div class="view-btn" title="Summary">Σ</div>
+    </div>
+  </div>
+
+  <!-- Session snapshot bar -->
+  <div class="session-bar">
+    <div class="session-tag bpm">142 BPM</div>
+    <div class="session-tag key">F# min</div>
+    <div class="session-tag rate">48kHz / 24bit</div>
+    <div class="session-tag date">Mar 9, 2026</div>
+  </div>
+
+  <!-- Track scope -->
+  <div class="track-scope">
+    <div class="scope-label">TRACK</div>
+    <div class="scope-name">MASTER BUS</div>
+    <div class="scope-count">3 instances in session</div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <button class="tool-btn"><span class="icon">⏱</span> Stamp</button>
+    <button class="tool-btn"><span class="icon">📸</span> Snapshot</button>
+    <div class="tool-divider"></div>
+    <button class="tool-btn"><span class="icon">📋</span> Recall</button>
+    <div class="tag-row">
+      <div class="tag-dot red active"></div>
+      <div class="tag-dot yellow"></div>
+      <div class="tag-dot green"></div>
+      <div class="tag-dot blue"></div>
+    </div>
+  </div>
+
+  <!-- Templates -->
+  <div class="template-row">
+    <div class="template-chip">+ New Note</div>
+    <div class="template-chip locked">Mix Checklist</div>
+    <div class="template-chip locked">Mastering Prep</div>
+    <div class="template-chip locked">Session Goals</div>
+    <div class="template-chip locked">Client Feedback</div>
+  </div>
+
+  <!-- Note area -->
+  <div class="note-area">
+    <div class="note-content">
+
+      <!-- Note 1 -->
+      <div class="note-entry">
+        <div class="note-tag-indicator red"></div>
+        <div class="note-timestamp">2:14pm</div>
+        <div class="note-user user-red">TEDDY</div>
+        <div class="note-text">Verse 2 vocals need warmth. Client wants more <span class="highlight">air above 12k</span>. Don't touch the ad libs, those are locked.</div>
+      </div>
+
+      <!-- Note 2 -->
+      <div class="note-entry">
+        <div class="note-tag-indicator yellow"></div>
+        <div class="note-timestamp">2:31pm</div>
+        <div class="note-user user-red">TEDDY</div>
+        <div class="note-text">808 pattern at bar 32 feels stiff. Try swinging the hats 60% and pulling the kick back 10ms. Might open it up.</div>
+      </div>
+
+      <!-- Note 3 — reply from collaborator -->
+      <div class="note-entry note-reply">
+        <div class="note-tag-indicator green"></div>
+        <div class="note-timestamp">3:45pm</div>
+        <div class="note-user user-blue">ANTHONY</div>
+        <div class="note-text">Swung the hats, pulled kick back. Way better. Also boosted 12k shelf +2dB on vox per your note. Check it.</div>
+      </div>
+
+      <!-- Note 4 -->
+      <div class="note-entry">
+        <div class="note-tag-indicator blue"></div>
+        <div class="note-timestamp">4:02pm</div>
+        <div class="note-user user-green">CLIENT</div>
+        <div class="note-text">Love the direction. Can we get a version with the bridge doubled? Also the intro feels 4 bars too long.</div>
+      </div>
+
+      <!-- Note 5 — recall log -->
+      <div class="note-entry">
+        <div class="note-tag-indicator red"></div>
+        <div class="note-timestamp">4:18pm</div>
+        <div class="note-user user-red">TEDDY</div>
+        <div class="note-text"><strong>Recall:</strong> Vox chain: Sit Down! PUNCH 65% BODY 40% → R-Vox → Pro-Q3 cut 300hz -3dB → Wet-N-Wide! SMOOTH 50% → Notes! says we're good ✓</div>
+      </div>
+
+      <!-- Note 6 -->
+      <div class="note-entry">
+        <div class="note-tag-indicator yellow"></div>
+        <div class="note-timestamp">4:30pm</div>
+        <div class="note-user user-red">TEDDY</div>
+        <div class="note-text">TODO: bounce stems for client by Friday. Need: vox, inst, 808+kick, full mix, TV mix (no vox). Export as 48k/24bit WAV.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Input bar -->
+  <div class="input-bar">
+    <input class="input-field" placeholder="Add a note..." />
+    <button class="mic-btn locked" title="Speech to text (unlock)">🎙</button>
+    <button class="send-btn">↵</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">NOTES! v1.0 — FREE TIER</div>
+    <div class="footer-unlock">UNLOCK FULL → $10</div>
+  </div>
+</div>
+
+</body>
+</html>
