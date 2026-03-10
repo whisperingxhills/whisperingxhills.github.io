@@ -329,6 +329,12 @@
     border-color: #D42B2B;
   }
 
+  .template-chip.active-chip {
+    color: #F5E6D3;
+    background: #D42B2B22;
+    border-color: #D42B2B;
+  }
+
   .template-chip.locked::after {
     content: ' 🔒';
     font-size: 9px;
@@ -471,6 +477,74 @@
     font-size: 10px;
     color: #666;
     margin-left: auto;
+  }
+
+  /* Checklist template */
+  .template-header {
+    padding: 12px 0 8px 0;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    border-bottom: 1px solid #2a261f;
+    margin-bottom: 12px;
+  }
+
+  .template-title {
+    font-size: 15px;
+    font-weight: 800;
+    color: #F5E6D3;
+  }
+
+  .template-meta {
+    font-size: 10px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .checklist-section {
+    margin-bottom: 14px;
+  }
+
+  .checklist-section-title {
+    font-size: 10px;
+    font-weight: 700;
+    color: #D42B2B;
+    letter-spacing: 1.2px;
+    padding: 6px 0 4px 0;
+    border-bottom: 1px solid #D42B2B22;
+    margin-bottom: 4px;
+  }
+
+  .checklist-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 12px;
+    color: #999;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: color 0.15s;
+  }
+
+  .checklist-item:hover {
+    color: #F5E6D3;
+  }
+
+  .checklist-item .check {
+    font-size: 13px;
+    width: 16px;
+    flex-shrink: 0;
+    text-align: center;
+    color: #555;
+  }
+
+  .checklist-item.done {
+    color: #666;
+  }
+
+  .checklist-item.done .check {
+    color: #2BD44A;
   }
 
   /* Stamp dropdown */
@@ -636,7 +710,7 @@
   <!-- Templates -->
   <div class="template-row">
     <div class="template-chip">+ New Note</div>
-    <div class="template-chip locked">Mix Checklist</div>
+    <div class="template-chip active-chip">Mix Checklist</div>
     <div class="template-chip locked">Mastering Prep</div>
     <div class="template-chip locked">Session Goals</div>
     <div class="template-chip locked">Client Feedback</div>
@@ -646,52 +720,66 @@
   <div class="note-area">
     <div class="note-content">
 
-      <!-- Note 1 -->
-      <div class="note-entry">
-        <div class="note-tag-indicator red"></div>
-        <div class="note-timestamp">2:14pm</div>
-        <div class="note-user user-red">TEDDY</div>
-        <div class="note-text"><span class="note-stamp"><span class="stamp-icon">⏱</span> Bar 16 | 0:42.3</span> Verse 2 vocals need warmth. Client wants more <span class="highlight">air above 12k</span>. Don't touch the ad libs, those are locked.</div>
+      <!-- Mix Checklist Template -->
+      <div class="template-header">
+        <div class="template-title">📋 Mix Checklist</div>
+        <div class="template-meta">R&B / Pop Template</div>
       </div>
 
-      <!-- Note 2 -->
-      <div class="note-entry">
-        <div class="note-tag-indicator yellow"></div>
-        <div class="note-timestamp">2:31pm</div>
-        <div class="note-user user-red">TEDDY</div>
-        <div class="note-text"><span class="note-stamp"><span class="stamp-icon">⏱</span> Bar 32 | Beat 3</span> 808 pattern feels stiff here. Try swinging the hats 60% and pulling the kick back 10ms. Might open it up.</div>
+      <div class="checklist-section">
+        <div class="checklist-section-title">PRE-MIX SETUP</div>
+        <div class="checklist-item done"><span class="check">✓</span> Organize and color code all tracks</div>
+        <div class="checklist-item done"><span class="check">✓</span> Label everything (no "Audio 1" or "Track 14")</div>
+        <div class="checklist-item done"><span class="check">✓</span> Set up bus routing (vox, drums, music, fx)</div>
+        <div class="checklist-item done"><span class="check">✓</span> Gain stage every track to ~-18dBFS</div>
+        <div class="checklist-item done"><span class="check">✓</span> Load reference track, level match</div>
       </div>
 
-      <!-- Note 3 — reply from collaborator -->
-      <div class="note-entry note-reply">
-        <div class="note-tag-indicator green"></div>
-        <div class="note-timestamp">3:45pm</div>
-        <div class="note-user user-blue">ANTHONY</div>
-        <div class="note-text">Swung the hats, pulled kick back. Way better. Also boosted 12k shelf +2dB on vox per your note. Check it.</div>
+      <div class="checklist-section">
+        <div class="checklist-section-title">LOW END</div>
+        <div class="checklist-item done"><span class="check">✓</span> High pass everything that isn't kick or 808</div>
+        <div class="checklist-item done"><span class="check">✓</span> Check kick and 808 relationship (sidechain or pattern)</div>
+        <div class="checklist-item"><span class="check">○</span> Solo bass in mono, make sure it translates</div>
+        <div class="checklist-item"><span class="check">○</span> A/B low end against reference</div>
       </div>
 
-      <!-- Note 4 -->
-      <div class="note-entry">
-        <div class="note-tag-indicator blue"></div>
-        <div class="note-timestamp">4:02pm</div>
-        <div class="note-user user-green">CLIENT</div>
-        <div class="note-text">Love the direction. Can we get a version with the bridge doubled? Also the intro feels 4 bars too long.</div>
+      <div class="checklist-section">
+        <div class="checklist-section-title">VOCALS</div>
+        <div class="checklist-item done"><span class="check">✓</span> Edit breaths (reduce, don't remove)</div>
+        <div class="checklist-item done"><span class="check">✓</span> Pitch correction (transparent, not robotic unless intentional)</div>
+        <div class="checklist-item"><span class="check">○</span> De-ess before compression</div>
+        <div class="checklist-item"><span class="check">○</span> Compress in stages (2-3dB per compressor, stack light)</div>
+        <div class="checklist-item"><span class="check">○</span> EQ: cut mud 200-400hz, presence 2-5kHz, air 10kHz+</div>
+        <div class="checklist-item"><span class="check">○</span> Vocal verb and delay (send, not insert)</div>
+        <div class="checklist-item"><span class="check">○</span> Ad libs panned and tucked, doubles slightly wider</div>
+        <div class="checklist-item"><span class="check">○</span> Check vocal sits on top of beat at every section</div>
       </div>
 
-      <!-- Note 5 — recall log -->
-      <div class="note-entry">
-        <div class="note-tag-indicator red"></div>
-        <div class="note-timestamp">4:18pm</div>
-        <div class="note-user user-red">TEDDY</div>
-        <div class="note-text"><span class="note-stamp"><span class="stamp-icon">⏱</span> 1:18:04</span> <strong>Recall:</strong> Vox chain: Sit Down! PUNCH 65% BODY 40% → R-Vox → Pro-Q3 cut 300hz -3dB → Wet-N-Wide! SMOOTH 50% ✓</div>
+      <div class="checklist-section">
+        <div class="checklist-section-title">DRUMS & PERCUSSION</div>
+        <div class="checklist-item"><span class="check">○</span> Snare / clap: crack and body balanced, not boxy</div>
+        <div class="checklist-item"><span class="check">○</span> Hi hats: tame harsh frequencies above 10kHz</div>
+        <div class="checklist-item"><span class="check">○</span> Percs panned for width (shakers, rims, snaps)</div>
+        <div class="checklist-item"><span class="check">○</span> Drum bus compression (glue, 2-4dB GR)</div>
       </div>
 
-      <!-- Note 6 -->
-      <div class="note-entry">
-        <div class="note-tag-indicator yellow"></div>
-        <div class="note-timestamp">4:30pm</div>
-        <div class="note-user user-red">TEDDY</div>
-        <div class="note-text">TODO: bounce stems for client by Friday. Need: vox, inst, 808+kick, full mix, TV mix (no vox). Export as 48k/24bit WAV.</div>
+      <div class="checklist-section">
+        <div class="checklist-section-title">INSTRUMENTS & SYNTHS</div>
+        <div class="checklist-item"><span class="check">○</span> Keys / pads: carve space for vocals (cut 1-4kHz)</div>
+        <div class="checklist-item"><span class="check">○</span> Guitars: check stereo spread, mono compat</div>
+        <div class="checklist-item"><span class="check">○</span> Synths: automate movement (filter, volume, pan)</div>
+        <div class="checklist-item"><span class="check">○</span> Nothing fighting the vocal for center stage</div>
+      </div>
+
+      <div class="checklist-section">
+        <div class="checklist-section-title">MIX BUS & FINAL</div>
+        <div class="checklist-item"><span class="check">○</span> Check mono compatibility (whole mix)</div>
+        <div class="checklist-item"><span class="check">○</span> Listen at low volume: can you hear vocal + kick + snare?</div>
+        <div class="checklist-item"><span class="check">○</span> Listen on phone speaker, car, earbuds</div>
+        <div class="checklist-item"><span class="check">○</span> Automation passes (vocal rides, mutes, builds)</div>
+        <div class="checklist-item"><span class="check">○</span> LUFS check (target -14 for streaming)</div>
+        <div class="checklist-item"><span class="check">○</span> Leave 3-6dB headroom for mastering</div>
+        <div class="checklist-item"><span class="check">○</span> Bounce and listen fresh tomorrow before sending</div>
       </div>
 
     </div>
