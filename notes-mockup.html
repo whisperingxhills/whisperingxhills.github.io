@@ -473,6 +473,93 @@
     margin-left: auto;
   }
 
+  /* Stamp dropdown */
+  .stamp-wrapper {
+    position: relative;
+  }
+
+  .stamp-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 4px;
+    background: #1e1e1e;
+    border: 1px solid #333;
+    border-radius: 8px;
+    padding: 4px;
+    min-width: 200px;
+    z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  }
+
+  .stamp-wrapper:hover .stamp-dropdown {
+    display: block;
+  }
+
+  .stamp-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+
+  .stamp-option:hover {
+    background: #D42B2B20;
+  }
+
+  .stamp-check {
+    font-size: 11px;
+    color: #D42B2B;
+    width: 14px;
+    visibility: hidden;
+  }
+
+  .stamp-option.active .stamp-check {
+    visibility: visible;
+  }
+
+  .stamp-preview {
+    font-size: 11px;
+    font-weight: 600;
+    color: #F5E6D3;
+    font-family: 'Inter', monospace;
+    background: #141414;
+    padding: 2px 6px;
+    border-radius: 3px;
+    border: 1px solid #2a2a2a;
+  }
+
+  .stamp-label {
+    font-size: 10px;
+    color: #777;
+    margin-left: auto;
+  }
+
+  /* Stamp badges in notes */
+  .note-stamp {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 600;
+    font-family: 'Inter', monospace;
+    background: #1a1a1a;
+    border: 1px solid #2a2a2a;
+    padding: 2px 7px;
+    border-radius: 4px;
+    color: #D42B2B;
+    margin-right: 4px;
+    white-space: nowrap;
+  }
+
+  .note-stamp .stamp-icon {
+    font-size: 9px;
+  }
+
   /* Scrollbar */
   .note-area::-webkit-scrollbar { width: 4px; }
   .note-area::-webkit-scrollbar-track { background: transparent; }
@@ -515,7 +602,26 @@
 
   <!-- Toolbar -->
   <div class="toolbar">
-    <button class="tool-btn"><span class="icon">⏱</span> Stamp</button>
+    <div class="stamp-wrapper">
+      <button class="tool-btn stamp-btn"><span class="icon">⏱</span> Stamp</button>
+      <div class="stamp-dropdown">
+        <div class="stamp-option active" data-mode="both">
+          <span class="stamp-check">✓</span>
+          <span class="stamp-preview">Bar 32 | 1:32.4</span>
+          <span class="stamp-label">Both</span>
+        </div>
+        <div class="stamp-option" data-mode="bar">
+          <span class="stamp-check">✓</span>
+          <span class="stamp-preview">Bar 32 | Beat 3</span>
+          <span class="stamp-label">Bar / Beat</span>
+        </div>
+        <div class="stamp-option" data-mode="time">
+          <span class="stamp-check">✓</span>
+          <span class="stamp-preview">1:32:22</span>
+          <span class="stamp-label">Time</span>
+        </div>
+      </div>
+    </div>
     <button class="tool-btn"><span class="icon">📸</span> Snapshot</button>
     <div class="tool-divider"></div>
     <button class="tool-btn"><span class="icon">📋</span> Recall</button>
@@ -545,7 +651,7 @@
         <div class="note-tag-indicator red"></div>
         <div class="note-timestamp">2:14pm</div>
         <div class="note-user user-red">TEDDY</div>
-        <div class="note-text">Verse 2 vocals need warmth. Client wants more <span class="highlight">air above 12k</span>. Don't touch the ad libs, those are locked.</div>
+        <div class="note-text"><span class="note-stamp"><span class="stamp-icon">⏱</span> Bar 16 | 0:42.3</span> Verse 2 vocals need warmth. Client wants more <span class="highlight">air above 12k</span>. Don't touch the ad libs, those are locked.</div>
       </div>
 
       <!-- Note 2 -->
@@ -553,7 +659,7 @@
         <div class="note-tag-indicator yellow"></div>
         <div class="note-timestamp">2:31pm</div>
         <div class="note-user user-red">TEDDY</div>
-        <div class="note-text">808 pattern at bar 32 feels stiff. Try swinging the hats 60% and pulling the kick back 10ms. Might open it up.</div>
+        <div class="note-text"><span class="note-stamp"><span class="stamp-icon">⏱</span> Bar 32 | Beat 3</span> 808 pattern feels stiff here. Try swinging the hats 60% and pulling the kick back 10ms. Might open it up.</div>
       </div>
 
       <!-- Note 3 — reply from collaborator -->
@@ -577,7 +683,7 @@
         <div class="note-tag-indicator red"></div>
         <div class="note-timestamp">4:18pm</div>
         <div class="note-user user-red">TEDDY</div>
-        <div class="note-text"><strong>Recall:</strong> Vox chain: Sit Down! PUNCH 65% BODY 40% → R-Vox → Pro-Q3 cut 300hz -3dB → Wet-N-Wide! SMOOTH 50% → Notes! says we're good ✓</div>
+        <div class="note-text"><span class="note-stamp"><span class="stamp-icon">⏱</span> 1:18:04</span> <strong>Recall:</strong> Vox chain: Sit Down! PUNCH 65% BODY 40% → R-Vox → Pro-Q3 cut 300hz -3dB → Wet-N-Wide! SMOOTH 50% ✓</div>
       </div>
 
       <!-- Note 6 -->
