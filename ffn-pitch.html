@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fresno Fright Nights — App Proposal</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    color: #e8e8e8;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+  }
+
+  .slide {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 80px;
+    position: relative;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  @media (max-width: 768px) {
+    .slide { padding: 40px 24px; }
+  }
+
+  /* Slide 1: Title */
+  .slide-title {
+    text-align: center;
+    background: linear-gradient(180deg, #0a0a0a 0%, #1a0a0a 100%);
+  }
+
+  .ffn-logo {
+    font-size: 64px;
+    font-weight: 900;
+    letter-spacing: -2px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .ffn-logo span { color: #cc2222; }
+
+  .ffn-subtitle {
+    font-size: 22px;
+    font-weight: 300;
+    color: #888;
+    margin-bottom: 48px;
+    letter-spacing: 2px;
+  }
+
+  .ffn-tagline {
+    font-size: 18px;
+    font-weight: 500;
+    color: #cc2222;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  .ffn-year {
+    position: absolute;
+    bottom: 40px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 13px;
+    color: #444;
+    letter-spacing: 1px;
+  }
+
+  /* Slide headings */
+  .slide-heading {
+    font-size: 42px;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 12px;
+    letter-spacing: -1px;
+  }
+
+  .slide-heading span { color: #cc2222; }
+
+  .slide-subheading {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 40px;
+    font-weight: 400;
+  }
+
+  /* Content cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    margin-top: 16px;
+  }
+
+  .card {
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 28px;
+    transition: border-color 0.3s;
+  }
+
+  .card:hover { border-color: #cc2222; }
+
+  .card-icon {
+    font-size: 32px;
+    margin-bottom: 16px;
+  }
+
+  .card-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .card-text {
+    font-size: 14px;
+    color: #999;
+    line-height: 1.7;
+  }
+
+  /* Stats row */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 24px;
+    margin-top: 16px;
+  }
+
+  .stat-card {
+    background: #141414;
+    border: 1px solid #222;
+    border-radius: 12px;
+    padding: 32px 28px;
+    text-align: center;
+  }
+
+  .stat-number {
+    font-size: 48px;
+    font-weight: 900;
+    color: #cc2222;
+    margin-bottom: 4px;
+  }
+
+  .stat-label {
+    font-size: 13px;
+    color: #888;
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  /* Feature list */
+  .feature-list {
+    list-style: none;
+    margin-top: 16px;
+  }
+
+  .feature-list li {
+    padding: 16px 0;
+    border-bottom: 1px solid #1a1a1a;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    font-size: 15px;
+    color: #ccc;
+  }
+
+  .feature-list li:last-child { border-bottom: none; }
+
+  .feature-bullet {
+    width: 8px;
+    height: 8px;
+    background: #cc2222;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-top: 7px;
+  }
+
+  .feature-label {
+    font-weight: 700;
+    color: #fff;
+  }
+
+  /* Phase timeline */
+  .timeline {
+    margin-top: 24px;
+  }
+
+  .phase {
+    display: flex;
+    gap: 24px;
+    padding: 24px 0;
+    border-bottom: 1px solid #1a1a1a;
+  }
+
+  .phase:last-child { border-bottom: none; }
+
+  .phase-marker {
+    width: 48px;
+    height: 48px;
+    background: #cc2222;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 800;
+    color: #fff;
+    flex-shrink: 0;
+  }
+
+  .phase-content { flex: 1; }
+
+  .phase-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 4px;
+  }
+
+  .phase-time {
+    font-size: 12px;
+    color: #cc2222;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+  }
+
+  .phase-desc {
+    font-size: 14px;
+    color: #999;
+    line-height: 1.6;
+  }
+
+  /* Closing */
+  .slide-closing {
+    text-align: center;
+    background: linear-gradient(180deg, #1a0a0a 0%, #0a0a0a 100%);
+  }
+
+  .closing-text {
+    font-size: 28px;
+    font-weight: 300;
+    color: #888;
+    max-width: 600px;
+    margin: 0 auto 32px;
+    line-height: 1.5;
+  }
+
+  .closing-text strong {
+    color: #fff;
+    font-weight: 700;
+  }
+
+  .closing-cta {
+    font-size: 14px;
+    color: #cc2222;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  /* Divider */
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: #cc2222;
+    margin-bottom: 32px;
+  }
+
+  /* Small text */
+  .fine-print {
+    font-size: 11px;
+    color: #444;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide slide-title">
+  <div class="ffn-logo">FRESNO <span>FRIGHT</span> NIGHTS</div>
+  <div class="ffn-subtitle">Official Mobile App Proposal</div>
+  <div class="ffn-tagline">The dead don't rest. Neither should the experience.</div>
+  <div class="ffn-year">Prepared for Season 2 — 2026</div>
+</div>
+
+<!-- SLIDE 2: The Problem -->
+<div class="slide">
+  <div class="divider"></div>
+  <div class="slide-heading">The <span>Problem</span></div>
+  <div class="slide-subheading">Every haunted attraction in the country has the same guest friction points.</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">⏳</div>
+      <div class="card-title">Blind Wait Times</div>
+      <div class="card-text">Guests don't know which haunt has the shortest line until they walk to it. This creates bottlenecks at popular attractions and dead zones at others.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🗺️</div>
+      <div class="card-title">Navigation Confusion</div>
+      <div class="card-text">6 acres in the dark. First time visitors don't know where anything is. They miss attractions, miss food, miss merch, and leave early.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📱</div>
+      <div class="card-title">No Digital Touchpoint</div>
+      <div class="card-text">Once a guest buys a ticket, there's no ongoing relationship until next year. No engagement between visits, no personalization, no data.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📸</div>
+      <div class="card-title">Missed Shareability</div>
+      <div class="card-text">Guests take photos, post stories, tag the location. But there's no branded experience they share that drives new visitors directly to tickets.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 3: The Solution -->
+<div class="slide">
+  <div class="divider"></div>
+  <div class="slide-heading">The <span>Solution</span></div>
+  <div class="slide-subheading">A dedicated Fresno Fright Nights mobile app that extends the haunt beyond the physical gates.</div>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-icon">🗺️</div>
+      <div class="card-title">Interactive Dark Map</div>
+      <div class="card-text">Real time map of the entire 6 acre property. Haunts, food trucks, bar, restrooms, photo ops, merch. GPS enabled with an atmosphere that matches the event.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">⏱️</div>
+      <div class="card-title">Live Wait Times</div>
+      <div class="card-text">Estimated wait time per haunt, updated in real time. Guests plan their route intelligently. Even distribution across attractions means better throughput for operations.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🎟️</div>
+      <div class="card-title">Tickets in App</div>
+      <div class="card-text">Purchase, upgrade, and manage tickets directly. Digital ticket display on arrival. Upsell opportunities for VIP, Frightening Lane, and add-ons throughout the night.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">📖</div>
+      <div class="card-title">Lore Codex</div>
+      <div class="card-text">Each haunt has deep backstory. The app unlocks lore entries as guests complete attractions, turning a night out into a narrative experience they want to finish.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏆</div>
+      <div class="card-title">Achievements & Badges</div>
+      <div class="card-text">Shareable badges for completing all 4 haunts, visiting on Halloween, going solo, hitting VIP. Gamification drives repeat visits and social sharing.</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">😱</div>
+      <div class="card-title">Scare Tracker</div>
+      <div class="card-text">Rate your fear level after each haunt. See aggregate scare scores across all guests. Social feature that creates conversation and competition.</div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 4: Industry Context -->
+<div class="slide">
+  <div class="divider"></div>
+  <div class="slide-heading">Industry <span>Context</span></div>
+  <div class="slide-subheading">The top haunted attractions in America are already moving digital.</div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-number">73%</div>
+      <div class="stat-label">of event attendees check their phone for info on site</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">2.4x</div>
+      <div class="stat-label">higher return rate for attractions with loyalty/gamification</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">40%</div>
+      <div class="stat-label">of guests discover attractions through shared social content</div>
+    </div>
+  </div>
+
+  <ul class="feature-list" style="margin-top: 32px;">
+    <li>
+      <div class="feature-bullet"></div>
+      <div><span class="feature-label">Universal Studios Horror Nights</span> — dedicated app with interactive map, wait times, food ordering, and upsell. Industry gold standard.</div>
+    </li>
+    <li>
+      <div class="feature-bullet"></div>
+      <div><span class="feature-label">Knott's Scary Farm</span> — uses the Knott's Berry Farm app with haunt overlay. Map, wait times, mobile food ordering.</div>
+    </li>
+    <li>
+      <div class="feature-bullet"></div>
+      <div><span class="feature-label">Eastern State Penitentiary</span> — app with self guided audio tour, historical lore, ticket management. Pioneered narrative driven haunt tech.</div>
+    </li>
+    <li>
+      <div class="feature-bullet"></div>
+      <div><span class="feature-label">Fresno Fright Nights</span> — no app. No digital touchpoint. This is the gap. A purpose built app positions FFN alongside national tier attractions while the competition in the Central Valley has nothing.</div>
+    </li>
+  </ul>
+</div>
+
+<!-- SLIDE 5: Guest Journey -->
+<div class="slide">
+  <div class="divider"></div>
+  <div class="slide-heading">Guest <span>Journey</span></div>
+  <div class="slide-subheading">The app touches every stage of the experience.</div>
+
+  <div class="timeline">
+    <div class="phase">
+      <div class="phase-marker">1</div>
+      <div class="phase-content">
+        <div class="phase-title">Before They Arrive</div>
+        <div class="phase-time">Days / weeks before visit</div>
+        <div class="phase-desc">Guest downloads app, browses haunts, reads lore teasers, purchases tickets. Push notifications for special event nights and flash deals. Anticipation builds before they ever step on property.</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker">2</div>
+      <div class="phase-content">
+        <div class="phase-title">At the Gate</div>
+        <div class="phase-time">Arrival</div>
+        <div class="phase-desc">Digital ticket scan. Interactive map loads with their current location. They immediately know where every haunt, food truck, and bar is. No confusion, no wasted time.</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker">3</div>
+      <div class="phase-content">
+        <div class="phase-title">During the Night</div>
+        <div class="phase-time">On property</div>
+        <div class="phase-desc">Check wait times before committing to a line. Track which haunts they've completed. Unlock lore entries and achievements as they progress. Rate scares. Find food when hungry.</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker">4</div>
+      <div class="phase-content">
+        <div class="phase-title">After They Leave</div>
+        <div class="phase-time">Post visit</div>
+        <div class="phase-desc">Share achievements and scare scores on social media. Browse unfinished lore entries (reason to come back). Receive push notifications for remaining event nights. Refer friends.</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker">5</div>
+      <div class="phase-content">
+        <div class="phase-title">Next Season</div>
+        <div class="phase-time">Year round</div>
+        <div class="phase-desc">App stays installed. Pre-season teaser content drops. Early access tickets for returning app users. The relationship doesn't end on November 1st.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 6: Operational Benefits -->
+<div class="slide">
+  <div class="divider"></div>
+  <div class="slide-heading">Operational <span>Benefits</span></div>
+  <div class="slide-subheading">The app doesn't just improve the guest experience. It improves operations.</div>
+
+  <ul class="feature-list">
+    <li>
+      <div class="feature-bullet"></div>
+      <div><span class="feature-label">Crowd distribution</span> — live wait times naturally spread guests across haunts instead of everyone queuing at the same one. Better throughput, shorter actual waits, happier guests.</div>
+    </li>
+    <li>
+      <div class="feature-bullet"></div>
+      <div><span class="feature-label">In-app upsell</span> — guest is in a 30 minute line. Push notification: "Skip the line? Upgrade to Frightening Lane for $20 more." Contextual upselling at the moment of highest motivation.</div>
+    </li>
+    <li>
+      <div class="feature-bullet"></div>
+      <div><span class="feature-label">Data collection</span> — which haunts are most popular, peak hours, dwell time, food and drink patterns, ticket tier preferences. Data driven decisions for Season 3 and beyond.</div>
+    </li>
+    <li>
+      <div class="feature-bullet"></div>
+      <div><span class="feature-label">Reduced staffing pressure</span> — fewer guests asking "where is X?" when the map is in their pocket. Information booth traffic drops. Staff focus on experience, not directions.</div>
+    </li>
+    <li>
+      <div class="feature-bullet"></div>
+      <div><span class="feature-label">Direct marketing channel</span> — push notifications replace paid social ads for reaching existing guests. Free re-engagement for every future event.</div>
+    </li>
+    <li>
+      <div class="feature-bullet"></div>
+      <div><span class="feature-label">Sponsor integration</span> — in-app sponsor placements (Liquid Death, local businesses) create a new revenue stream without physical signage.</div>
+    </li>
+  </ul>
+</div>
+
+<!-- SLIDE 7: Rollout -->
+<div class="slide">
+  <div class="divider"></div>
+  <div class="slide-heading">Proposed <span>Rollout</span></div>
+  <div class="slide-subheading">Phased approach. Launch lean, expand based on data.</div>
+
+  <div class="timeline">
+    <div class="phase">
+      <div class="phase-marker">1</div>
+      <div class="phase-content">
+        <div class="phase-title">Phase 1 — Launch</div>
+        <div class="phase-time">Ready for Season 2 opening night</div>
+        <div class="phase-desc">Interactive map, haunt info and lore, ticket purchase integration, event calendar, push notifications. Core experience that immediately adds value.</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker">2</div>
+      <div class="phase-content">
+        <div class="phase-title">Phase 2 — Mid Season</div>
+        <div class="phase-time">Weeks 2-3 of the season</div>
+        <div class="phase-desc">Live wait times (requires on-site tracking), scare tracker, achievement system, social sharing features. Layered in after launch stability is confirmed.</div>
+      </div>
+    </div>
+    <div class="phase">
+      <div class="phase-marker">3</div>
+      <div class="phase-content">
+        <div class="phase-title">Phase 3 — Off Season</div>
+        <div class="phase-time">Post season through next year</div>
+        <div class="phase-desc">Year round lore drops, pre-season teaser content, early bird ticket sales, loyalty rewards for returning users. The app becomes the always-on relationship with the guest.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDE 8: Closing -->
+<div class="slide slide-closing">
+  <div class="ffn-logo" style="font-size: 48px; margin-bottom: 32px;">FRESNO <span>FRIGHT</span> NIGHTS</div>
+  <div class="closing-text">
+    The haunted attraction industry is moving digital. The question isn't whether FFN needs an app. It's whether FFN leads that shift in the <strong>Central Valley</strong> or follows it.
+  </div>
+  <div class="closing-cta">Let's build something they'll never forget.</div>
+  <div class="fine-print" style="margin-top: 48px;">Prepared by Immersive Attractions Group — 2026</div>
+</div>
+
+</body>
+</html>
