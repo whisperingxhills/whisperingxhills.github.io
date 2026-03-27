@@ -5,6 +5,7 @@ import AboutPage from './pages/AboutPage'
 import MusicPage from './pages/MusicPage'
 import DspPage from './pages/DspPage'
 import LoginPage from './pages/LoginPage'
+import ContactPage from './pages/ContactPage'
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="about" element={<AboutPage />} />
         <Route path="music" element={<MusicPage />} />
         <Route path="dsp" element={<DspPage />} />
+        <Route path="contact" element={<ContactPage />} />
         <Route path="login" element={<LoginPage />} />
       </Route>
     </Routes>
