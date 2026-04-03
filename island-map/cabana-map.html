@@ -714,8 +714,27 @@ var ZONE_COLORS = {
   "Sharky's":        "#DC2626"
 };
 
+/* Zone details: video (YouTube ID), size, capacity, seating — populate as content becomes available */
+var ZONE_DETAILS = {
+  "BBQ Cove":        { video:"yiR3TFMfBg0", size:"12' x 12'", capacity:"Up to 40", seating:"2 Large Picnic Tables", features:"Covered pavilion, corrugated metal roof, concrete pad, hibachi style BBQ with adjustable cooking surface. Guests can bring shade structures and additional seating." },
+  "Tide Pool":       { video:null, size:null, capacity:null, seating:null, features:null },
+  "Family":          { video:null, size:null, capacity:null, seating:null, features:null },
+  "Premium":         { video:null, size:null, capacity:null, seating:null, features:null },
+  "Kailua":          { video:null, size:null, capacity:null, seating:null, features:null },
+  "Honu":            { video:null, size:null, capacity:null, seating:null, features:null },
+  "Waikiki Cove":    { video:null, size:null, capacity:null, seating:null, features:null },
+  "Bayou Bungalow":  { video:null, size:null, capacity:null, seating:null, features:null },
+  "Waimea Falls":    { video:null, size:null, capacity:null, seating:null, features:null },
+  "Wave Bungalow":   { video:null, size:null, capacity:null, seating:null, features:null },
+  "Beach Bungalow":  { video:null, size:null, capacity:null, seating:null, features:null },
+  "Beach Villa":     { video:null, size:null, capacity:null, seating:null, features:null },
+  "Bamboo Bay":      { video:null, size:null, capacity:null, seating:null, features:null },
+  "Pete's Retreat":  { video:null, size:null, capacity:null, seating:null, features:null },
+  "Sharky's":        { video:null, size:null, capacity:null, seating:null, features:null }
+};
+
 var ZONE_DESCRIPTIONS = {
-  "BBQ Cove":        "Covered pavilions with BBQ grills, picnic tables, and grass seating areas. Perfect for large groups and cookouts.",
+  "BBQ Cove":        "12' x 12' covered pavilion with corrugated metal roof, concrete pad, 2 large picnic tables, and a hibachi style BBQ with adjustable cooking surface. Surrounded by grass. Guests can bring multiple shade structures and additional seating for up to 40 people.",
   "Tide Pool":       "Relaxing cabanas surrounding the calm Tide Pool area. A serene spot to unwind between slides.",
   "Family":          "Spacious family cabanas in the heart of the park near Ohana Bay. Great for families with kids.",
   "Premium":         "Upgraded cabanas with premium amenities and prime park views. The best seats in the house.",
@@ -1381,14 +1400,37 @@ function openPanel(cabana) {
   var pricing = ZONE_PRICING[cabana.zone];
   var desc = ZONE_DESCRIPTIONS[cabana.zone] || '';
 
+  var details = ZONE_DETAILS[cabana.zone] || {};
   var html = '';
 
   /* Zone tag */
   html += '<span class="iw-panel-tag" style="background:' + hexToRgba(color, 0.12) + ';color:' + color + ';">' + escapeHtml(cabana.zone) + '</span>';
 
+  /* Video embed */
+  if (details.video) {
+    html += '<div style="position:relative;width:100%;padding-bottom:56.25%;margin:12px 0;border-radius:8px;overflow:hidden;background:#000;">';
+    html += '<iframe src="https://www.youtube.com/embed/' + escapeAttr(details.video) + '?rel=0&modestbranding=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe>';
+    html += '</div>';
+  }
+
   /* Description */
   if (desc) {
     html += '<p class="iw-panel-desc">' + escapeHtml(desc) + '</p>';
+  }
+
+  /* Zone specs (size, capacity, seating, features) */
+  if (details.size || details.capacity || details.seating) {
+    html += '<div class="iw-panel-meta" style="margin-bottom:12px;">';
+    if (details.size) {
+      html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Size</span><span class="iw-panel-meta-value">' + escapeHtml(details.size) + '</span></div>';
+    }
+    if (details.capacity) {
+      html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Capacity</span><span class="iw-panel-meta-value">' + escapeHtml(details.capacity) + '</span></div>';
+    }
+    if (details.seating) {
+      html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Seating</span><span class="iw-panel-meta-value">' + escapeHtml(details.seating) + '</span></div>';
+    }
+    html += '</div>';
   }
 
   /* Availability status */
