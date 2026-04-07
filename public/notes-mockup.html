@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notes! — hillsxdsp Mockup</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .plugin-frame {
+    width: 460px;
+    height: 660px;
+    background: #141414;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.8), inset 0 1px 0 rgba(255,255,255,0.05);
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Noise texture */
+  .plugin-frame::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 100;
+  }
+
+  /* ── Header ── */
+  .header {
+    background: #1a1a1a;
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid #2a2a2a;
+    flex-shrink: 0;
+  }
+
+  .header-left { display: flex; align-items: center; gap: 10px; }
+
+  .logo-text { font-size: 16px; font-weight: 800; color: #F5E6D3; letter-spacing: 0.5px; }
+  .logo-text span { color: #D42B2B; }
+  .brand-sub { font-size: 9px; color: #666; font-weight: 500; letter-spacing: 1.5px; text-transform: uppercase; }
+
+  .header-right { display: flex; align-items: center; gap: 6px; }
+
+  .search-box {
+    width: 130px;
+    height: 26px;
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 5px;
+    padding: 0 8px 0 26px;
+    color: #F5E6D3;
+    font-size: 10px;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: border-color 0.2s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: 8px center;
+  }
+  .search-box:focus { border-color: #D42B2B; width: 160px; }
+  .search-box::placeholder { color: #555; }
+
+  .icon-btn {
+    width: 26px; height: 26px; border-radius: 5px; border: 1px solid #333;
+    background: #1e1e1e; color: #888; font-size: 12px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  }
+  .icon-btn:hover { border-color: #D42B2B; color: #F5E6D3; }
+
+  /* ── Session bar ── */
+  .session-bar {
+    background: #181818;
+    padding: 6px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #222;
+    flex-shrink: 0;
+  }
+
+  .session-tag {
+    font-size: 10px; font-weight: 600; color: #999;
+    background: #222; padding: 2px 7px; border-radius: 4px; letter-spacing: 0.3px;
+  }
+  .session-tag.bpm { color: #D42B2B; border: 1px solid #D42B2B33; background: #D42B2B11; }
+  .session-tag.key { color: #4A9EFF; border: 1px solid #4A9EFF33; background: #4A9EFF11; }
+  .session-tag.date { color: #888; margin-left: auto; }
+
+  /* ── Track scope ── */
+  .track-scope {
+    background: #161616; padding: 5px 16px;
+    display: flex; align-items: center; gap: 8px;
+    border-bottom: 1px solid #222; flex-shrink: 0;
+  }
+  .scope-label { font-size: 9px; color: #555; font-weight: 600; letter-spacing: 0.8px; }
+  .scope-name {
+    font-size: 10px; color: #F5E6D3; font-weight: 700;
+    background: #D42B2B22; border: 1px solid #D42B2B44;
+    padding: 2px 7px; border-radius: 4px;
+  }
+  .scope-count { font-size: 9px; color: #555; margin-left: auto; }
+
+  /* ── Tab bar ── */
+  .tab-bar {
+    background: #161616;
+    display: flex;
+    align-items: flex-end;
+    gap: 0;
+    padding: 0 8px;
+    border-bottom: 1px solid #2a2a2a;
+    flex-shrink: 0;
+    overflow-x: auto;
+  }
+  .tab-bar::-webkit-scrollbar { height: 0; }
+
+  .tab {
+    display: flex; align-items: center; gap: 6px;
+    padding: 7px 12px 6px;
+    font-size: 10px; font-weight: 600; color: #666;
+    cursor: pointer; white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .tab:hover { color: #aaa; }
+  .tab.active { color: #F5E6D3; border-bottom-color: #D42B2B; }
+  .tab .tab-icon { font-size: 11px; }
+
+  .tab .tab-close {
+    font-size: 9px; color: #555; margin-left: 2px;
+    width: 14px; height: 14px; border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s; opacity: 0;
+  }
+  .tab:hover .tab-close { opacity: 1; }
+  .tab .tab-close:hover { background: #D42B2B; color: #fff; }
+
+  .tab-add {
+    padding: 7px 10px 6px;
+    font-size: 14px; color: #555; cursor: pointer;
+    transition: color 0.15s; flex-shrink: 0;
+  }
+  .tab-add:hover { color: #D42B2B; }
+
+  /* ── Toolbar ── */
+  .toolbar {
+    background: #161616; padding: 6px 16px;
+    display: flex; align-items: center; gap: 5px;
+    border-bottom: 1px solid #222; flex-shrink: 0;
+  }
+
+  .tool-btn {
+    height: 28px; padding: 0 9px; border-radius: 5px;
+    border: 1px solid #2a2a2a; background: #1c1c1c;
+    color: #999; font-size: 10px; font-weight: 500;
+    font-family: 'Inter', sans-serif; cursor: pointer;
+    display: flex; align-items: center; gap: 4px; transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tool-btn:hover { border-color: #D42B2B; color: #F5E6D3; background: #D42B2B15; }
+  .tool-btn .icon { font-size: 12px; }
+
+  /* Stamp dropdown */
+  .stamp-wrapper { position: relative; }
+
+  .stamp-dropdown {
+    display: none; position: absolute; top: 100%; left: 0; margin-top: 4px;
+    background: #1e1e1e; border: 1px solid #333; border-radius: 8px;
+    padding: 4px; min-width: 190px; z-index: 200;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  }
+  .stamp-wrapper:hover .stamp-dropdown { display: block; }
+
+  .stamp-option {
+    display: flex; align-items: center; gap: 8px;
+    padding: 6px 8px; border-radius: 5px; cursor: pointer; transition: background 0.15s;
+  }
+  .stamp-option:hover { background: #D42B2B20; }
+  .stamp-check { font-size: 10px; color: #D42B2B; width: 12px; visibility: hidden; }
+  .stamp-option.active .stamp-check { visibility: visible; }
+  .stamp-preview {
+    font-size: 10px; font-weight: 600; color: #F5E6D3;
+    background: #141414; padding: 2px 5px; border-radius: 3px; border: 1px solid #2a2a2a;
+  }
+  .stamp-label { font-size: 9px; color: #777; margin-left: auto; }
+
+  .tool-divider { width: 1px; height: 18px; background: #2a2a2a; margin: 0 3px; }
+
+  /* Tag dots */
+  .tag-row { display: flex; gap: 5px; margin-left: auto; }
+  .tag-dot {
+    width: 12px; height: 12px; border-radius: 50%; cursor: pointer;
+    border: 2px solid transparent; transition: all 0.2s; opacity: 0.5;
+  }
+  .tag-dot:hover { opacity: 1; transform: scale(1.2); }
+  .tag-dot.active { opacity: 1; border-color: #F5E6D3; }
+  .tag-dot.red { background: #D42B2B; }
+  .tag-dot.yellow { background: #E8B931; }
+  .tag-dot.green { background: #2BD44A; }
+  .tag-dot.blue { background: #4A9EFF; }
+
+  /* ── Note area ── */
+  .note-area { flex: 1; overflow-y: auto; position: relative; }
+
+  .note-content {
+    padding: 14px 16px; min-height: 100%;
+    background: linear-gradient(180deg, #1e1c19 0%, #1a1814 100%);
+    position: relative;
+  }
+  .note-content::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(180deg, transparent, transparent 31px, #2a261f 31px, #2a261f 32px);
+    pointer-events: none; opacity: 0.3;
+  }
+
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* Note entries */
+  .note-entry {
+    position: relative; padding: 4px 0 4px 22px;
+    min-height: 30px; display: flex; align-items: flex-start; gap: 6px;
+  }
+  .note-tag-indicator {
+    position: absolute; left: 4px; top: 9px;
+    width: 7px; height: 7px; border-radius: 50%;
+  }
+  .note-tag-indicator.red { background: #D42B2B; }
+  .note-tag-indicator.yellow { background: #E8B931; }
+  .note-tag-indicator.green { background: #2BD44A; }
+  .note-tag-indicator.blue { background: #4A9EFF; }
+
+  .note-timestamp { font-size: 9px; color: #555; font-weight: 500; white-space: nowrap; padding-top: 2px; min-width: 40px; }
+
+  .note-user {
+    font-size: 9px; font-weight: 700; padding: 1px 5px; border-radius: 3px; white-space: nowrap;
+  }
+  .note-user.user-red { color: #D42B2B; background: #D42B2B18; }
+  .note-user.user-blue { color: #4A9EFF; background: #4A9EFF18; }
+  .note-user.user-green { color: #2BD44A; background: #2BD44A18; }
+
+  .note-text { font-size: 12px; color: #F5E6D3; line-height: 1.5; flex: 1; }
+  .note-text .highlight { background: #D42B2B25; color: #FF6B6B; padding: 0 2px; border-radius: 2px; }
+
+  .note-reply { margin-left: 44px; padding-left: 10px; border-left: 2px solid #333; }
+
+  .note-stamp {
+    display: inline-flex; align-items: center; gap: 3px;
+    font-size: 9px; font-weight: 600; font-family: 'Inter', monospace;
+    background: #1a1a1a; border: 1px solid #2a2a2a;
+    padding: 1px 6px; border-radius: 3px; color: #D42B2B;
+    margin-right: 3px; white-space: nowrap;
+  }
+  .note-stamp .si { font-size: 8px; }
+
+  /* ── Checklist ── */
+  .checklist-section { margin-bottom: 12px; }
+  .checklist-section-title {
+    font-size: 9px; font-weight: 700; color: #D42B2B;
+    letter-spacing: 1.2px; padding: 5px 0 3px; border-bottom: 1px solid #D42B2B22; margin-bottom: 3px;
+  }
+  .checklist-item {
+    display: flex; align-items: flex-start; gap: 7px;
+    padding: 4px 0; font-size: 11px; color: #999; line-height: 1.4; cursor: pointer;
+    transition: color 0.15s;
+  }
+  .checklist-item:hover { color: #F5E6D3; }
+  .checklist-item .check { font-size: 12px; width: 14px; flex-shrink: 0; text-align: center; color: #555; }
+  .checklist-item.done { color: #666; }
+  .checklist-item.done .check { color: #2BD44A; }
+
+  .template-library-btn {
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    padding: 10px; margin-top: 8px;
+    font-size: 11px; font-weight: 600; color: #D42B2B;
+    background: #D42B2B11; border: 1px dashed #D42B2B44;
+    border-radius: 8px; cursor: pointer; transition: all 0.2s;
+  }
+  .template-library-btn:hover { background: #D42B2B22; border-color: #D42B2B; }
+
+  /* ── Input bar ── */
+  .input-bar {
+    background: #1a1a1a; padding: 8px 16px;
+    border-top: 1px solid #2a2a2a;
+    display: flex; align-items: center; gap: 6px; flex-shrink: 0;
+  }
+  .input-field {
+    flex: 1; height: 34px; background: #222; border: 1px solid #333;
+    border-radius: 8px; padding: 0 12px; color: #F5E6D3;
+    font-size: 11px; font-family: 'Inter', sans-serif; outline: none;
+    transition: border-color 0.2s;
+  }
+  .input-field:focus { border-color: #D42B2B; }
+  .input-field::placeholder { color: #555; }
+
+  .send-btn {
+    width: 34px; height: 34px; border-radius: 8px; border: none;
+    background: #D42B2B; color: #fff; font-size: 15px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  }
+  .send-btn:hover { background: #e63333; }
+
+  .mic-btn {
+    width: 34px; height: 34px; border-radius: 8px; border: 1px solid #333;
+    background: #1e1e1e; color: #888; font-size: 13px; cursor: pointer;
+    display: flex; align-items: center; justify-content: center; transition: all 0.2s;
+  }
+  .mic-btn:hover { border-color: #D42B2B; color: #D42B2B; }
+  .mic-btn.locked { opacity: 0.4; cursor: default; }
+
+  /* ── Footer ── */
+  .footer {
+    background: #121212; padding: 5px 16px;
+    display: flex; align-items: center; justify-content: space-between; flex-shrink: 0;
+  }
+  .footer-text { font-size: 8px; color: #444; letter-spacing: 0.5px; }
+  .footer-unlock { font-size: 9px; color: #D42B2B; font-weight: 600; cursor: pointer; letter-spacing: 0.5px; }
+  .footer-unlock:hover { text-decoration: underline; }
+
+  /* Scrollbar */
+  .note-area::-webkit-scrollbar { width: 4px; }
+  .note-area::-webkit-scrollbar-track { background: transparent; }
+  .note-area::-webkit-scrollbar-thumb { background: #333; border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="plugin-frame">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div>
+        <div class="logo-text">NOTES<span>!</span></div>
+        <div class="brand-sub">hillsxdsp</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <input class="search-box" placeholder="Search all tabs..." />
+      <div class="icon-btn" title="Compact mode">▬</div>
+      <div class="icon-btn" title="Skin">🎨</div>
+    </div>
+  </div>
+
+  <!-- Session bar -->
+  <div class="session-bar">
+    <div class="session-tag bpm">142 BPM</div>
+    <div class="session-tag key">F# min</div>
+    <div class="session-tag">48kHz</div>
+    <div class="session-tag date">Mar 9, 2026</div>
+  </div>
+
+  <!-- Track scope -->
+  <div class="track-scope">
+    <div class="scope-label">TRACK</div>
+    <div class="scope-name">MASTER BUS</div>
+    <div class="scope-count">3 instances in session</div>
+  </div>
+
+  <!-- Tab bar -->
+  <div class="tab-bar">
+    <div class="tab active" data-tab="session-notes">
+      <span class="tab-icon">📝</span> Session Notes
+      <span class="tab-close">×</span>
+    </div>
+    <div class="tab" data-tab="vocal-notes">
+      <span class="tab-icon">🎤</span> Vocal Notes
+      <span class="tab-close">×</span>
+    </div>
+    <div class="tab" data-tab="mix-checklist">
+      <span class="tab-icon">✅</span> Mix Checklist
+      <span class="tab-close">×</span>
+    </div>
+    <div class="tab" data-tab="mastering-prep">
+      <span class="tab-icon">📋</span> Mastering Prep
+      <span class="tab-close">×</span>
+    </div>
+    <div class="tab-add" title="New tab">+</div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="stamp-wrapper">
+      <button class="tool-btn"><span class="icon">⏱</span> Stamp</button>
+      <div class="stamp-dropdown">
+        <div class="stamp-option active"><span class="stamp-check">✓</span><span class="stamp-preview">Bar 32 | 1:32.4</span><span class="stamp-label">Both</span></div>
+        <div class="stamp-option"><span class="stamp-check">✓</span><span class="stamp-preview">Bar 32 | Beat 3</span><span class="stamp-label">Bar / Beat</span></div>
+        <div class="stamp-option"><span class="stamp-check">✓</span><span class="stamp-preview">1:32:22</span><span class="stamp-label">Time</span></div>
+      </div>
+    </div>
+    <button class="tool-btn"><span class="icon">📸</span> Snap</button>
+    <button class="tool-btn"><span class="icon">📋</span> Recall</button>
+    <div class="tool-divider"></div>
+    <div class="tag-row">
+      <div class="tag-dot red active"></div>
+      <div class="tag-dot yellow"></div>
+      <div class="tag-dot green"></div>
+      <div class="tag-dot blue"></div>
+    </div>
+  </div>
+
+  <!-- Note area -->
+  <div class="note-area">
+    <div class="note-content">
+
+      <!-- TAB: Session Notes -->
+      <div class="tab-panel active" id="panel-session-notes">
+        <div class="note-entry">
+          <div class="note-tag-indicator red"></div>
+          <div class="note-timestamp">2:14pm</div>
+          <div class="note-user user-red">TEDDY</div>
+          <div class="note-text"><span class="note-stamp"><span class="si">⏱</span> Bar 16 | 0:42.3</span> Verse 2 vocals need warmth. Client wants more <span class="highlight">air above 12k</span>. Don't touch the ad libs, those are locked.</div>
+        </div>
+        <div class="note-entry">
+          <div class="note-tag-indicator yellow"></div>
+          <div class="note-timestamp">2:31pm</div>
+          <div class="note-user user-red">TEDDY</div>
+          <div class="note-text"><span class="note-stamp"><span class="si">⏱</span> Bar 32 | Beat 3</span> 808 pattern feels stiff here. Try swinging the hats 60% and pulling the kick back 10ms.</div>
+        </div>
+        <div class="note-entry note-reply">
+          <div class="note-tag-indicator green"></div>
+          <div class="note-timestamp">3:45pm</div>
+          <div class="note-user user-blue">ANTHONY</div>
+          <div class="note-text">Swung the hats, pulled kick back. Way better. Also boosted 12k shelf +2dB on vox per your note.</div>
+        </div>
+        <div class="note-entry">
+          <div class="note-tag-indicator blue"></div>
+          <div class="note-timestamp">4:02pm</div>
+          <div class="note-user user-green">CLIENT</div>
+          <div class="note-text">Love the direction. Can we get a version with the bridge doubled? Intro feels 4 bars too long.</div>
+        </div>
+        <div class="note-entry">
+          <div class="note-tag-indicator red"></div>
+          <div class="note-timestamp">4:18pm</div>
+          <div class="note-user user-red">TEDDY</div>
+          <div class="note-text"><span class="note-stamp"><span class="si">⏱</span> 1:18:04</span> <strong>Recall:</strong> Vox chain: Sit Down! PUNCH 65% BODY 40% → R-Vox → Pro-Q3 cut 300hz -3dB → Wet-N-Wide! SMOOTH 50% ✓</div>
+        </div>
+        <div class="note-entry">
+          <div class="note-tag-indicator yellow"></div>
+          <div class="note-timestamp">4:30pm</div>
+          <div class="note-user user-red">TEDDY</div>
+          <div class="note-text">TODO: bounce stems for client by Friday. Need: vox, inst, 808+kick, full mix, TV mix (no vox). 48k/24bit WAV.</div>
+        </div>
+      </div>
+
+      <!-- TAB: Vocal Notes -->
+      <div class="tab-panel" id="panel-vocal-notes">
+        <div class="note-entry">
+          <div class="note-tag-indicator red"></div>
+          <div class="note-timestamp">1:50pm</div>
+          <div class="note-user user-red">TEDDY</div>
+          <div class="note-text"><span class="note-stamp"><span class="si">⏱</span> Bar 8 | 0:21.1</span> Hook vocal needs double. Record one slightly detuned and pan 30L/30R.</div>
+        </div>
+        <div class="note-entry">
+          <div class="note-tag-indicator green"></div>
+          <div class="note-timestamp">2:10pm</div>
+          <div class="note-user user-red">TEDDY</div>
+          <div class="note-text">Verse 1 take 3 is the one. Delete takes 1 and 2 to save space. Comped and locked.</div>
+        </div>
+        <div class="note-entry">
+          <div class="note-tag-indicator yellow"></div>
+          <div class="note-timestamp">3:20pm</div>
+          <div class="note-user user-blue">ANTHONY</div>
+          <div class="note-text">Ad libs at the bridge feel thin. Layer another pass with more chest, less falsetto. Teddy's call on vibe.</div>
+        </div>
+        <div class="note-entry">
+          <div class="note-tag-indicator red"></div>
+          <div class="note-timestamp">4:00pm</div>
+          <div class="note-user user-red">TEDDY</div>
+          <div class="note-text"><strong>Recall:</strong> Lead vox: De-esser 6kHz → CLA-76 (4:1, fast) → Pultec 3kHz boost → Sit Down! PUNCH 50% → plate verb send</div>
+        </div>
+      </div>
+
+      <!-- TAB: Mix Checklist -->
+      <div class="tab-panel" id="panel-mix-checklist">
+        <div class="checklist-section">
+          <div class="checklist-section-title">PRE-MIX SETUP</div>
+          <div class="checklist-item done"><span class="check">✓</span> Organize and color code all tracks</div>
+          <div class="checklist-item done"><span class="check">✓</span> Label everything (no "Audio 1" or "Track 14")</div>
+          <div class="checklist-item done"><span class="check">✓</span> Set up bus routing (vox, drums, music, fx)</div>
+          <div class="checklist-item done"><span class="check">✓</span> Gain stage every track to ~-18dBFS</div>
+          <div class="checklist-item done"><span class="check">✓</span> Load reference track, level match</div>
+        </div>
+        <div class="checklist-section">
+          <div class="checklist-section-title">LOW END</div>
+          <div class="checklist-item done"><span class="check">✓</span> High pass everything that isn't kick or 808</div>
+          <div class="checklist-item done"><span class="check">✓</span> Check kick and 808 relationship (sidechain or pattern)</div>
+          <div class="checklist-item"><span class="check">○</span> Solo bass in mono, make sure it translates</div>
+          <div class="checklist-item"><span class="check">○</span> A/B low end against reference</div>
+        </div>
+        <div class="checklist-section">
+          <div class="checklist-section-title">VOCALS</div>
+          <div class="checklist-item done"><span class="check">✓</span> Edit breaths (reduce, don't remove)</div>
+          <div class="checklist-item done"><span class="check">✓</span> Pitch correction (transparent unless intentional)</div>
+          <div class="checklist-item"><span class="check">○</span> De-ess before compression</div>
+          <div class="checklist-item"><span class="check">○</span> Compress in stages (2-3dB per compressor, stack light)</div>
+          <div class="checklist-item"><span class="check">○</span> EQ: cut mud 200-400hz, presence 2-5kHz, air 10kHz+</div>
+          <div class="checklist-item"><span class="check">○</span> Vocal verb and delay on sends, not inserts</div>
+          <div class="checklist-item"><span class="check">○</span> Ad libs panned and tucked, doubles slightly wider</div>
+          <div class="checklist-item"><span class="check">○</span> Check vocal sits on top of beat at every section</div>
+        </div>
+        <div class="checklist-section">
+          <div class="checklist-section-title">DRUMS & PERCUSSION</div>
+          <div class="checklist-item"><span class="check">○</span> Snare / clap: crack and body balanced, not boxy</div>
+          <div class="checklist-item"><span class="check">○</span> Hi hats: tame harshness above 10kHz</div>
+          <div class="checklist-item"><span class="check">○</span> Percs panned for width (shakers, rims, snaps)</div>
+          <div class="checklist-item"><span class="check">○</span> Drum bus compression (glue, 2-4dB GR)</div>
+        </div>
+        <div class="checklist-section">
+          <div class="checklist-section-title">INSTRUMENTS & SYNTHS</div>
+          <div class="checklist-item"><span class="check">○</span> Keys / pads: carve space for vocals (cut 1-4kHz)</div>
+          <div class="checklist-item"><span class="check">○</span> Guitars: check stereo spread, mono compat</div>
+          <div class="checklist-item"><span class="check">○</span> Synths: automate movement (filter, volume, pan)</div>
+          <div class="checklist-item"><span class="check">○</span> Nothing fighting the vocal for center stage</div>
+        </div>
+        <div class="checklist-section">
+          <div class="checklist-section-title">MIX BUS & FINAL</div>
+          <div class="checklist-item"><span class="check">○</span> Check mono compatibility (whole mix)</div>
+          <div class="checklist-item"><span class="check">○</span> Listen at low volume: vocal + kick + snare audible?</div>
+          <div class="checklist-item"><span class="check">○</span> Listen on phone speaker, car, earbuds</div>
+          <div class="checklist-item"><span class="check">○</span> Automation passes (vocal rides, mutes, builds)</div>
+          <div class="checklist-item"><span class="check">○</span> LUFS check (target -14 for streaming)</div>
+          <div class="checklist-item"><span class="check">○</span> Leave 3-6dB headroom for mastering</div>
+          <div class="checklist-item"><span class="check">○</span> Bounce and listen fresh tomorrow before sending</div>
+        </div>
+      </div>
+
+      <!-- TAB: Mastering Prep -->
+      <div class="tab-panel" id="panel-mastering-prep">
+        <div class="checklist-section">
+          <div class="checklist-section-title">BEFORE YOU BOUNCE</div>
+          <div class="checklist-item"><span class="check">○</span> Remove any limiter or maximizer from master bus</div>
+          <div class="checklist-item"><span class="check">○</span> Peak levels between -6dB and -3dB</div>
+          <div class="checklist-item"><span class="check">○</span> No clipping on any bus or individual track</div>
+          <div class="checklist-item"><span class="check">○</span> Disable dithering (mastering engineer will add)</div>
+          <div class="checklist-item"><span class="check">○</span> Leave 1 second silence at start, 2 seconds at end</div>
+        </div>
+        <div class="checklist-section">
+          <div class="checklist-section-title">BOUNCE SETTINGS</div>
+          <div class="checklist-item"><span class="check">○</span> Same sample rate as session (don't convert)</div>
+          <div class="checklist-item"><span class="check">○</span> 24-bit or 32-bit float WAV</div>
+          <div class="checklist-item"><span class="check">○</span> Stereo interleaved</div>
+          <div class="checklist-item"><span class="check">○</span> Realtime bounce if using hardware inserts</div>
+        </div>
+        <div class="checklist-section">
+          <div class="checklist-section-title">DELIVERABLES</div>
+          <div class="checklist-item"><span class="check">○</span> Full mix (stereo)</div>
+          <div class="checklist-item"><span class="check">○</span> Instrumental</div>
+          <div class="checklist-item"><span class="check">○</span> Acapella (if requested)</div>
+          <div class="checklist-item"><span class="check">○</span> TV mix / performance mix (if needed)</div>
+          <div class="checklist-item"><span class="check">○</span> Notes for mastering engineer (reference tracks, LUFS target, vibe)</div>
+        </div>
+        <div class="checklist-section">
+          <div class="checklist-section-title">FINAL CHECK</div>
+          <div class="checklist-item"><span class="check">○</span> Listen to bounced file start to finish (not in the DAW)</div>
+          <div class="checklist-item"><span class="check">○</span> Check for clicks, pops, or glitches at edit points</div>
+          <div class="checklist-item"><span class="check">○</span> Confirm file name format: Artist - Title (Mix Version).wav</div>
+          <div class="checklist-item"><span class="check">○</span> Save session, back up project folder</div>
+        </div>
+        <div class="template-library-btn">📚 Open Template Library — Create Your Own</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Input bar -->
+  <div class="input-bar">
+    <input class="input-field" placeholder="Add a note..." />
+    <button class="mic-btn locked" title="Speech to text (unlock)">🎙</button>
+    <button class="send-btn">↵</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div class="footer-text">NOTES! v1.0 — FREE TIER</div>
+    <div class="footer-unlock">UNLOCK FULL → $10</div>
+  </div>
+
+</div>
+
+<script>
+  // Tab switching
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', (e) => {
+      if (e.target.classList.contains('tab-close')) return;
+      const tabId = tab.dataset.tab;
+
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      const panel = document.getElementById('panel-' + tabId);
+      if (panel) panel.classList.add('active');
+    });
+  });
+
+  // Checklist toggle
+  document.querySelectorAll('.checklist-item').forEach(item => {
+    item.addEventListener('click', () => {
+      item.classList.toggle('done');
+      const check = item.querySelector('.check');
+      check.textContent = item.classList.contains('done') ? '✓' : '○';
+    });
+  });
+</script>
+
+</body>
+</html>

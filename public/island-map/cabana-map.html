@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Island Waterpark - Cabana Map</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --iw-blue: #0EA5E9;
+  --iw-blue-dark: #0284C7;
+  --iw-blue-light: #E0F2FE;
+  --iw-orange: #F97316;
+  --iw-orange-light: #FFF7ED;
+  --iw-green: #22C55E;
+  --iw-green-light: #F0FDF4;
+  --iw-purple: #8B5CF6;
+  --iw-purple-light: #F5F3FF;
+  --iw-red: #EF4444;
+  --iw-red-dark: #DC2626;
+  --iw-dark: #1E293B;
+  --iw-darker: #0F172A;
+  --iw-light: #F8FAFC;
+  --iw-gray: #64748B;
+  --iw-gray-light: #94A3B8;
+  --iw-border: #E2E8F0;
+  --sidebar-width: 320px;
+}
+
+html, body { height: 100%; overflow: hidden; }
+
+/* ── Video Modal ── */
+.iw-video-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.iw-video-modal-overlay.active { display: flex; }
+.iw-video-modal {
+  position: relative;
+  width: 90vw;
+  max-width: 900px;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  cursor: default;
+}
+.iw-video-modal iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.iw-video-modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.iw-video-modal-close:hover { background: rgba(255,255,255,0.3); }
+
+/* Video thumbnail in sidebar */
+.iw-video-thumb {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  margin: 12px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #000;
+}
+.iw-video-thumb img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s, brightness 0.3s;
+}
+.iw-video-thumb:hover img {
+  transform: scale(1.05);
+  brightness: 0.8;
+}
+.iw-video-play-btn {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px; height: 56px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+.iw-video-thumb:hover .iw-video-play-btn {
+  background: var(--iw-blue);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+.iw-video-play-btn::after {
+  content: '';
+  display: block;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 10px 0 10px 18px;
+  border-color: transparent transparent transparent white;
+  margin-left: 3px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--iw-dark);
+  color: var(--iw-dark);
+  display: flex;
+}
+
+/* ── Sidebar ── */
+.iw-sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: white;
+  border-right: 1px solid var(--iw-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 30;
+  transition: transform 0.3s ease;
+}
+
+.iw-sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--iw-border);
+  background: var(--iw-darker);
+}
+
+.iw-sidebar-header h1 {
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+.iw-sidebar-header p {
+  font-size: 11px;
+  color: var(--iw-gray-light);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.iw-sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.iw-sidebar-body::-webkit-scrollbar { width: 4px; }
+.iw-sidebar-body::-webkit-scrollbar-thumb { background: var(--iw-border); border-radius: 4px; }
+
+/* ── Legend ── */
+.iw-legend {
+  border-bottom: 1px solid var(--iw-border);
+}
+
+.iw-legend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.iw-legend-header:hover { background: var(--iw-light); }
+
+.iw-legend-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--iw-dark);
+}
+
+.iw-legend-chevron {
+  font-size: 12px;
+  color: var(--iw-gray-light);
+  transition: transform 0.2s;
+}
+
+.iw-legend.open .iw-legend-chevron { transform: rotate(180deg); }
+
+.iw-legend-items {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.iw-legend.open .iw-legend-items {
+  max-height: 600px;
+}
+
+.iw-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  font-size: 12px;
+  color: var(--iw-dark);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.iw-legend-item:hover { background: var(--iw-light); }
+
+.iw-legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.iw-legend-name { flex: 1; font-weight: 500; }
+
+.iw-legend-count {
+  font-size: 11px;
+  color: var(--iw-gray-light);
+  background: var(--iw-light);
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+/* Zone sections in sidebar */
+.iw-zone-section {
+  border-bottom: 1px solid var(--iw-border);
+}
+
+.iw-zone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.iw-zone-header:hover { background: var(--iw-light); }
+
+.iw-zone-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iw-zone-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.iw-zone-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--iw-dark);
+}
+
+.iw-zone-price {
+  font-size: 11px;
+  color: var(--iw-gray);
+  margin-top: 1px;
+}
+
+.iw-zone-chevron {
+  font-size: 12px;
+  color: var(--iw-gray-light);
+  transition: transform 0.2s;
+}
+
+.iw-zone-section.open .iw-zone-chevron { transform: rotate(180deg); }
+
+.iw-zone-items {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.iw-zone-section.open .iw-zone-items {
+  max-height: 2000px;
+}
+
+.iw-zone-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px 8px 58px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-top: 1px solid rgba(0,0,0,0.03);
+}
+
+.iw-zone-item:hover { background: var(--iw-light); }
+.iw-zone-item.active { background: var(--iw-blue-light); }
+
+.iw-zone-item-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.iw-zone-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--iw-dark);
+  flex: 1;
+}
+
+.iw-zone-item-status {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.iw-zone-item-status.available {
+  background: var(--iw-green-light);
+  color: #15803D;
+}
+
+.iw-zone-item-status.booked {
+  background: #FEF2F2;
+  color: #DC2626;
+}
+
+/* Sidebar toggle */
+.iw-sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.iw-sidebar-toggle.visible { display: flex; }
+
+/* ── Map Area ── */
+.iw-map-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #87CEEB;
+  cursor: grab;
+}
+
+.iw-map-area.grabbing { cursor: grabbing; }
+
+.iw-map-inner {
+  position: absolute;
+  transform-origin: 0 0;
+}
+
+.iw-map-inner img {
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── Cabana Pins ── */
+.iw-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.15s, opacity 0.2s;
+}
+
+.iw-pin:hover {
+  transform: translate(-50%, -100%) scale(1.25);
+  z-index: 15;
+}
+
+.iw-pin.hidden { opacity: 0; pointer-events: none; }
+.iw-pin.highlight .iw-pin-marker { animation: iw-bounce 0.6s ease; }
+.iw-pin.booked { opacity: 0.5; filter: grayscale(0.7); }
+
+@keyframes iw-bounce {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-12px); }
+  60% { transform: translateY(-4px); }
+}
+
+.iw-pin-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.iw-pin-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.9);
+}
+
+.iw-pin-dot span {
+  transform: rotate(45deg);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.iw-pin-shadow {
+  width: 10px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  margin-top: 1px;
+}
+
+/* ── Cluster Pins ── */
+.iw-cluster {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 12;
+  transition: transform 0.15s, opacity 0.2s;
+}
+
+.iw-cluster:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  z-index: 16;
+}
+
+.iw-cluster.hidden { opacity: 0; pointer-events: none; }
+
+.iw-cluster-dot {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+  border: 3px solid rgba(255,255,255,0.9);
+  position: relative;
+}
+
+.iw-cluster-label {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  letter-spacing: 0.3px;
+}
+
+/* ── Detail Panel ── */
+.iw-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.iw-panel-backdrop.open { opacity: 1; pointer-events: auto; }
+
+.iw-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  max-width: 90vw;
+  height: 100vh;
+  background: white;
+  z-index: 70;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+}
+
+.iw-panel.open { transform: translateX(0); }
+
+.iw-panel-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--iw-border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.iw-panel-header h2 {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.iw-panel-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--iw-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--iw-gray);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.iw-panel-close:hover { background: var(--iw-border); color: var(--iw-dark); }
+
+.iw-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.iw-panel-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.iw-panel-desc {
+  font-size: 14px;
+  color: var(--iw-gray);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.iw-panel-meta {
+  padding: 12px 16px;
+  background: var(--iw-light);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.iw-panel-meta-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.iw-panel-meta-row:not(:last-child) { border-bottom: 1px solid var(--iw-border); }
+
+.iw-panel-meta-label { color: var(--iw-gray); }
+.iw-panel-meta-value { font-weight: 600; color: var(--iw-dark); }
+
+.iw-book-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 14px;
+  background: var(--iw-red);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+
+.iw-book-btn:hover { background: var(--iw-red-dark); }
+
+.iw-book-btn:disabled {
+  background: var(--iw-border);
+  color: var(--iw-gray);
+  cursor: not-allowed;
+}
+
+.iw-sold-out {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 14px;
+  background: var(--iw-light);
+  color: var(--iw-gray);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  border: 2px solid var(--iw-border);
+}
+
+/* ── Zoom Controls ── */
+.iw-zoom {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.iw-zoom button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--iw-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.iw-zoom button:hover { background: var(--iw-light); transform: scale(1.05); }
+
+/* ── Map link ── */
+.iw-map-link {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 20;
+  padding: 8px 14px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--iw-blue-dark);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.iw-map-link:hover { background: var(--iw-blue-light); }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .iw-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  }
+  .iw-sidebar-toggle { display: flex; }
+  .iw-panel {
+    width: 100vw;
+    max-width: 100vw;
+    top: auto;
+    bottom: 0;
+    height: 65vh;
+    transform: translateY(100%);
+    border-radius: 16px 16px 0 0;
+  }
+  .iw-panel.open { transform: translateY(0); }
+  .iw-pin-dot { width: 26px; height: 26px; }
+  .iw-pin-dot span { font-size: 9px; }
+  .iw-cluster-dot { width: 38px; height: 38px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile sidebar toggle -->
+<button class="iw-sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">&#9776;</button>
+
+<!-- Sidebar -->
+<aside class="iw-sidebar" id="sidebar">
+  <div class="iw-sidebar-header" style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="flex:1;">
+      <img src="iw-logo.png" alt="Island Waterpark" style="width:100%;max-width:240px;height:auto;display:block;">
+      <p style="font-size:11px;color:var(--iw-gray-light);margin-top:6px;text-transform:uppercase;letter-spacing:1px;">Cabana Map</p>
+    </div>
+    <button onclick="collapseSidebar()" style="background:rgba(255,255,255,0.15);border:none;color:white;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Hide sidebar">&#10005;</button>
+  </div>
+  <div class="iw-sidebar-body" id="sidebarBody">
+    <!-- Injected by JS -->
+  </div>
+</aside>
+
+<!-- Map Area -->
+<div class="iw-map-area" id="mapArea">
+  <!-- Zoom Controls -->
+  <div class="iw-zoom">
+    <button onclick="zoomMap(1)">+</button>
+    <button onclick="zoomMap(-1)">&minus;</button>
+    <button onclick="resetMap()" style="font-size:14px;">&#10227;</button>
+  </div>
+
+  <!-- Link to rides map -->
+  <a href="index.html" class="iw-map-link">&#8592; Park Map</a>
+
+  <!-- Map -->
+  <div class="iw-map-inner" id="mapInner">
+    <img src="map-base.png" id="mapImg" draggable="false">
+  </div>
+</div>
+
+<!-- Detail Panel -->
+<div class="iw-panel-backdrop" id="panelBackdrop" onclick="closePanel()"></div>
+<div class="iw-panel" id="panel">
+  <div class="iw-panel-header">
+    <h2 id="panelTitle">&mdash;</h2>
+    <button class="iw-panel-close" onclick="closePanel()">&#10005;</button>
+  </div>
+  <div class="iw-panel-body" id="panelBody"></div>
+</div>
+
+<script>
+/* ================================================================
+   CABANA DATA — merged from coordinates + inventory + pricing
+   Map image: 2048 x 1592 — coords are x%, y% on that image
+   ================================================================ */
+
+var ZONE_COLORS = {
+  "BBQ Cove":        "#E85D04",
+  "Tide Pool":       "#0EA5E9",
+  "Ohana Family":          "#22C55E",
+  "Ohana Premium":         "#8B5CF6",
+  "Kailua":          "#EC4899",
+  "Honu":            "#14B8A6",
+  "Waikiki Cove":    "#3B82F6",
+  "Bayou Bungalow":  "#A855F7",
+  "Waimea Falls":    "#06B6D4",
+  "Wave Bungalow":   "#F59E0B",
+  "Beach Bungalow":  "#F97316",
+  "Beach Villa":     "#EF4444",
+  "Bamboo Bay":      "#10B981",
+  "Pete's Retreat":  "#6366F1",
+  "Sharky's Family":        "#DC2626"
+};
+
+/* Zone details: video (YouTube ID), size, capacity, seating — populate as content becomes available */
+var ZONE_DETAILS = {
+  "BBQ Cove":        { video:"yiR3TFMfBg0", size:"12' x 12'", capacity:"Up to 40", seating:"2 Large Picnic Tables", features:"Covered pavilion, corrugated metal roof, concrete pad, hibachi style BBQ with adjustable cooking surface. Guests can bring shade structures and additional seating." },
+  "Tide Pool":       { video:"Jo2dnZtW_RM", size:"10' x 11'", capacity:"8 Seated", seating:"Sling Chairs", features:"South end of the island in the heart of the Waimea Lazy River. Near a river entrance for direct lazy river access from your cabana. Surrounds the tranquil tide pool — a small wading pool for cooling off. Spacious rectangular dining table." },
+  "Ohana Family":          { video:"jn3-bM9lLEE", size:"10' x 12'", capacity:"8 Seated, 12 Max", seating:"Sling Chairs", features:"Located on the Ohana Bay deck near sea creatures, spraying mushrooms, and the best play structure in the valley. Bamboo table and sling chairs included. Cabana service included." },
+  "Ohana Premium":         { video:"g97KApFTbtM", size:"12' x 14' Plus Back Patio", capacity:"10 Seated, 16 Max", seating:"Wicker Style Chaise Lounges, Chairs", features:"Vibrant blue and white color scheme with spacious back patio. RED BULL Refrigerator, variable-speed ceiling fans, device charging outlets. Finished wood construction with pitched metal roofs. Wicker style dining, coffee, and cocktail tables. Prime location on Ohana Bay deck. Cabana service included." },
+  "Kailua":          { video:"QFssCcKeNU8", size:"10' x 12'", capacity:"Up to 8", seating:"Sling Chairs, Adirondack Chairs", features:"Adjacent to the Lazy River and steps from Ohana Bay Kiddies area and Waikiki Willies Bar. Large rectangular dining table, sling chairs, and spacious Adirondack chairs." },
+  "Honu":            { video:"bSLGnN_jzGo", size:"20' x 14'", capacity:"20 Seated, 24 Max", seating:"Picnic Table Benches, Adirondack Chairs", features:"Located between the Lazy River entrance and Ohana Bay. 3 picnic tables, adirondack chairs, and colorful umbrella. Perfect for birthday parties, family reunions, sports teams. Rent two side-by-side for even more space." },
+  "Waikiki Cove":    { video:"B9rNF6xqAjw", size:"10' x 11'", capacity:"8 Seated, 12 Max", seating:"Wicker Love Seat, Wicker Chairs", features:"Secluded cul-de-sac next to Waimea Lazy River entrance and Waikiki Willies bar. Picnic table with colorful umbrella, wicker love seat, wicker chairs, personal storage unit, and large coffee table." },
+  "Bayou Bungalow":  { video:null, size:null, capacity:null, seating:null, features:null },
+  "Waimea Falls":    { video:"rLdJ9IguMU4", size:"10' x 11'", capacity:"8 Seated, 12 Max", seating:"Sling Chairs, Strapped Chaise Loungers", features:"Positioned in the middle of the Waimea Lazy River on the north end of the island. Pelican Pete surfing in the center. Colorful chairs, chaise loungers, large umbrella, hexagon glass table. Has its own Lazy River entrance." },
+  "Wave Bungalow":   { video:"w2RyShuJgZc", size:"12' x 20'", capacity:"12 Seated, 20 Max", seating:"Chairs, Chaise Loungers, Wicker Furniture", features:"Secluded area near the wave pool surrounded by nautical netting. Two ceiling fans, countertop with sink and running water, electrical outlets, Jarritos refrigerator. Dining, cocktail, and coffee tables. Cabana service included." },
+  "Beach Bungalow":  { video:"RMs2c_p3vFg", size:"12' x 10'", capacity:"10", seating:"8 Sling Chairs, 2 Chaise Loungers", features:"Perfectly positioned on the wave pool deck, steps from the water. Spacious outdoor wooden-grained metal dining table. Back shade curtain for privacy and sun protection. Cabana service included." },
+  "Beach Villa":     { video:"J15NSLmCqJc", size:"20' x 12'", capacity:"16 Seated, 20 Max", seating:"8 Sling Chairs, 4 Chaise Loungers, Adirondack Chairs w/ Ottomans", features:"The largest cabanas available. Directly on the wave pool deck at the water's edge. Spacious wood-grained dining table, cocktail tables, end tables. Back shade curtains for privacy and sun protection. Cabana service included." },
+  "Bamboo Bay":      { video:"iPChyL_jpXw", size:"15' x 10'", capacity:"12", seating:"Director & Adirondack Chairs", features:"Built from high-grade bamboo with red corrugated metal roof. Bamboo dining table, colorful director chairs, Adirondack chairs for lounging, and cocktail tables. Nestled on the beach beside the Ohana Kids Play Structure." },
+  "Pete's Retreat":  { video:"29x-LHVZUS8", size:"Approx 900 sq ft", capacity:"60 Guests", seating:"Bar Stools", features:"NEW large BBQ grill added. Secluded area nestled among trees, adjacent to lazy river. Beautiful grass area with picnic tables. Large tiled countertop, Jarritos refrigerator, multiple electrical outlets, sink with running water. 8 cocktail tables with bar stools included. Pizzas can be ordered and scheduled via Group Sales. Perfect for parties, company events, sports teams, church groups." },
+  "Sharky's Family":        { video:"9sZyerEXMYY", size:"15' x 40'", capacity:"12 Seated, 20 Capacity", seating:"Chaise Loungers, Dining Chairs, Love Seats", features:"The ONLY cabana with synthetic grass underfoot. Nautical netting for privacy. Includes small refrigerator, unlimited all-day beverage wristbands for up to 20 guests, ESPN Air Hockey Table, Foosball Table, Giant Jenga, and Corn Hole. Positioned by Waikiki Willies Bar, Sharky's snack area, Wave Pool Entry, and Waimea Lazy River Entry." }
+};
+
+var ZONE_DESCRIPTIONS = {
+  "BBQ Cove":        "12' x 12' covered pavilion with corrugated metal roof, concrete pad, 2 large picnic tables, and a hibachi style BBQ with adjustable cooking surface. Surrounded by grass. Guests can bring multiple shade structures and additional seating for up to 40 people.",
+  "Tide Pool":       "10' x 11' cabanas on the south end of the island in the heart of the Waimea Lazy River, near a river entrance for direct access from your cabana. Surround the tranquil tide pool — a small wading pool perfect for cooling off and dipping your toes. Sling chairs and spacious dining table. Seats 8.",
+  "Ohana Family":          "The perfect spot for families with kids! 10' x 12' cabanas on the Ohana Bay deck, close to sea creatures, spraying mushrooms, and the best play structure in the valley. Relax with a bamboo table and sling chairs while the kids play. Seats 8 with max capacity of 12. Cabana service included.",
+  "Ohana Premium":         "Sure to impress with vibrant blue and white styling and a spacious back patio. 12' x 14' finished wood construction with pitched metal roofs. Equipped with a RED BULL Refrigerator, variable-speed ceiling fans, and device charging outlets. Premium wicker style seating and tables for up to 10 seated (16 max). Prime location on the Ohana Bay deck with cabana service included. Not a party cabana — occupancy strictly enforced.",
+  "Kailua":          "10' x 12' cabanas with spacious Adirondack chairs, adjacent to the Lazy River and steps from the Ohana Bay Kiddies area and Waikiki Willies Bar. Furnished with a large rectangular dining table, sling chairs, and Adirondack chairs for up to 8 guests.",
+  "Honu":            "Spacious 20' x 14' cabanas between the Lazy River entrance and Ohana Bay. Perfect for birthday parties, reunions, sports teams, or group gatherings. Each includes 3 picnic tables, adirondack chairs, and a colorful umbrella. Seats 20 with max capacity of 24. Rent two side-by-side to expand your party.",
+  "Waikiki Cove":    "Exclusive 10' x 11' cabanas in a secluded cul-de-sac next to the Waimea Lazy River entrance and Waikiki Willies bar. Enjoy a picnic table with colorful umbrella, cozy wicker love seat, wicker chairs, personal storage unit, and large coffee table. Seats 8 with max capacity of 12.",
+  "Bayou Bungalow":  "Private bungalows along the Bayou with an immersive tropical atmosphere. New for 2026.",
+  "Waimea Falls":    "Serene 10' x 11' cabanas on the north end of the island in the middle of the Waimea Lazy River, with Pelican Pete surfing in the center. Colorful chairs, chaise loungers, large umbrella, and hexagon glass table. Has its own Lazy River entrance. Seats 8 with max capacity of 12.",
+  "Wave Bungalow":   "One-of-a-kind 12' x 20' bungalows in a secluded area near the wave pool, surrounded by nautical netting. Equipped with two ceiling fans, countertop with sink and running water, electrical outlets, Jarritos refrigerator, chaise loungers, and stylish wicker furniture. Seats 12 with max capacity of 20. Cabana service included.",
+  "Beach Bungalow":  "Perfectly positioned on the wave pool deck, just a stone's throw from the water. 12' x 10' exclusive bungalows with a gorgeous spacious dining table, 8 sling chairs, and 2 chaise loungers. Back shade curtain for privacy and sun protection. Cabana service included.",
+  "Beach Villa":     "The largest cabanas available — 20' x 12' exquisite villas positioned directly on the wave pool deck at the water's edge. Spacious wood-grained dining table with 8 sling chairs, 4 chaise loungers, and Adirondack chairs with ottomans and end tables. Back shade curtains for privacy. Seats 16 with max capacity of 20. Cabana service included.",
+  "Bamboo Bay":      "New this season — one of a kind! Relax in island style at Bamboo Bay. This exclusive 15' x 10' cabana is built from high-grade bamboo and topped with eye-catching red corrugated metal roofs. Features a bamboo dining table, colorful director chairs, comfortable Adirondack chairs, and cocktail tables. Nestled right on the beach beside the Ohana Kids Play Structure — the perfect place to unwind in style.",
+  "Pete's Retreat":  "The ultimate gathering spot — approx 900 sq ft secluded among trees and adjacent to the lazy river. Accommodates up to 60 guests. Equipped with a NEW large BBQ grill, tiled countertop, Jarritos refrigerator, electrical outlets, sink with running water, 8 cocktail tables with bar stools, and picnic tables. Perfect for parties, company events, sports teams, and large group outings. Pizzas can be ordered via Group Sales in advance.",
+  "Sharky's Family":        "Our best cabana yet! NEW this season — the ONLY cabana in the park with synthetic grass under your feet. 15' x 40' covered area surrounded by nautical netting for privacy. Seating for 12 with capacity of 20. Includes a refrigerator, unlimited all-day beverages for up to 20 guests, ESPN Air Hockey, Foosball, Giant Jenga, and Corn Hole. Perfectly positioned by Waikiki Willies Bar, Sharky's snack area, Wave Pool Entry, and Waimea Lazy River Entry."
+};
+
+var ZONE_PRICING = {
+  "Bamboo Bay":      { "M/Th":"$119","T/W":"$129","Fri":"$129","Fri Night":"$79","Sat":"$229","Sun":"$219","Jul 3":"$129","Jul 3 Night":"$79","Jul 4":"$399" },
+  "BBQ Cove":        { "M/Th":"$49","T/W":"$49","Fri":"$49","Fri Night":"N/A","Sat":"$119","Sun":"$119","Jul 3":"$49","Jul 3 Night":"N/A","Jul 4":"$199" },
+  "Beach Bungalow":  { "M/Th":"$99","T/W":"$129","Fri":"$129","Fri Night":"$69","Sat":"$199","Sun":"$199","Jul 3":"$129","Jul 3 Night":"$69","Jul 4":"$349" },
+  "Beach Villa":     { "M/Th":"$139","T/W":"$159","Fri":"$149","Fri Night":"$89","Sat":"$269","Sun":"$269","Jul 3":"$149","Jul 3 Night":"$89","Jul 4":"$399" },
+  "Ohana Family":          { "M/Th":"$89","T/W":"$129","Fri":"$119","Fri Night":"$49","Sat":"$229","Sun":"$219","Jul 3":"$119","Jul 3 Night":"$49","Jul 4":"$319" },
+  "Honu":            { "M/Th":"$59","T/W":"$89","Fri":"$89","Fri Night":"$49","Sat":"$189","Sun":"$179","Jul 3":"$89","Jul 3 Night":"$49","Jul 4":"$299" },
+  "Kailua":          { "M/Th":"$69","T/W":"$89","Fri":"$89","Fri Night":"$49","Sat":"$199","Sun":"$179","Jul 3":"$89","Jul 3 Night":"$49","Jul 4":"$299" },
+  "Pete's Retreat":  { "M/Th":"$159","T/W":"$159","Fri":"$169","Fri Night":"$89","Sat":"$399","Sun":"$349","Jul 3":"$169","Jul 3 Night":"$89","Jul 4":"$499" },
+  "Ohana Premium":         { "M/Th":"$189","T/W":"$199","Fri":"$199","Fri Night":"$79","Sat":"$379","Sun":"$379","Jul 3":"$199","Jul 3 Night":"$79","Jul 4":"$499" },
+  "Sharky's Family":        { "M/Th":"$199","T/W":"$279","Fri":"$199","Fri Night":"$99","Sat":"$399","Sun":"$399","Jul 3":"$199","Jul 3 Night":"$99","Jul 4":"$499" },
+  "Tide Pool":       { "M/Th":"$59","T/W":"$69","Fri":"$59","Fri Night":"$49","Sat":"$129","Sun":"$119","Jul 3":"$59","Jul 3 Night":"$49","Jul 4":"$259" },
+  "Waikiki Cove":    { "M/Th":"$59","T/W":"$79","Fri":"$79","Fri Night":"$49","Sat":"$159","Sun":"$139","Jul 3":"$79","Jul 3 Night":"$49","Jul 4":"$259" },
+  "Waimea Falls":    { "M/Th":"$69","T/W":"$79","Fri":"$69","Fri Night":"$49","Sat":"$159","Sun":"$139","Jul 3":"$69","Jul 3 Night":"$49","Jul 4":"$259" },
+  "Wave Bungalow":   { "M/Th":"$169","T/W":"$179","Fri":"$179","Fri Night":"$69","Sat":"$369","Sun":"$359","Jul 3":"$179","Jul 3 Night":"$69","Jul 4":"$499" },
+  "Bayou Bungalow":  { "M/Th":"$169","T/W":"$179","Fri":"$179","Fri Night":"$69","Sat":"$369","Sun":"$359","Jul 3":"$179","Jul 3 Night":"$69","Jul 4":"$499" }
+};
+
+/* Coordinates: 120 cabanas with x,y positions */
+var CABANA_COORDS = [
+  {"zone":"BBQ Cove","unit":"BBQ Cove 01","x":2.9,"y":59.5},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 02","x":8,"y":57.3},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 03","x":10.6,"y":59.6},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 04","x":11.9,"y":54.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 05","x":11.7,"y":52.1},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 06","x":8.4,"y":49.8},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 07","x":3,"y":54.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 08","x":2.7,"y":51.5},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 09","x":3.6,"y":48.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 10","x":6.4,"y":46.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 11","x":4.1,"y":45.5},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 12","x":5.3,"y":43.3},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 13","x":8.9,"y":43.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 14","x":10.6,"y":43.4},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 15","x":15.8,"y":42.4},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 16","x":14.1,"y":40.5},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 17","x":9.6,"y":40.1},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 18","x":7.2,"y":40.3},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 19","x":9.9,"y":37.3},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 20","x":11.6,"y":35.7},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 21","x":13.1,"y":34.1},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 22","x":15,"y":32.1},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 23","x":16.2,"y":30.2},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 24","x":18.7,"y":30.3},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 25","x":19.5,"y":33.1},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 26","x":17.8,"y":35.1},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 27","x":16.9,"y":32.4},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 28","x":15.8,"y":34.5},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 29","x":15.6,"y":37.6},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 30","x":13.4,"y":38.3},
+  {"zone":"Pete's Retreat","unit":"Pete's Retreat","x":73.5,"y":56.8},
+  {"zone":"Tide Pool","unit":"Tide Pool 01","x":73.1,"y":54.1},
+  {"zone":"Tide Pool","unit":"Tide Pool 02","x":70.9,"y":53.2},
+  {"zone":"Tide Pool","unit":"Tide Pool 03","x":68.6,"y":52.9},
+  {"zone":"Tide Pool","unit":"Tide Pool 04","x":66.6,"y":53.7},
+  {"zone":"Tide Pool","unit":"Tide Pool 05","x":65.6,"y":56.3},
+  {"zone":"Tide Pool","unit":"Tide Pool 06","x":65.5,"y":58.8},
+  {"zone":"Tide Pool","unit":"Tide Pool 07","x":67,"y":61.1},
+  {"zone":"Tide Pool","unit":"Tide Pool 08","x":69.3,"y":61.3},
+  {"zone":"Tide Pool","unit":"Tide Pool 09","x":71.9,"y":60.5},
+  {"zone":"Ohana Family","unit":"Family 01","x":41.8,"y":68.3},
+  {"zone":"Ohana Family","unit":"Family 02","x":43,"y":67.6},
+  {"zone":"Ohana Family","unit":"Family 03","x":44.2,"y":66.9},
+  {"zone":"Ohana Family","unit":"Family 04","x":45,"y":66.3},
+  {"zone":"Ohana Family","unit":"Family 05","x":45.7,"y":65.3},
+  {"zone":"Ohana Family","unit":"Family 06","x":46.7,"y":64.3},
+  {"zone":"Ohana Family","unit":"Family 07","x":47.9,"y":63.6},
+  {"zone":"Ohana Family","unit":"Family 08","x":49.1,"y":62.7},
+  {"zone":"Ohana Family","unit":"Family 09","x":50.1,"y":61.8},
+  {"zone":"Ohana Family","unit":"Family 10","x":50.3,"y":59.1},
+  {"zone":"Ohana Family","unit":"Family 11","x":49.8,"y":57.3},
+  {"zone":"Ohana Family","unit":"Family 12","x":48.9,"y":56.4},
+  {"zone":"Ohana Family","unit":"Family 13","x":48,"y":55.5},
+  {"zone":"Ohana Family","unit":"Family 14","x":43.5,"y":51.9},
+  {"zone":"Ohana Family","unit":"Family 15","x":41.4,"y":50.7},
+  {"zone":"Ohana Family","unit":"Family 16","x":39.8,"y":51.3},
+  {"zone":"Ohana Family","unit":"Family 17","x":38.8,"y":51.8},
+  {"zone":"Ohana Family","unit":"Family 18","x":37,"y":53.8},
+  {"zone":"Ohana Family","unit":"Family 19","x":35.9,"y":54.4},
+  {"zone":"Ohana Family","unit":"Family 20","x":34.7,"y":55.2},
+  {"zone":"Ohana Premium","unit":"Premium 01","x":39.6,"y":68.3},
+  {"zone":"Ohana Premium","unit":"Premium 02","x":38.5,"y":67.4},
+  {"zone":"Ohana Premium","unit":"Premium 03","x":37.4,"y":66.5},
+  {"zone":"Ohana Premium","unit":"Premium 04","x":36.4,"y":65.6},
+  {"zone":"Ohana Premium","unit":"Premium 05","x":35.5,"y":64.7},
+  {"zone":"Ohana Premium","unit":"Premium 06","x":34.4,"y":64.1},
+  {"zone":"Ohana Premium","unit":"Premium 07","x":33.4,"y":63},
+  {"zone":"Ohana Premium","unit":"Premium 08","x":33,"y":61.8},
+  {"zone":"Ohana Premium","unit":"Premium 09","x":33.2,"y":60.6},
+  {"zone":"Ohana Premium","unit":"Premium 10","x":33.4,"y":59.2},
+  {"zone":"Ohana Premium","unit":"Premium 11","x":33.7,"y":57.7},
+  {"zone":"Ohana Premium","unit":"Premium 12","x":34,"y":56.4},
+  {"zone":"Kailua","unit":"Kailua 01","x":53.1,"y":64.6},
+  {"zone":"Kailua","unit":"Kailua 02","x":51.9,"y":65.8},
+  {"zone":"Kailua","unit":"Kailua 03","x":50.4,"y":66.7},
+  {"zone":"Kailua","unit":"Kailua 04","x":49.1,"y":67.6},
+  {"zone":"Kailua","unit":"Kailua 05","x":47.9,"y":68.4},
+  {"zone":"Kailua","unit":"Kailua 06","x":46.7,"y":69.7},
+  {"zone":"Kailua","unit":"Kailua 07","x":45.7,"y":71.5},
+  {"zone":"Honu","unit":"Honu 01","x":53.1,"y":62.6},
+  {"zone":"Honu","unit":"Honu 02","x":53.6,"y":61.3},
+  {"zone":"Honu","unit":"Honu 03","x":54.2,"y":60},
+  {"zone":"Honu","unit":"Honu 04","x":54.6,"y":59},
+  {"zone":"Honu","unit":"Honu 05","x":55.1,"y":57.7},
+  {"zone":"Honu","unit":"Honu 06","x":55.8,"y":56.4},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 01","x":61.4,"y":55.3},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 02","x":61.8,"y":54.3},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 03","x":62.1,"y":53},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 04","x":62.5,"y":52},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 05","x":62,"y":50.7},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 06","x":60.9,"y":49.8},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 07","x":60.1,"y":49.1},
+  {"zone":"Bayou Bungalow","unit":"Bayou Bungalow 01","x":65.5,"y":67.1},
+  {"zone":"Bayou Bungalow","unit":"Bayou Bungalow 02","x":66.9,"y":64.6},
+  {"zone":"Sharky's Family","unit":"Sharky's Family","x":53.1,"y":49.6},
+  {"zone":"Waimea Falls","unit":"Waimea 01","x":59.9,"y":66.7},
+  {"zone":"Waimea Falls","unit":"Waimea 02","x":61.3,"y":67.9},
+  {"zone":"Waimea Falls","unit":"Waimea 03","x":62.1,"y":70},
+  {"zone":"Waimea Falls","unit":"Waimea 04","x":57.2,"y":66.5},
+  {"zone":"Waimea Falls","unit":"Waimea 05","x":58.9,"y":67.7},
+  {"zone":"Waimea Falls","unit":"Waimea 06","x":58.7,"y":69.9},
+  {"zone":"Waimea Falls","unit":"Waimea 07","x":58.9,"y":71.5},
+  {"zone":"Waimea Falls","unit":"Waimea 08","x":55.1,"y":69},
+  {"zone":"Waimea Falls","unit":"Waimea 09","x":52.8,"y":70.5},
+  {"zone":"Waimea Falls","unit":"Waimea 10","x":50.6,"y":71.8},
+  {"zone":"Waimea Falls","unit":"Waimea 11","x":51.6,"y":73.8},
+  {"zone":"Waimea Falls","unit":"Waimea 12","x":54.1,"y":74},
+  {"zone":"Waimea Falls","unit":"Waimea 13","x":56,"y":72.9},
+  {"zone":"Wave Bungalow","unit":"Wave Bungalow 01","x":40.4,"y":45.1},
+  {"zone":"Wave Bungalow","unit":"Wave Bungalow 02","x":41.6,"y":45.4},
+  {"zone":"Wave Bungalow","unit":"Wave Bungalow 03","x":42.9,"y":45.9},
+  {"zone":"Wave Bungalow","unit":"Wave Bungalow 04","x":44.6,"y":46.2},
+  {"zone":"Beach Bungalow","unit":"Beach Bungalow 01","x":50.3,"y":44.6},
+  {"zone":"Beach Bungalow","unit":"Beach Bungalow 02","x":53.3,"y":44.8},
+  {"zone":"Beach Bungalow","unit":"Beach Bungalow 03","x":56.2,"y":44},
+  {"zone":"Beach Bungalow","unit":"Beach Bungalow 04","x":58.4,"y":42.6},
+  {"zone":"Beach Villa","unit":"Beach Villa 01","x":51.8,"y":44.8},
+  {"zone":"Beach Villa","unit":"Beach Villa 02","x":54.6,"y":44.5},
+  {"zone":"Beach Villa","unit":"Beach Villa 03","x":57.1,"y":43.5},
+  {"zone":"Bamboo Bay","unit":"Bamboo Bay","x":46.1,"y":52.5}
+];
+
+/* Booking data: rate codes, root IDs, eids */
+var CABANA_INVENTORY = [
+  {"zone":"Bamboo Bay","name":"Bamboo Bay","root":"dxB","rate":"","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 01","root":"Zyv","rate":"TR-dxR","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 02","root":"Zyv","rate":"TR-dzZ","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 03","root":"Zyv","rate":"TR-Jmk","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 04","root":"Zyv","rate":"TR-DZb","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 05","root":"Zyv","rate":"TR-pRB","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 06","root":"Zyv","rate":"TR-Vdb","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 07","root":"Zyv","rate":"TR-jBp","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 08","root":"Zyv","rate":"TR-zxm","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 09","root":"Zyv","rate":"TR-yxp","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 10","root":"Zyv","rate":"TR-rrk","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 11","root":"Zyv","rate":"TR-AXY","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 12","root":"Zyv","rate":"TR-Bbv","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 13","root":"Zyv","rate":"TR-QXK","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 14","root":"Zyv","rate":"TR-myK","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 15","root":"Zyv","rate":"TR-RgM","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 16","root":"Zyv","rate":"TR-qxn","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 17","root":"Zyv","rate":"TR-xvQ","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 18","root":"Zyv","rate":"TR-nxj","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 19","root":"Zyv","rate":"TR-WJz","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 20","root":"Zyv","rate":"TR-Nrv","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 21","root":"Zyv","rate":"TR-KQv","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 22","root":"Zyv","rate":"TR-vgp","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 23","root":"Zyv","rate":"TR-gAW","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 24","root":"Zyv","rate":"TR-Mgk","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 25","root":"Zyv","rate":"TR-XMn","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 26","root":"Zyv","rate":"TR-bAW","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 27","root":"Zyv","rate":"TR-kAq","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 28","root":"Zyv","rate":"TR-Zbn","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 29","root":"Zyv","rate":"TR-YXX","eid":"9f5be16b3a6b913c"},
+  {"zone":"BBQ Cove","name":"BBQ Cove 30","root":"Zyv","rate":"TR-dAZ","eid":"9f5be16b3a6b913c"},
+  {"zone":"Beach Bungalow","name":"Beach Bungalow 01","root":"rZx","rate":"TR-rZx","eid":"9f5be16b3a6b913c"},
+  {"zone":"Beach Bungalow","name":"Beach Bungalow 02","root":"rZx","rate":"TR-JRk","eid":"9f5be16b3a6b913c"},
+  {"zone":"Beach Bungalow","name":"Beach Bungalow 03","root":"rZx","rate":"TR-DQb","eid":"9f5be16b3a6b913c"},
+  {"zone":"Beach Bungalow","name":"Beach Bungalow 04","root":"rZx","rate":"TR-pzB","eid":"9f5be16b3a6b913c"},
+  {"zone":"Beach Villa","name":"Beach Villa 01","root":"ABy","rate":"TR-Mnr","eid":"9f5be16b3a6b913c"},
+  {"zone":"Beach Villa","name":"Beach Villa 02","root":"ABy","rate":"TR-VBb","eid":"9f5be16b3a6b913c"},
+  {"zone":"Beach Villa","name":"Beach Villa 03","root":"ABy","rate":"TR-jVp","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 01","root":"yDW","rate":"TR-bNY","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 02","root":"yDW","rate":"TR-zym","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 03","root":"yDW","rate":"TR-yjp","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 04","root":"yDW","rate":"TR-rnk","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 05","root":"yDW","rate":"TR-AQY","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 06","root":"yDW","rate":"TR-BQv","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 07","root":"yDW","rate":"TR-QBK","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 08","root":"yDW","rate":"TR-mxK","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 09","root":"yDW","rate":"TR-RBM","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 10","root":"yDW","rate":"TR-qNn","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 11","root":"yDW","rate":"TR-xjQ","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 12","root":"yDW","rate":"TR-nVj","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 13","root":"yDW","rate":"TR-WBz","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 14","root":"yDW","rate":"TR-Nbv","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 15","root":"yDW","rate":"TR-KKv","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 16","root":"yDW","rate":"TR-vbp","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 17","root":"yDW","rate":"TR-gJW","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 18","root":"yDW","rate":"TR-MXk","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 19","root":"yDW","rate":"TR-bbW","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Family","name":"Family 20","root":"yDW","rate":"TR-kXq","eid":"9f5be16b3a6b913c"},
+  {"zone":"Honu","name":"Honu 01","root":"XqN","rate":"TR-Zyk","eid":"9f5be16b3a6b913c"},
+  {"zone":"Honu","name":"Honu 02","root":"XqN","rate":"TR-Xbn","eid":"9f5be16b3a6b913c"},
+  {"zone":"Honu","name":"Honu 03","root":"XqN","rate":"TR-ZZn","eid":"9f5be16b3a6b913c"},
+  {"zone":"Honu","name":"Honu 04","root":"XqN","rate":"TR-dZZ","eid":"9f5be16b3a6b913c"},
+  {"zone":"Honu","name":"Honu 05","root":"XqN","rate":"TR-Jzk","eid":"9f5be16b3a6b913c"},
+  {"zone":"Honu","name":"Honu 06","root":"XqN","rate":"TR-Drb","eid":"9f5be16b3a6b913c"},
+  {"zone":"Kailua","name":"Kailua 01","root":"bNY","rate":"TR-mMB","eid":"9f5be16b3a6b913c"},
+  {"zone":"Kailua","name":"Kailua 02","root":"bNY","rate":"TR-pdB","eid":"9f5be16b3a6b913c"},
+  {"zone":"Kailua","name":"Kailua 03","root":"bNY","rate":"TR-VMb","eid":"9f5be16b3a6b913c"},
+  {"zone":"Kailua","name":"Kailua 04","root":"bNY","rate":"TR-jMp","eid":"9f5be16b3a6b913c"},
+  {"zone":"Kailua","name":"Kailua 05","root":"bNY","rate":"TR-zdm","eid":"9f5be16b3a6b913c"},
+  {"zone":"Kailua","name":"Kailua 06","root":"bNY","rate":"TR-yYp","eid":"9f5be16b3a6b913c"},
+  {"zone":"Kailua","name":"Kailua 07","root":"bNY","rate":"TR-rDk","eid":"9f5be16b3a6b913c"},
+  {"zone":"Pete's Retreat","name":"Pete's Retreat 01","root":"DmZ","rate":"","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 01","root":"zzD","rate":"TR-WvY","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 02","root":"zzD","rate":"TR-ArY","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 03","root":"zzD","rate":"TR-MXK","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 04","root":"zzD","rate":"TR-XbK","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 05","root":"zzD","rate":"TR-bbQ","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 06","root":"zzD","rate":"TR-kXb","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 07","root":"zzD","rate":"TR-ZZW","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 08","root":"zzD","rate":"TR-ZZW","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 09","root":"zzD","rate":"TR-dZX","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 10","root":"zzD","rate":"TR-Jzy","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 11","root":"zzD","rate":"TR-DRd","eid":"9f5be16b3a6b913c"},
+  {"zone":"Ohana Premium","name":"Premium 12","root":"zzD","rate":"TR-pgj","eid":"9f5be16b3a6b913c"},
+  {"zone":"Sharky's Family","name":"Sharky's Family","root":"JnV","rate":"","eid":"9f5be16b3a6b913c"},
+  {"zone":"Tide Pool","name":"Tide Pool 01","root":"Zyk","rate":"TR-Mnp","eid":"9f5be16b3a6b913c"},
+  {"zone":"Tide Pool","name":"Tide Pool 02","root":"Zyk","rate":"TR-ARM","eid":"9f5be16b3a6b913c"},
+  {"zone":"Tide Pool","name":"Tide Pool 03","root":"Zyk","rate":"TR-Bqb","eid":"9f5be16b3a6b913c"},
+  {"zone":"Tide Pool","name":"Tide Pool 04","root":"Zyk","rate":"TR-QVB","eid":"9f5be16b3a6b913c"},
+  {"zone":"Tide Pool","name":"Tide Pool 05","root":"Zyk","rate":"TR-mYk","eid":"9f5be16b3a6b913c"},
+  {"zone":"Tide Pool","name":"Tide Pool 06","root":"Zyk","rate":"TR-Rqq","eid":"9f5be16b3a6b913c"},
+  {"zone":"Tide Pool","name":"Tide Pool 07","root":"Zyk","rate":"TR-qpj","eid":"9f5be16b3a6b913c"},
+  {"zone":"Tide Pool","name":"Tide Pool 08","root":"Zyk","rate":"TR-xgB","eid":"9f5be16b3a6b913c"},
+  {"zone":"Tide Pool","name":"Tide Pool 09","root":"Zyk","rate":"TR-ndN","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waikiki Cove","name":"Waikiki Cove 01","root":"rqd","rate":"TR-bNp","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waikiki Cove","name":"Waikiki Cove 02","root":"rqd","rate":"TR-WAW","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waikiki Cove","name":"Waikiki Cove 03","root":"rqd","rate":"TR-NJA","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waikiki Cove","name":"Waikiki Cove 04","root":"rqd","rate":"TR-KZr","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waikiki Cove","name":"Waikiki Cove 05","root":"rqd","rate":"TR-vNJ","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waikiki Cove","name":"Waikiki Cove 06","root":"rqd","rate":"TR-gmY","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waikiki Cove","name":"Waikiki Cove 07","root":"rqd","rate":"TR-MdK","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 01","root":"kWp","rate":"TR-Zyv","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 02","root":"kWp","rate":"TR-XvK","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 03","root":"kWp","rate":"TR-bmQ","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 04","root":"kWp","rate":"TR-kkb","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 05","root":"kWp","rate":"TR-ZgW","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 06","root":"kWp","rate":"TR-YAj","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 07","root":"kWp","rate":"TR-dWX","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 08","root":"kWp","rate":"TR-Jky","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 09","root":"kWp","rate":"TR-Dbd","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 10","root":"kWp","rate":"TR-pVj","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 11","root":"kWp","rate":"TR-VQv","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 12","root":"kWp","rate":"TR-jZg","eid":"9f5be16b3a6b913c"},
+  {"zone":"Waimea Falls","name":"Waimea 13","root":"kWp","rate":"TR-zDM","eid":"9f5be16b3a6b913c"},
+  {"zone":"Wave Bungalow","name":"Wave Bungalow 01","root":"Mnr","rate":"TR-dxB","eid":"9f5be16b3a6b913c"},
+  {"zone":"Wave Bungalow","name":"Wave Bungalow 02","root":"Mnr","rate":"TR-yJz","eid":"9f5be16b3a6b913c"},
+  {"zone":"Wave Bungalow","name":"Wave Bungalow 03","root":"Mnr","rate":"TR-rMX","eid":"9f5be16b3a6b913c"},
+  {"zone":"Wave Bungalow","name":"Wave Bungalow 04","root":"Mnr","rate":"TR-AjM","eid":"9f5be16b3a6b913c"},
+  {"zone":"Bayou Bungalow","name":"Bayou Bungalow 01","root":"mDA","rate":"TR-DmZ","eid":"9f5be16b3a6b913c"},
+  {"zone":"Bayou Bungalow","name":"Bayou Bungalow 02","root":"mDA","rate":"TR-BMb","eid":"9f5be16b3a6b913c"}
+];
+
+/* ================================================================
+   MERGE coordinates + inventory into unified CABANAS array
+   ================================================================ */
+var inventoryByName = {};
+CABANA_INVENTORY.forEach(function(item) {
+  inventoryByName[item.name] = item;
+});
+
+var CABANAS = [];
+CABANA_COORDS.forEach(function(coord) {
+  /* Match by unit name. Handle cases like "Pete's Retreat" -> "Pete's Retreat 01" */
+  var inv = inventoryByName[coord.unit];
+  if (!inv) {
+    /* Try appending " 01" for single-unit zones */
+    inv = inventoryByName[coord.unit + " 01"];
+  }
+
+  /* Extract unit number from name */
+  var numMatch = coord.unit.match(/(\d+)$/);
+  var unitNum = numMatch ? parseInt(numMatch[1], 10) : 1;
+  var displayNum = numMatch ? numMatch[1].replace(/^0+/, '') : '';
+
+  CABANAS.push({
+    zone: coord.zone,
+    unit: coord.unit,
+    x: coord.x,
+    y: coord.y,
+    num: unitNum,
+    displayNum: displayNum,
+    rate: inv ? inv.rate : '',
+    root: inv ? inv.root : '',
+    eid: inv ? inv.eid : '',
+    available: true  /* default — updated by fetchAvailability() */
+  });
+});
+
+/* Build zone groups for sidebar and clustering */
+var ZONE_ORDER = [
+  "BBQ Cove","Ohana Family","Ohana Premium","Kailua","Honu","Waikiki Cove",
+  "Waimea Falls","Tide Pool","Wave Bungalow","Beach Bungalow",
+  "Beach Villa","Bayou Bungalow","Bamboo Bay","Pete's Retreat","Sharky's Family"
+];
+
+var ZONES = {};
+CABANAS.forEach(function(c) {
+  if (!ZONES[c.zone]) {
+    ZONES[c.zone] = { name: c.zone, cabanas: [], cx: 0, cy: 0 };
+  }
+  ZONES[c.zone].cabanas.push(c);
+});
+
+/* Compute zone centroids for cluster pins */
+Object.keys(ZONES).forEach(function(z) {
+  var zone = ZONES[z];
+  var sx = 0, sy = 0;
+  zone.cabanas.forEach(function(c) { sx += c.x; sy += c.y; });
+  zone.cx = sx / zone.cabanas.length;
+  zone.cy = sy / zone.cabanas.length;
+});
+
+/* ================================================================
+   STATE
+   ================================================================ */
+var scale = 1, panX = 0, panY = 0;
+var isDragging = false, dragStartX = 0, dragStartY = 0, startPanX = 0, startPanY = 0;
+var imgW = 0, imgH = 0;
+var CLUSTER_THRESHOLD = 0.7; /* show clusters below this zoom */
+var pinElements = [];
+var clusterElements = [];
+
+/* ================================================================
+   INIT
+   ================================================================ */
+var mapImg = document.getElementById('mapImg');
+var mapInner = document.getElementById('mapInner');
+var mapArea = document.getElementById('mapArea');
+
+mapImg.onload = function() {
+  imgW = mapImg.naturalWidth;
+  imgH = mapImg.naturalHeight;
+  mapImg.style.width = imgW + 'px';
+  mapImg.style.height = imgH + 'px';
+  resetMap();
+  renderSidebar();
+  renderPins();
+  renderClusters();
+  updatePinVisibility();
+  fetchAvailability();
+};
+
+function updateTransform() {
+  mapInner.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ')';
+}
+
+/* ================================================================
+   SIDEBAR
+   ================================================================ */
+function renderSidebar() {
+  var body = document.getElementById('sidebarBody');
+  var frag = document.createDocumentFragment();
+
+  /* Legend section */
+  var legend = document.createElement('div');
+  legend.className = 'iw-legend open';
+  var legendHeader = document.createElement('div');
+  legendHeader.className = 'iw-legend-header';
+  legendHeader.setAttribute('onclick', 'toggleLegend()');
+  legendHeader.innerHTML = '<span class="iw-legend-title">Zone Legend</span><span class="iw-legend-chevron">&#9660;</span>';
+  legend.appendChild(legendHeader);
+
+  var legendItems = document.createElement('div');
+  legendItems.className = 'iw-legend-items';
+  ZONE_ORDER.forEach(function(zoneName) {
+    var zone = ZONES[zoneName];
+    if (!zone) return;
+    var item = document.createElement('div');
+    item.className = 'iw-legend-item';
+    item.setAttribute('onclick', 'flyToZone("' + escapeAttr(zoneName) + '")');
+    var swatch = document.createElement('div');
+    swatch.className = 'iw-legend-swatch';
+    swatch.style.background = ZONE_COLORS[zoneName] || '#888';
+    item.appendChild(swatch);
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'iw-legend-name';
+    nameSpan.textContent = zoneName;
+    item.appendChild(nameSpan);
+    var countSpan = document.createElement('span');
+    countSpan.className = 'iw-legend-count';
+    countSpan.textContent = zone.cabanas.length;
+    item.appendChild(countSpan);
+    legendItems.appendChild(item);
+  });
+  legend.appendChild(legendItems);
+  frag.appendChild(legend);
+
+  /* Zone sections */
+  ZONE_ORDER.forEach(function(zoneName) {
+    var zone = ZONES[zoneName];
+    if (!zone) return;
+
+    var pricing = ZONE_PRICING[zoneName];
+    var startPrice = pricing ? getStartPrice(pricing) : '';
+
+    var section = document.createElement('div');
+    section.className = 'iw-zone-section';
+    section.dataset.zone = zoneName;
+
+    var header = document.createElement('div');
+    header.className = 'iw-zone-header';
+    header.setAttribute('onclick', 'toggleZoneSection("' + escapeAttr(zoneName) + '")');
+
+    header.innerHTML =
+      '<div class="iw-zone-header-left">' +
+        '<div class="iw-zone-icon" style="background:' + (ZONE_COLORS[zoneName] || '#888') + '">' + zone.cabanas.length + '</div>' +
+        '<div><div class="iw-zone-name">' + escapeHtml(zoneName) + '</div>' +
+        (startPrice ? '<div class="iw-zone-price">From ' + startPrice + '</div>' : '') +
+        '</div></div>' +
+      '<span class="iw-zone-chevron">&#9660;</span>';
+
+    section.appendChild(header);
+
+    var items = document.createElement('div');
+    items.className = 'iw-zone-items';
+
+    zone.cabanas.forEach(function(cabana, idx) {
+      var item = document.createElement('div');
+      item.className = 'iw-zone-item';
+      item.dataset.cabanaId = cabana.unit;
+      item.setAttribute('onclick', 'flyToCabana("' + escapeAttr(cabana.unit) + '")');
+
+      var numCircle = document.createElement('div');
+      numCircle.className = 'iw-zone-item-num';
+      numCircle.style.background = ZONE_COLORS[zoneName] || '#888';
+      numCircle.textContent = cabana.displayNum || '1';
+      item.appendChild(numCircle);
+
+      var name = document.createElement('span');
+      name.className = 'iw-zone-item-name';
+      name.textContent = cabana.unit;
+      item.appendChild(name);
+
+      var status = document.createElement('span');
+      status.className = 'iw-zone-item-status available';
+      status.dataset.cabanaStatus = cabana.unit;
+      status.textContent = 'Available';
+      item.appendChild(status);
+
+      items.appendChild(item);
+    });
+
+    section.appendChild(items);
+    frag.appendChild(section);
+  });
+
+  body.appendChild(frag);
+}
+
+function getStartPrice(pricing) {
+  var prices = [];
+  Object.keys(pricing).forEach(function(k) {
+    var v = pricing[k];
+    if (v && v !== 'N/A') {
+      var num = parseInt(v.replace('$', ''), 10);
+      if (!isNaN(num)) prices.push(num);
+    }
+  });
+  if (prices.length === 0) return '';
+  return '$' + Math.min.apply(null, prices);
+}
+
+function toggleLegend() {
+  document.querySelector('.iw-legend').classList.toggle('open');
+}
+
+function toggleZoneSection(zoneName) {
+  var section = document.querySelector('.iw-zone-section[data-zone="' + zoneName + '"]');
+  if (section) section.classList.toggle('open');
+}
+
+/* ================================================================
+   RENDER PINS (individual cabana pins)
+   ================================================================ */
+function renderPins() {
+  var frag = document.createDocumentFragment();
+
+  CABANAS.forEach(function(cabana) {
+    var pin = document.createElement('div');
+    pin.className = 'iw-pin';
+    pin.dataset.unit = cabana.unit;
+    pin.dataset.zone = cabana.zone;
+    pin.style.left = cabana.x + '%';
+    pin.style.top = cabana.y + '%';
+
+    var color = ZONE_COLORS[cabana.zone] || '#888';
+    var label = cabana.displayNum || '&#9679;';
+
+    pin.innerHTML =
+      '<div class="iw-pin-marker">' +
+        '<div class="iw-pin-dot" style="background:' + color + '"><span>' + label + '</span></div>' +
+        '<div class="iw-pin-shadow"></div>' +
+      '</div>';
+
+    pin.addEventListener('click', function() {
+      openPanel(cabana);
+      highlightSidebarItem(cabana.unit);
+    });
+
+    mapInner.appendChild(pin);
+    frag.appendChild(pin);
+    pinElements.push({ el: pin, cabana: cabana });
+  });
+
+  mapInner.appendChild(frag);
+}
+
+/* ================================================================
+   RENDER CLUSTERS (zone-level groupings at low zoom)
+   ================================================================ */
+function renderClusters() {
+  var frag = document.createDocumentFragment();
+
+  ZONE_ORDER.forEach(function(zoneName) {
+    var zone = ZONES[zoneName];
+    if (!zone) return;
+
+    var cluster = document.createElement('div');
+    cluster.className = 'iw-cluster';
+    cluster.dataset.zone = zoneName;
+    cluster.style.left = zone.cx + '%';
+    cluster.style.top = zone.cy + '%';
+
+    var color = ZONE_COLORS[zoneName] || '#888';
+    cluster.innerHTML =
+      '<div class="iw-cluster-dot" style="background:' + color + '">' +
+        zone.cabanas.length +
+        '<div class="iw-cluster-label">' + escapeHtml(zoneName) + '</div>' +
+      '</div>';
+
+    cluster.addEventListener('click', function() {
+      flyToZone(zoneName);
+    });
+
+    frag.appendChild(cluster);
+    clusterElements.push({ el: cluster, zone: zoneName });
+  });
+
+  mapInner.appendChild(frag);
+}
+
+/* ================================================================
+   PIN VISIBILITY (clustering vs. individual)
+   ================================================================ */
+function updatePinVisibility() {
+  var showClusters = scale < CLUSTER_THRESHOLD;
+
+  pinElements.forEach(function(p) {
+    p.el.classList.toggle('hidden', showClusters);
+  });
+
+  clusterElements.forEach(function(c) {
+    c.el.classList.toggle('hidden', !showClusters);
+  });
+}
+
+/* ================================================================
+   FLY TO / NAVIGATE
+   ================================================================ */
+function flyToZone(zoneName) {
+  var zone = ZONES[zoneName];
+  if (!zone) return;
+
+  var ww = mapArea.clientWidth;
+  var wh = mapArea.clientHeight;
+  scale = 1.8;
+  panX = ww / 2 - (zone.cx / 100 * imgW) * scale;
+  panY = wh / 2 - (zone.cy / 100 * imgH) * scale;
+  mapInner.style.transition = 'transform 0.5s ease';
+  updateTransform();
+  updatePinVisibility();
+  setTimeout(function() { mapInner.style.transition = ''; }, 500);
+
+  /* Open the zone section in sidebar */
+  var section = document.querySelector('.iw-zone-section[data-zone="' + zoneName + '"]');
+  if (section && !section.classList.contains('open')) {
+    section.classList.add('open');
+  }
+}
+
+function flyToCabana(unitName) {
+  var cabana = null;
+  for (var i = 0; i < CABANAS.length; i++) {
+    if (CABANAS[i].unit === unitName) { cabana = CABANAS[i]; break; }
+  }
+  if (!cabana) return;
+
+  var ww = mapArea.clientWidth;
+  var wh = mapArea.clientHeight;
+  scale = 2.2;
+  panX = ww / 2 - (cabana.x / 100 * imgW) * scale;
+  panY = wh / 2 - (cabana.y / 100 * imgH) * scale;
+  mapInner.style.transition = 'transform 0.5s ease';
+  updateTransform();
+  updatePinVisibility();
+  setTimeout(function() { mapInner.style.transition = ''; }, 500);
+
+  /* Bounce the pin */
+  var pin = mapInner.querySelector('[data-unit="' + unitName + '"]');
+  if (pin) {
+    pin.classList.remove('highlight');
+    void pin.offsetWidth;
+    pin.classList.add('highlight');
+  }
+
+  highlightSidebarItem(unitName);
+  openPanel(cabana);
+
+  /* Close mobile sidebar */
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function highlightSidebarItem(unitName) {
+  document.querySelectorAll('.iw-zone-item').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  var item = document.querySelector('[data-cabana-id="' + unitName + '"]');
+  if (item) item.classList.add('active');
+}
+
+/* ================================================================
+   DETAIL PANEL
+   ================================================================ */
+function openPanel(cabana) {
+  var panel = document.getElementById('panel');
+  var backdrop = document.getElementById('panelBackdrop');
+  var title = document.getElementById('panelTitle');
+  var body = document.getElementById('panelBody');
+
+  title.textContent = cabana.unit;
+
+  var color = ZONE_COLORS[cabana.zone] || '#888';
+  var pricing = ZONE_PRICING[cabana.zone];
+  var desc = ZONE_DESCRIPTIONS[cabana.zone] || '';
+
+  var details = ZONE_DETAILS[cabana.zone] || {};
+  var html = '';
+
+  /* Zone tag */
+  html += '<span class="iw-panel-tag" style="background:' + hexToRgba(color, 0.12) + ';color:' + color + ';">' + escapeHtml(cabana.zone) + '</span>';
+
+  /* Video thumbnail — click to open modal */
+  if (details.video) {
+    html += '<div class="iw-video-thumb" onclick="openVideoModal(\'' + escapeAttr(details.video) + '\')">';
+    html += '<img src="https://img.youtube.com/vi/' + escapeAttr(details.video) + '/hqdefault.jpg" alt="Watch video" loading="lazy">';
+    html += '<div class="iw-video-play-btn"></div>';
+    html += '</div>';
+  }
+
+  /* Description */
+  if (desc) {
+    html += '<p class="iw-panel-desc">' + escapeHtml(desc) + '</p>';
+  }
+
+  /* Zone specs (size, capacity, seating, features) */
+  if (details.size || details.capacity || details.seating) {
+    html += '<div class="iw-panel-meta" style="margin-bottom:12px;">';
+    if (details.size) {
+      html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Size</span><span class="iw-panel-meta-value">' + escapeHtml(details.size) + '</span></div>';
+    }
+    if (details.capacity) {
+      html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Capacity</span><span class="iw-panel-meta-value">' + escapeHtml(details.capacity) + '</span></div>';
+    }
+    if (details.seating) {
+      html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Seating</span><span class="iw-panel-meta-value">' + escapeHtml(details.seating) + '</span></div>';
+    }
+    html += '</div>';
+  }
+
+  /* Availability status */
+  if (cabana.available) {
+    html += '<button class="iw-book-btn" onclick="openBooking(\'' + escapeAttr(cabana.rate) + '\', \'' + escapeAttr(cabana.eid) + '\')">Book Now</button>';
+  } else {
+    html += '<div class="iw-sold-out">Sold Out Today</div>';
+  }
+
+  /* Pricing table */
+  if (pricing) {
+    html += '<div style="margin-bottom:16px;">';
+    html += '<div style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--iw-dark);margin-bottom:8px;">Pricing</div>';
+    html += '<div class="iw-panel-meta">';
+    var pricingKeys = ["M/Th","T/W","Fri","Fri Night","Sat","Sun","Jul 3","Jul 3 Night","Jul 4"];
+    pricingKeys.forEach(function(key) {
+      var val = pricing[key];
+      if (val) {
+        html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">' + escapeHtml(key) + '</span><span class="iw-panel-meta-value">' + escapeHtml(val) + '</span></div>';
+      }
+    });
+    html += '</div></div>';
+  }
+
+  /* Meta info */
+  html += '<div class="iw-panel-meta">';
+  html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Zone</span><span class="iw-panel-meta-value">' + escapeHtml(cabana.zone) + '</span></div>';
+  html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Unit</span><span class="iw-panel-meta-value">' + escapeHtml(cabana.unit) + '</span></div>';
+  if (cabana.rate) {
+    html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Status</span><span class="iw-panel-meta-value" style="color:' + (cabana.available ? '#15803D' : '#DC2626') + ';">' + (cabana.available ? 'Available' : 'Booked') + '</span></div>';
+  }
+  html += '</div>';
+
+  body.innerHTML = html;
+  panel.classList.add('open');
+  backdrop.classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('panelBackdrop').classList.remove('open');
+  document.querySelectorAll('.iw-zone-item').forEach(function(el) {
+    el.classList.remove('active');
+  });
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePanel();
+});
+
+/* ================================================================
+   BOOKING STUB
+   ================================================================ */
+function openBooking(rateCode, eid) {
+  /* Will be replaced with RocketRez iframe integration */
+  console.log('[CabanaMap] openBooking called — rateCode:', rateCode, 'eid:', eid);
+}
+
+/* ================================================================
+   AVAILABILITY (architecture — calls server-side proxy)
+   ================================================================ */
+function fetchAvailability() {
+  /*
+   * Calls our backend proxy which handles RocketRez OAuth + API calls.
+   * The proxy caches responses server-side (~10s TTL) to stay within
+   * RocketRez rate limits (60 req/min).
+   *
+   * Expected response format from /api/cabana-availability:
+   * {
+   *   "date": "2026-04-03",
+   *   "zones": [
+   *     {
+   *       "name": "BBQ Cove",
+   *       "capacity": 30,
+   *       "available": 22,
+   *       "reserved": 8,
+   *       "cabanas": [
+   *         { "name": "BBQ Cove 01", "rate": "TR-dxR", "available": true },
+   *         { "name": "BBQ Cove 02", "rate": "TR-dzZ", "available": false },
+   *         ...
+   *       ]
+   *     },
+   *     ...
+   *   ]
+   * }
+   *
+   * Maps to RocketRez Headless API:
+   *   GET /api/v1/headless/products/event/2/schedules?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
+   *   Response: schedules[].seatTypes[].name = zone name
+   *             schedules[].seatTypes[].available = count
+   *             schedules[].seatTypes[].rates[].name = individual cabana
+   */
+
+  var url = '/api/cabana-availability';
+
+  fetch(url).then(function(res) {
+    if (!res.ok) throw new Error('Availability fetch failed: ' + res.status);
+    return res.json();
+  }).then(function(data) {
+    applyAvailability(data);
+  }).catch(function(err) {
+    /* Availability fetch failed — cabanas remain in default "available" state.
+       This is intentional: better to show all as available and let the booking
+       engine handle conflicts than to show nothing. */
+    console.warn('[CabanaMap] Availability fetch failed, using defaults:', err.message);
+  });
+}
+
+function applyAvailability(data) {
+  if (!data || !data.zones) return;
+
+  /* Build lookup: cabana name -> available boolean */
+  var availability = {};
+  data.zones.forEach(function(zone) {
+    if (!zone.cabanas) return;
+    zone.cabanas.forEach(function(c) {
+      availability[c.name] = !!c.available;
+    });
+  });
+
+  /* Update CABANAS state */
+  CABANAS.forEach(function(cabana) {
+    if (cabana.unit in availability) {
+      cabana.available = availability[cabana.unit];
+    }
+  });
+
+  /* Update pin appearance */
+  pinElements.forEach(function(p) {
+    p.el.classList.toggle('booked', !p.cabana.available);
+  });
+
+  /* Update sidebar status badges */
+  CABANAS.forEach(function(cabana) {
+    var badge = document.querySelector('[data-cabana-status="' + cabana.unit + '"]');
+    if (badge) {
+      if (cabana.available) {
+        badge.className = 'iw-zone-item-status available';
+        badge.textContent = 'Available';
+      } else {
+        badge.className = 'iw-zone-item-status booked';
+        badge.textContent = 'Booked';
+      }
+    }
+  });
+}
+
+/* ================================================================
+   PAN & ZOOM
+   ================================================================ */
+mapArea.addEventListener('mousedown', function(e) {
+  if (e.target.closest('.iw-pin') || e.target.closest('.iw-cluster')) return;
+  isDragging = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  startPanX = panX;
+  startPanY = panY;
+  mapArea.classList.add('grabbing');
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (!isDragging) return;
+  panX = startPanX + (e.clientX - dragStartX);
+  panY = startPanY + (e.clientY - dragStartY);
+  updateTransform();
+});
+
+window.addEventListener('mouseup', function() {
+  isDragging = false;
+  mapArea.classList.remove('grabbing');
+});
+
+/* Touch */
+var lastTouchDist = 0;
+mapArea.addEventListener('touchstart', function(e) {
+  if (e.touches.length === 1) {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartY = e.touches[0].clientY;
+    startPanX = panX;
+    startPanY = panY;
+  } else if (e.touches.length === 2) {
+    isDragging = false;
+    lastTouchDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  }
+}, { passive: true });
+
+mapArea.addEventListener('touchmove', function(e) {
+  if (e.touches.length === 1 && isDragging) {
+    panX = startPanX + (e.touches[0].clientX - dragStartX);
+    panY = startPanY + (e.touches[0].clientY - dragStartY);
+    updateTransform();
+  } else if (e.touches.length === 2) {
+    var dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    scale = Math.max(0.3, Math.min(3, scale + (dist - lastTouchDist) * 0.003));
+    lastTouchDist = dist;
+    updateTransform();
+    updatePinVisibility();
+  }
+}, { passive: true });
+
+mapArea.addEventListener('touchend', function() { isDragging = false; });
+
+mapArea.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  var factor = e.deltaY > 0 ? 0.9 : 1.1;
+  var rect = mapArea.getBoundingClientRect();
+  var mx = e.clientX - rect.left;
+  var my = e.clientY - rect.top;
+  var newScale = Math.max(0.3, Math.min(3, scale * factor));
+  panX = mx - (mx - panX) * (newScale / scale);
+  panY = my - (my - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+  updatePinVisibility();
+}, { passive: false });
+
+function zoomMap(dir) {
+  var factor = dir > 0 ? 1.25 : 0.8;
+  var ww = mapArea.clientWidth / 2;
+  var wh = mapArea.clientHeight / 2;
+  var newScale = Math.max(0.3, Math.min(3, scale * factor));
+  panX = ww - (ww - panX) * (newScale / scale);
+  panY = wh - (wh - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+  updatePinVisibility();
+}
+
+function resetMap() {
+  var ww = mapArea.clientWidth;
+  var wh = mapArea.clientHeight;
+  scale = Math.min(ww / imgW, wh / imgH);
+  panX = (ww - imgW * scale) / 2;
+  panY = (wh - imgH * scale) / 2;
+  updateTransform();
+  updatePinVisibility();
+}
+
+/* ================================================================
+   MOBILE SIDEBAR
+   ================================================================ */
+function toggleSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  var toggle = document.getElementById('sidebarToggle');
+  sidebar.classList.add('open');
+  sidebar.style.transform = '';
+  toggle.classList.remove('visible');
+}
+
+function collapseSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  var toggle = document.getElementById('sidebarToggle');
+  sidebar.classList.remove('open');
+  sidebar.style.transform = 'translateX(-100%)';
+  toggle.classList.add('visible');
+}
+
+/* ================================================================
+   UTILITY
+   ================================================================ */
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
+function escapeAttr(str) {
+  return str.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function hexToRgba(hex, alpha) {
+  var r = parseInt(hex.slice(1, 3), 16);
+  var g = parseInt(hex.slice(3, 5), 16);
+  var b = parseInt(hex.slice(5, 7), 16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+</script>
+
+<!-- Video Modal -->
+<div class="iw-video-modal-overlay" id="videoModal" onclick="closeVideoModal()">
+  <div class="iw-video-modal" onclick="event.stopPropagation()">
+    <button class="iw-video-modal-close" onclick="closeVideoModal()">&times;</button>
+    <iframe id="videoModalIframe" src="" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+  </div>
+</div>
+<script>
+function openVideoModal(videoId) {
+  var modal = document.getElementById('videoModal');
+  var iframe = document.getElementById('videoModalIframe');
+  iframe.src = 'https://www.youtube.com/embed/' + videoId + '?rel=0&modestbranding=1&autoplay=1';
+  modal.classList.add('active');
+  document.addEventListener('keydown', videoModalEsc);
+}
+function closeVideoModal() {
+  var modal = document.getElementById('videoModal');
+  var iframe = document.getElementById('videoModalIframe');
+  modal.classList.remove('active');
+  iframe.src = '';
+  document.removeEventListener('keydown', videoModalEsc);
+}
+function videoModalEsc(e) { if (e.key === 'Escape') closeVideoModal(); }
+</script>
+</body>
+</html>
