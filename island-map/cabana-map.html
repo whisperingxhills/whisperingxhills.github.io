@@ -33,6 +33,103 @@
 
 html, body { height: 100%; overflow: hidden; }
 
+/* ── Video Modal ── */
+.iw-video-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.iw-video-modal-overlay.active { display: flex; }
+.iw-video-modal {
+  position: relative;
+  width: 90vw;
+  max-width: 900px;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  cursor: default;
+}
+.iw-video-modal iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.iw-video-modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.iw-video-modal-close:hover { background: rgba(255,255,255,0.3); }
+
+/* Video thumbnail in sidebar */
+.iw-video-thumb {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  margin: 12px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #000;
+}
+.iw-video-thumb img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s, brightness 0.3s;
+}
+.iw-video-thumb:hover img {
+  transform: scale(1.05);
+  brightness: 0.8;
+}
+.iw-video-play-btn {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px; height: 56px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+.iw-video-thumb:hover .iw-video-play-btn {
+  background: var(--iw-blue);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+.iw-video-play-btn::after {
+  content: '';
+  display: block;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 10px 0 10px 18px;
+  border-color: transparent transparent transparent white;
+  margin-left: 3px;
+}
+
 body {
   font-family: 'Inter', sans-serif;
   background: var(--iw-dark);
@@ -1406,10 +1503,11 @@ function openPanel(cabana) {
   /* Zone tag */
   html += '<span class="iw-panel-tag" style="background:' + hexToRgba(color, 0.12) + ';color:' + color + ';">' + escapeHtml(cabana.zone) + '</span>';
 
-  /* Video embed */
+  /* Video thumbnail — click to open modal */
   if (details.video) {
-    html += '<div style="position:relative;width:100%;padding-bottom:56.25%;margin:12px 0;border-radius:8px;overflow:hidden;background:#000;">';
-    html += '<iframe src="https://www.youtube.com/embed/' + escapeAttr(details.video) + '?rel=0&modestbranding=1" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen loading="lazy"></iframe>';
+    html += '<div class="iw-video-thumb" onclick="openVideoModal(\'' + escapeAttr(details.video) + '\')">';
+    html += '<img src="https://img.youtube.com/vi/' + escapeAttr(details.video) + '/hqdefault.jpg" alt="Watch video" loading="lazy">';
+    html += '<div class="iw-video-play-btn"></div>';
     html += '</div>';
   }
 
@@ -1716,5 +1814,29 @@ function hexToRgba(hex, alpha) {
 }
 </script>
 
+<!-- Video Modal -->
+<div class="iw-video-modal-overlay" id="videoModal" onclick="closeVideoModal()">
+  <div class="iw-video-modal" onclick="event.stopPropagation()">
+    <button class="iw-video-modal-close" onclick="closeVideoModal()">&times;</button>
+    <iframe id="videoModalIframe" src="" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+  </div>
+</div>
+<script>
+function openVideoModal(videoId) {
+  var modal = document.getElementById('videoModal');
+  var iframe = document.getElementById('videoModalIframe');
+  iframe.src = 'https://www.youtube.com/embed/' + videoId + '?rel=0&modestbranding=1&autoplay=1';
+  modal.classList.add('active');
+  document.addEventListener('keydown', videoModalEsc);
+}
+function closeVideoModal() {
+  var modal = document.getElementById('videoModal');
+  var iframe = document.getElementById('videoModalIframe');
+  modal.classList.remove('active');
+  iframe.src = '';
+  document.removeEventListener('keydown', videoModalEsc);
+}
+function videoModalEsc(e) { if (e.key === 'Escape') closeVideoModal(); }
+</script>
 </body>
 </html>
