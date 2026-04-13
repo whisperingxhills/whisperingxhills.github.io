@@ -397,3 +397,14 @@ table.budget td { padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0
 
 </body>
 </html>
+<style>
+img { pointer-events: none; user-select: none; -webkit-user-drag: none; }
+body { -webkit-user-select: none; user-select: none; }
+</style>
+<script>
+document.addEventListener("contextmenu", function(e){ e.preventDefault(); });
+document.addEventListener("keydown", function(e){
+  if(e.ctrlKey && (e.key==="s"||e.key==="u"||e.key==="p"||e.key==="c")) e.preventDefault();
+});
+document.addEventListener("dragstart", function(e){ e.preventDefault(); });
+</script>
