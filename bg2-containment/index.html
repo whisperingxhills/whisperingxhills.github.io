@@ -13,14 +13,19 @@
   box-sizing: border-box;
 }
 body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
   font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
   color: #ffffff;
   background: #000000;
 }
 .slide {
-  width: 11in;
+  width: 100%;
+  max-width: 11in;
   min-height: 8.5in;
-  max-height: 8.5in;
+  max-height: none;
   overflow: hidden;
   padding: 0.7in 1in;
   page-break-after: always;
@@ -93,7 +98,8 @@ table.budget td { padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0
 <body>
 
 <!-- SLIDE 1: COVER -->
-<div class="slide center" style="display: table; width: 11in;">
+<div class="slide center" style="display: table; width: 100%;
+  max-width: 11in;">
   <div style="display: table-cell; vertical-align: middle; text-align: center; padding: 0 1.5in;">
     <p class="tag" style="margin-bottom: 0.4in;">Production Pitch</p>
     <h1 style="font-size: 50pt;">BLOOD GAMES:</h1>
@@ -362,7 +368,8 @@ table.budget td { padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0
 </div>
 
 <!-- SLIDE 8: THE ASK -->
-<div class="slide center" style="display: table; width: 11in;">
+<div class="slide center" style="display: table; width: 100%;
+  max-width: 11in;">
   <div style="display: table-cell; vertical-align: middle; text-align: center; padding: 0 1.5in;">
     <p class="tag">The Ask</p>
     <h1 style="font-size: 38pt; margin-bottom: 0.4in;">Blood Games: Containment</h1>
