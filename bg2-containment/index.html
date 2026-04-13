@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+@page {
+  size: 11in 8.5in;
+  margin: 0;
+}
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #ffffff;
+  background: #000000;
+}
+.slide {
+  width: 11in;
+  min-height: 8.5in;
+  max-height: 8.5in;
+  overflow: hidden;
+  padding: 0.7in 1in;
+  page-break-after: always;
+  page-break-inside: avoid;
+  position: relative;
+  background: #000000;
+}
+.slide:last-child {
+  page-break-after: avoid;
+}
+
+/* Typography */
+h1 { font-size: 42pt; font-weight: 800; letter-spacing: -1px; line-height: 1.1; color: #ffffff; }
+h2 { font-size: 26pt; font-weight: 700; margin-bottom: 0.3in; color: #e94560; }
+h3 { font-size: 16pt; font-weight: 600; margin-bottom: 0.12in; color: #ffffff; }
+p  { font-size: 12pt; line-height: 1.5; color: #e0e0e0; }
+
+.tag { font-size: 10pt; color: #e94560; text-transform: uppercase; letter-spacing: 3px; font-weight: 600; margin-bottom: 0.12in; }
+.subtitle { font-size: 15pt; color: #aaaaaa; margin-top: 0.3in; font-weight: 400; }
+.highlight { color: #e94560; font-weight: 600; }
+.red-line { width: 50px; height: 3px; background: #e94560; margin-bottom: 0.2in; }
+
+/* Layout */
+.two-col { display: table; width: 100%; }
+.two-col .col { display: table-cell; vertical-align: top; width: 48%; }
+.two-col .col:first-child { padding-right: 0.4in; }
+.two-col .col:last-child { padding-left: 0.4in; }
+.three-col { display: table; width: 100%; }
+.three-col .col { display: table-cell; vertical-align: top; width: 32%; padding: 0 0.15in; }
+
+/* Cards */
+.card {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 0.18in 0.22in;
+  margin-bottom: 0.12in;
+}
+.card-red {
+  background: rgba(233,69,96,0.12);
+  border: 1px solid rgba(233,69,96,0.35);
+  border-radius: 10px;
+  padding: 0.18in 0.22in;
+  margin-bottom: 0.12in;
+}
+
+/* Stats */
+.stat { font-size: 34pt; font-weight: 800; color: #e94560; }
+.stat-label { font-size: 10pt; color: #aaaaaa; text-transform: uppercase; letter-spacing: 1px; }
+
+/* Lists */
+ul { list-style: none; padding: 0; }
+ul li { font-size: 12pt; color: #e0e0e0; padding: 4px 0 4px 18px; position: relative; line-height: 1.4; }
+ul li:before { content: "\2192"; position: absolute; left: 0; color: #e94560; font-weight: bold; }
+
+/* Table */
+table.budget { width: 100%; border-collapse: collapse; font-size: 11pt; }
+table.budget th { text-align: left; padding: 8px 10px; color: #e94560; border-bottom: 1px solid rgba(233,69,96,0.3); font-size: 9pt; text-transform: uppercase; letter-spacing: 1px; }
+table.budget td { padding: 7px 10px; border-bottom: 1px solid rgba(255,255,255,0.05); color: #e0e0e0; }
+
+/* Footer */
+.footer { position: absolute; bottom: 0.4in; left: 1in; right: 1in; display: table; width: calc(100% - 2in); font-size: 9pt; color: #777777; }
+.footer span:first-child { float: left; }
+.footer span:last-child { float: right; }
+
+/* Center helper */
+.center { text-align: center; }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: COVER -->
+<div class="slide center" style="display: table; width: 11in;">
+  <div style="display: table-cell; vertical-align: middle; text-align: center; padding: 0 1.5in;">
+    <p class="tag" style="margin-bottom: 0.4in;">Production Pitch</p>
+    <h1 style="font-size: 50pt;">BLOOD GAMES:</h1>
+    <h1 style="font-size: 50pt; color: #e94560;">CONTAINMENT</h1>
+    <p class="subtitle" style="max-width: 6in; margin: 0.4in auto 0;">A full-service production proposal for Fishtank's next event season - professional haunted attraction design, live special effects, sound design, original graphics, and a ready-built team to execute it all.</p>
+    <div style="margin-top: 0.7in;">
+      <p style="font-size: 13pt; color: #aaaaaa;">Presented by</p>
+      <p style="font-size: 18pt; color: #ffffff; font-weight: 600; margin-top: 4px;">Theodore Summers &amp; Team</p>
+      <p style="font-size: 11pt; color: #999999; margin-top: 4px;">Scenic Design - SFX - Sound Engineering - Graphics - Creative Direction</p>
+    </div>
+  </div>
+  <div class="footer"><span>CONFIDENTIAL</span><span>2026</span></div>
+</div>
+
+<!-- SLIDE 2: THE OPPORTUNITY -->
+<div class="slide">
+  <p class="tag">The Opportunity</p>
+  <h2>Blood Games Was a Proof of Concept. Now Make It a Spectacle.</h2>
+  <div class="two-col">
+    <div class="col">
+      <p>Blood Games 1 proved the format works - an event-style spinoff between main seasons that deepens lore, brings back fan favorites, and keeps the audience engaged year-round.</p>
+      <br>
+      <p>But the outdoor format had limitations: weather dependency, limited infrastructure for cameras and networking, no controlled environment for repeatable high-impact moments, and production costs inflated by logistics.</p>
+      <br>
+      <p>Blood Games 2 solves all of this by moving <span class="highlight">indoors</span> - into a space purpose-built for chaos.</p>
+    </div>
+    <div class="col">
+      <div class="card center" style="margin-bottom: 0.2in;">
+        <p class="stat-label">BG1 Peak Viewers</p>
+        <p class="stat">~10K</p>
+        <p style="font-size: 10pt; color: #999999;">vs 24K (S1) / 17K (S2)</p>
+      </div>
+      <div class="card center" style="margin-bottom: 0.2in;">
+        <p class="stat-label">BG1 Est. Revenue</p>
+        <p class="stat">$500-700K</p>
+        <p style="font-size: 10pt; color: #999999;">2-week run, compressed format</p>
+      </div>
+      <div class="card-red center">
+        <p class="stat-label">BG2 Potential</p>
+        <p class="stat" style="color: #ffffff;">Higher</p>
+        <p style="font-size: 10pt; color: #e0e0e0;">Better production = more viewers = more revenue</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>CONFIDENTIAL</span><span>Blood Games: Containment - Production Pitch</span></div>
+</div>
+
+<!-- SLIDE 3: THE CONCEPT -->
+<div class="slide">
+  <p class="tag">The Concept</p>
+  <h2>Containment. No Way Out.</h2>
+  <div class="two-col">
+    <div class="col">
+      <h3>The Setting</h3>
+      <p>An abandoned mall or large retail space - 15,000 to 30,000 sq ft of controllable, camera-ready environment. Multiple distinct zones. Full power infrastructure. Climate controlled. <span class="highlight">We will help source and secure the venue</span> using our network of production contacts and location experience.</p>
+      <br>
+      <h3>The Theme</h3>
+      <p>Zombie apocalypse. The contestants are locked inside an abandoned facility as the outbreak spreads. The space transforms around them - walls break, explosions erupt, creatures appear, power goes out. Nothing is safe. Nothing is what it seems.</p>
+      <br>
+      <h3>The Twist</h3>
+      <p>Every "disaster" is a precisely engineered, remotely triggered special effect - controlled by production in real time. The contestants don't know what's real and what isn't. The audience does.</p>
+    </div>
+    <div class="col">
+      <h3>Why Indoor &gt; Outdoor</h3>
+      <div class="card">
+        <p style="font-size: 11pt;"><span class="highlight">Camera Infrastructure</span> - Hardwired power + networking. No battery swaps. No signal drops. 24/7 coverage.</p>
+      </div>
+      <div class="card">
+        <p style="font-size: 11pt;"><span class="highlight">SFX Control</span> - Every effect is pre-rigged, DMX-controlled, and repeatable. No weather dependency.</p>
+      </div>
+      <div class="card">
+        <p style="font-size: 11pt;"><span class="highlight">Set Design</span> - Build once, dress multiple zones. Retail spaces have open floor plans, high ceilings, existing electrical.</p>
+      </div>
+      <div class="card">
+        <p style="font-size: 11pt;"><span class="highlight">Viewer Experience</span> - Better lighting = better cameras = better content. Controlled atmospherics on demand.</p>
+      </div>
+      <div class="card">
+        <p style="font-size: 11pt;"><span class="highlight">Safety</span> - Controlled environment. No wildlife, no exposure, no terrain hazards. Every SFX is crowd-rated and haunt-tested.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>CONFIDENTIAL</span><span>Blood Games: Containment - Production Pitch</span></div>
+</div>
+
+<!-- SLIDE 4: EFFECTS SHOWCASE -->
+<div class="slide">
+  <p class="tag">Effects Showcase</p>
+  <h2>What We Bring to the Screen</h2>
+  <p style="margin-bottom: 0.25in;">Every effect below is <span class="highlight">crowd-safe, DMX-controlled, and remotely triggered</span> - designed for live audiences in haunted attractions. Zero pyrotechnics. Zero danger. Maximum impact.</p>
+  <div class="three-col">
+    <div class="col">
+      <div class="card-red">
+        <h3 style="font-size: 13pt; color: #e94560;">Car Crash</h3>
+        <p style="font-size: 10pt;">A pneumatic ram pushes a real car front-clip through a breakaway wall. Headlights flash, horn blares, speakers deliver a massive crash sound through a sub. Contestants think a car just drove through the building.</p>
+        <p style="font-size: 10pt; margin-top: 6px;"><span class="highlight">Est. Cost: ~$2,500</span></p>
+      </div>
+      <div class="card-red">
+        <h3 style="font-size: 13pt; color: #e94560;">Dumpster Explosion</h3>
+        <p style="font-size: 10pt;">Geyser fog machine fires a 15ft column of vapor, synced to a strobe flash, sub-bass rumble, and scattered lightweight debris. Reads as an explosion on camera and in person.</p>
+        <p style="font-size: 10pt; margin-top: 6px;"><span class="highlight">Est. Cost: ~$2,600</span></p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-red">
+        <h3 style="font-size: 13pt; color: #e94560;">Power Outage</h3>
+        <p style="font-size: 10pt;">DMX controller kills all set lighting simultaneously. Emergency lights flicker on. Sirens fade in. Total environmental control - production decides when the lights come back.</p>
+        <p style="font-size: 10pt; margin-top: 6px;"><span class="highlight">Est. Cost: ~$1,600</span></p>
+      </div>
+      <div class="card-red">
+        <h3 style="font-size: 13pt; color: #e94560;">Creature Reveal</h3>
+        <p style="font-size: 10pt;">Fog burst + strobe + directional spot + audio sting. A zombie appears from nowhere, fully lit for 2 seconds, then vanishes into blackout. Simple rig, massive impact.</p>
+        <p style="font-size: 10pt; margin-top: 6px;"><span class="highlight">Est. Cost: ~$1,000</span></p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card-red">
+        <h3 style="font-size: 13pt; color: #e94560;">Atmospheric Zones</h3>
+        <p style="font-size: 10pt;">Full environmental dressing per zone - haze, spatial audio, accent lighting, scenic paint. Each zone feels like a different part of the outbreak. Controllable mood on demand.</p>
+        <p style="font-size: 10pt; margin-top: 6px;"><span class="highlight">Est. Cost: ~$1,000/zone</span></p>
+      </div>
+      <div class="card-red">
+        <h3 style="font-size: 13pt; color: #e94560;">Monster Costumes</h3>
+        <p style="font-size: 10pt;">Professional SFX makeup + foam prosthetics + distressed wardrobe. Haunted house grade - designed to look real under direct lighting and on camera.</p>
+        <p style="font-size: 10pt; margin-top: 6px;"><span class="highlight">Est. Cost: &lt;$250/character</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>CONFIDENTIAL</span><span>Blood Games: Containment - Production Pitch</span></div>
+</div>
+
+<!-- SLIDE 5: BUDGET -->
+<div class="slide">
+  <p class="tag">Production Budget</p>
+  <h2>Complete SFX Package - Estimated Costs</h2>
+  <table class="budget">
+    <tr><th>Category</th><th>Item</th><th>Est. Cost</th></tr>
+    <tr><td><strong>Hero Effects</strong></td><td></td><td></td></tr>
+    <tr><td></td><td>Car Crash Through Wall (pneumatic + audio + lighting)</td><td>$2,500</td></tr>
+    <tr><td></td><td>Dumpster Explosion (geyser + sub + strobe + debris)</td><td>$2,600</td></tr>
+    <tr><td></td><td>Power Outage System (controller + emergency lighting + audio)</td><td>$1,600</td></tr>
+    <tr><td></td><td>Creature Reveals x3 (fog + lighting + audio)</td><td>$3,000</td></tr>
+    <tr><td></td><td>Additional Scare Gags x4</td><td>$2,000</td></tr>
+    <tr><td><strong>Atmospherics</strong></td><td></td><td></td></tr>
+    <tr><td></td><td>Zone Dressing x5 zones (lighting + haze + audio + scenic)</td><td>$5,000</td></tr>
+    <tr><td></td><td>Haze/Fog Fluid (full run)</td><td>$500</td></tr>
+    <tr><td><strong>Audio</strong></td><td></td><td></td></tr>
+    <tr><td></td><td>Main PA System (subs + tops for whole venue)</td><td>$4,000</td></tr>
+    <tr><td></td><td>Zone Speakers x10</td><td>$4,000</td></tr>
+    <tr><td></td><td>Original Sound Design (full season)</td><td>Included</td></tr>
+    <tr><td><strong>Costumes &amp; Makeup</strong></td><td></td><td></td></tr>
+    <tr><td></td><td>Zombie Characters x8 (full costume + SFX makeup)</td><td>$2,000</td></tr>
+    <tr><td><strong>Graphics</strong></td><td></td><td></td></tr>
+    <tr><td></td><td>All season graphics, in-world signage, environmental design</td><td>Included</td></tr>
+    <tr><td><strong>Control Systems</strong></td><td></td><td></td></tr>
+    <tr><td></td><td>DMX Controllers + Infrastructure (relay packs, wireless, cabling)</td><td>$3,372</td></tr>
+    <tr><td><strong>Set Construction</strong></td><td></td><td></td></tr>
+    <tr><td></td><td>Breakaway walls, faux construction, scenic elements</td><td>$3,000</td></tr>
+    <tr><td><strong>Pneumatics</strong></td><td></td><td></td></tr>
+    <tr><td></td><td>2x Mid-size quiet compressors + air lines + fittings</td><td>$800</td></tr>
+    <tr><td></td><td>Cylinders, valves, reservoirs (car gag)</td><td>$800</td></tr>
+    <tr style="border-top: 2px solid #e94560;">
+      <td><strong style="color: #e94560; font-size: 13pt;">TOTAL SFX PACKAGE</strong></td>
+      <td></td>
+      <td><strong style="color: #e94560; font-size: 13pt;">~$35,172</strong></td>
+    </tr>
+  </table>
+  <div class="card-red" style="margin-top: 0.2in; text-align: center;">
+    <p style="font-size: 12pt; color: #ffffff;"><strong>Sound design, original graphics, and signage are included at no additional material cost.</strong> This total covers materials and equipment only. Team labor is billed at a discussed, fair day rate - no markup surprises, no hidden fees.</p>
+  </div>
+  <div class="footer"><span>CONFIDENTIAL</span><span>Blood Games: Containment - Production Pitch</span></div>
+</div>
+
+<!-- SLIDE 6: SERVICES -->
+<div class="slide">
+  <p class="tag">What We Deliver</p>
+  <h2>Full-Service Production Partnership</h2>
+  <div class="two-col">
+    <div class="col">
+      <div class="card">
+        <h3 style="font-size: 13pt; color: #e94560;">Creative Direction &amp; Set Design</h3>
+        <p style="font-size: 11pt;">Creative is a shared effort - your vision, our professional execution. We bring scenic design, fabrication, painting, finishing, and detailing at a level that matches the ambition. We can take the helm where needed, hand it back when you want it. One creative team, no walls.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size: 13pt; color: #e94560;">Live Special Effects</h3>
+        <p style="font-size: 11pt;">Pneumatic effects, fog systems, DMX lighting, creature reveals, simulated disasters. All crowd-safe, all remotely controlled, all designed for maximum impact on camera and in person.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size: 13pt; color: #e94560;">Sound Design &amp; Audio</h3>
+        <p style="font-size: 11pt;">We handle <span class="highlight">all audio for the entire season</span> - ambient soundscapes, SFX triggers, spatial audio per zone, full PA management. Mixed by a Dolby Atmos / 5.1 surround specialist.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size: 13pt; color: #e94560;">Graphics &amp; Visual Design</h3>
+        <p style="font-size: 11pt;">We handle <span class="highlight">all graphics for the entire season</span> - in-world signage, environmental graphics, promotional assets, and any visual design needs. One team, one look, total consistency.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="card">
+        <h3 style="font-size: 13pt; color: #e94560;">SFX Makeup &amp; Costumes</h3>
+        <p style="font-size: 11pt;">Zombie/creature design, prosthetic application, costume creation. High-impact looks that hold up under direct lighting and HD cameras. Full character kits under $250 each.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size: 13pt; color: #e94560;">Challenge Writing &amp; Creative</h3>
+        <p style="font-size: 11pt;">We understand Fishtank's humor, audience, and format. We can help write challenges that integrate with the SFX infrastructure - use the environment as a character, not just a backdrop.</p>
+      </div>
+      <div class="card">
+        <h3 style="font-size: 13pt; color: #e94560;">Venue Sourcing &amp; Build Team</h3>
+        <p style="font-size: 11pt;">We will <span class="highlight">help find and secure the venue</span> using our production location network. Full crew available - carpenters, scenic artists, SFX technicians. Load-in, build, operate, and strike.</p>
+      </div>
+      <div class="card-red">
+        <h3 style="font-size: 13pt; color: #ffffff;">Fair &amp; Transparent Pricing</h3>
+        <p style="font-size: 11pt;">All team members - including myself - work off a <span class="highlight">discussed, fair day rate</span>. No agency markups, no surprise invoices. The budget on the previous page is materials only. Labor is a separate, straightforward conversation.</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>CONFIDENTIAL</span><span>Blood Games: Containment - Production Pitch</span></div>
+</div>
+
+<!-- SLIDE 7: CREDENTIALS -->
+<div class="slide">
+  <p class="tag">Credentials</p>
+  <h2>Who's Behind This</h2>
+  <div class="two-col">
+    <div class="col">
+      <h3>Theodore Summers</h3>
+      <div class="red-line"></div>
+      <h3 style="font-size: 12pt; color: #e94560; margin-bottom: 0.08in;">Themed Attractions</h3>
+      <ul>
+        <li>Universal Studios - Halloween Horror Nights (Scenic Design, Finishing, Painting)</li>
+        <li>Six Flags - Fright Fest scenic and SFX</li>
+        <li>SeaWorld, Cedar Fair, Knott's Berry Farm</li>
+        <li>Pennhurst Asylum, Eloise Asylum</li>
+        <li>13th Floor - Old Joliet Prison</li>
+        <li>Consulting for 30+ haunted attractions nationwide</li>
+        <li>Founder &amp; Operator - Fresno Fright Nights (6-acre, 4-attraction seasonal haunt)</li>
+      </ul>
+      <h3 style="font-size: 12pt; color: #e94560; margin-top: 0.15in; margin-bottom: 0.08in;">Audio Engineering</h3>
+      <ul>
+        <li>Sound Design - MachineGames / Bethesda (Wolfenstein: The New Order)</li>
+        <li>Pre-mastering - Sony Music Entertainment (Epic Records)</li>
+        <li>Commercial - BetterHelp, State Farm Insurance</li>
+        <li>Dolby Atmos &amp; 5.1 surround mixing</li>
+      </ul>
+    </div>
+    <div class="col">
+      <h3 style="font-size: 12pt; color: #e94560; margin-bottom: 0.08in;">Software &amp; Community</h3>
+      <ul>
+        <li>Built Daily Fish Facts - Fishtank's community companion app</li>
+        <li>Prediction markets, user economy, real-time leaderboards</li>
+        <li>1,200+ registered users, active daily engagement</li>
+      </ul>
+      <div class="card-red" style="margin-top: 0.2in;">
+        <h3 style="font-size: 13pt; color: #ffffff;">Why This Matters</h3>
+        <p style="font-size: 11pt;">This isn't an outside vendor pitching a service they Googled. This is:</p>
+        <ul>
+          <li style="font-size: 11pt;">A team that has built sets for the biggest names in themed entertainment</li>
+          <li style="font-size: 11pt;">An operator who runs their own haunt - understands budgets, logistics, and safety from the ownership side</li>
+          <li style="font-size: 11pt;">A sound engineer at the AAA game / major label level</li>
+          <li style="font-size: 11pt;">A developer who already built for the Fishtank community - understands the audience from the inside</li>
+          <li style="font-size: 11pt;">People who speak your language. Get the humor. Know what makes good content vs. what just looks expensive.</li>
+          <li style="font-size: 11pt;"><span class="highlight">A full team already in place</span> - carpenters, scenic artists, SFX techs - ready to mobilize</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="footer"><span>CONFIDENTIAL</span><span>Blood Games: Containment - Production Pitch</span></div>
+</div>
+
+<!-- SLIDE 8: THE ASK -->
+<div class="slide center" style="display: table; width: 11in;">
+  <div style="display: table-cell; vertical-align: middle; text-align: center; padding: 0 1.5in;">
+    <p class="tag">The Ask</p>
+    <h1 style="font-size: 38pt; margin-bottom: 0.4in;">Blood Games: Containment</h1>
+    <h1 style="font-size: 38pt; color: #e94560;">Let's talk.</h1>
+    <div style="max-width: 7in; text-align: left; margin: 0.4in auto 0;">
+      <div class="card" style="margin-bottom: 0.15in;">
+        <p style="font-size: 13pt;"><span class="highlight">Step 1:</span> A conversation. Walk your team through the effects in person or on a call. Show what's possible.</p>
+      </div>
+      <div class="card" style="margin-bottom: 0.15in;">
+        <p style="font-size: 13pt;"><span class="highlight">Step 2:</span> Scope the venue. We help source locations, scout them with you, and tell you exactly what we can build and what it costs.</p>
+      </div>
+      <div class="card" style="margin-bottom: 0.15in;">
+        <p style="font-size: 13pt;"><span class="highlight">Step 3:</span> Build it. One team handles scenic, SFX, audio, and graphics. Creative stays collaborative - your show, our hands. We build the world you run.</p>
+      </div>
+    </div>
+    <div style="margin-top: 0.5in;">
+      <p style="font-size: 15pt; color: #ffffff; font-weight: 600;">Theodore Summers</p>
+      <p style="font-size: 12pt; color: #aaaaaa;">theodoretsummersprof@gmail.com</p>
+      <p style="font-size: 11pt; color: #aaaaaa; margin-top: 4px;">Scenic Design - Live SFX - Sound Engineering - Graphics - Creative Direction</p>
+      <p style="font-size: 11pt; color: #999999; margin-top: 4px;">Team in place. Ready to mobilize.</p>
+    </div>
+  </div>
+  <div class="footer"><span>CONFIDENTIAL</span><span>Blood Games: Containment - Production Pitch</span></div>
+</div>
+
+</body>
+</html>
