@@ -1533,7 +1533,7 @@ function openPanel(cabana) {
 
   /* Availability status */
   if (cabana.available) {
-    html += '<button class="iw-book-btn" onclick="openBooking(\'' + escapeAttr(cabana.rate) + '\', \'' + escapeAttr(cabana.eid) + '\')">Book Now</button>';
+    html += '<button class="iw-book-btn" onclick="openBooking(\'' + escapeAttr(cabana.root || '') + '\', \'' + escapeAttr(cabana.eid) + '\', \'' + escapeAttr(cabana.unit) + '\')">Book Now</button>';
   } else {
     html += '<div class="iw-sold-out">Sold Out Today</div>';
   }
@@ -1567,12 +1567,44 @@ document.addEventListener('keydown', function(e) {
 /* ================================================================
    BOOKING STUB
    ================================================================ */
-function openBooking(rateCode, eid) {
-  /* Opens the park's cabana booking page.
-     When RocketRez headless API is enabled, this will deep-link
-     to the specific cabana using rateCode and eid. */
-  window.open('https://islandwaterpark.com/cabanas/', '_blank');
+function openBooking(root, eid, unitName) {
+  /* Opens RocketRez web engine in a modal for the selected cabana's zone */
+  var modal = document.getElementById('bookingModal');
+  var container = document.getElementById('bookingEngineContainer');
+  var title = document.getElementById('bookingModalTitle');
+
+  title.textContent = unitName ? ('Book ' + unitName) : 'Book Cabana';
+
+  /* Clear previous engine instance */
+  container.innerHTML = '';
+
+  /* Create the RocketRez embed div */
+  var engineDiv = document.createElement('div');
+  engineDiv.setAttribute('eid', eid);
+  engineDiv.setAttribute('root', root);
+  engineDiv.setAttribute('id', 'FlatlandWebEngine');
+  container.appendChild(engineDiv);
+
+  /* Load the RocketRez web engine script */
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src = 'https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js';
+  script.async = true;
+  container.appendChild(script);
+
+  modal.classList.add('active');
+  document.addEventListener('keydown', bookingModalEsc);
 }
+
+function closeBookingModal() {
+  var modal = document.getElementById('bookingModal');
+  var container = document.getElementById('bookingEngineContainer');
+  modal.classList.remove('active');
+  container.innerHTML = '';
+  document.removeEventListener('keydown', bookingModalEsc);
+}
+
+function bookingModalEsc(e) { if (e.key === 'Escape') closeBookingModal(); }
 
 /* ================================================================
    AVAILABILITY (architecture — calls server-side proxy)
@@ -1805,6 +1837,17 @@ function hexToRgba(hex, alpha) {
   return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
 }
 </script>
+
+<!-- Booking Modal -->
+<div class="iw-video-modal-overlay" id="bookingModal" onclick="closeBookingModal()">
+  <div style="position:relative;width:90vw;max-width:960px;height:85vh;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);cursor:default;" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--iw-darker);color:#fff;">
+      <span id="bookingModalTitle" style="font-weight:700;font-size:16px;">Book Cabana</span>
+      <button onclick="closeBookingModal()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:0 4px;">&times;</button>
+    </div>
+    <div id="bookingEngineContainer" style="width:100%;height:calc(100% - 48px);overflow-y:auto;padding:16px;"></div>
+  </div>
+</div>
 
 <!-- Video Modal -->
 <div class="iw-video-modal-overlay" id="videoModal" onclick="closeVideoModal()">
