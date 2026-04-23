@@ -754,6 +754,11 @@ body {
     </div>
     <button onclick="collapseSidebar()" style="background:rgba(255,255,255,0.15);border:none;color:white;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Hide sidebar">&#10005;</button>
   </div>
+  <div style="padding:12px 16px;background:var(--iw-blue-light);border-bottom:1px solid var(--iw-border);">
+    <label for="datePicker" style="font-size:12px;font-weight:600;color:var(--iw-dark);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Select Date</label>
+    <input type="date" id="datePicker" onchange="onDateChange()" style="width:100%;padding:8px 12px;border:1px solid var(--iw-border);border-radius:8px;font-size:14px;font-family:Inter,sans-serif;color:var(--iw-dark);background:#fff;cursor:pointer;">
+    <div id="dateStatus" style="font-size:11px;color:var(--iw-gray);margin-top:4px;"></div>
+  </div>
   <div class="iw-sidebar-body" id="sidebarBody">
     <!-- Injected by JS -->
   </div>
@@ -1612,6 +1617,28 @@ function closeBookingModal() {
 function bookingModalEsc(e) { if (e.key === 'Escape') closeBookingModal(); }
 
 /* ================================================================
+   DATE PICKER
+   ================================================================ */
+(function initDatePicker() {
+  var picker = document.getElementById('datePicker');
+  if (!picker) return;
+  var today = new Date().toISOString().split('T')[0];
+  picker.value = today;
+  picker.min = today;
+})();
+
+function onDateChange() {
+  var statusEl = document.getElementById('dateStatus');
+  if (statusEl) statusEl.textContent = 'Loading availability...';
+
+  /* Reset all cabanas to available before fetching */
+  CABANAS.forEach(function(c) { c.available = true; });
+  pinElements.forEach(function(p) { p.el.classList.remove('booked'); });
+
+  fetchAvailability();
+}
+
+/* ================================================================
    AVAILABILITY (architecture — calls server-side proxy)
    ================================================================ */
 function fetchAvailability() {
@@ -1646,22 +1673,34 @@ function fetchAvailability() {
    *             schedules[].seatTypes[].rates[].name = individual cabana
    */
 
-  /* Live availability disabled until RocketRez enables headless integration.
-     All cabanas default to "available". Uncomment when API is ready. */
   var AVAILABILITY_API = 'https://dailyfishfacts.com/api/cabana-availability';
-  var url = AVAILABILITY_API + '?date=' + new Date().toISOString().split('T')[0];
+  var selectedDate = document.getElementById('datePicker') ? document.getElementById('datePicker').value : new Date().toISOString().split('T')[0];
+  var url = AVAILABILITY_API + '?date=' + selectedDate;
 
-  return; /* DISABLED — remove this line when headless API is enabled */
+  var statusEl = document.getElementById('dateStatus');
 
   fetch(url).then(function(res) {
     if (!res.ok) throw new Error('Availability fetch failed: ' + res.status);
     return res.json();
   }).then(function(data) {
     applyAvailability(data);
+    if (statusEl) {
+      if (!data.hasSchedules) {
+        statusEl.textContent = 'No cabanas available on this date';
+        statusEl.style.color = '#DC2626';
+      } else {
+        var totalAvail = 0, totalCap = 0;
+        data.zones.forEach(function(z) { totalAvail += z.available; totalCap += z.capacity; });
+        var booked = totalCap - totalAvail;
+        statusEl.textContent = totalAvail + ' of ' + totalCap + ' cabanas available';
+        statusEl.style.color = totalAvail > 0 ? '#15803D' : '#DC2626';
+      }
+    }
   }).catch(function(err) {
-    /* Availability fetch failed — cabanas remain in default "available" state.
-       This is intentional: better to show all as available and let the booking
-       engine handle conflicts than to show nothing. */
+    if (statusEl) {
+      statusEl.textContent = 'All cabanas shown as available';
+      statusEl.style.color = 'var(--iw-gray)';
+    }
     console.warn('[CabanaMap] Availability fetch failed, using defaults:', err.message);
   });
 }
