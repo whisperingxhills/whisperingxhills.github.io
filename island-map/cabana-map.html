@@ -649,6 +649,27 @@ body {
   cursor: not-allowed;
 }
 
+.iw-slot-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border: 2px solid var(--iw-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--iw-dark);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: Inter, sans-serif;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.iw-slot-btn:hover { border-color: var(--iw-blue); color: var(--iw-blue); }
+.iw-slot-btn.active {
+  background: var(--iw-blue);
+  border-color: var(--iw-blue);
+  color: #fff;
+}
+
 .iw-sold-out {
   display: block;
   width: 100%;
@@ -757,7 +778,11 @@ body {
   <div style="padding:12px 16px;background:var(--iw-blue-light);border-bottom:1px solid var(--iw-border);">
     <label for="datePicker" style="font-size:12px;font-weight:600;color:var(--iw-dark);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Select Date</label>
     <input type="date" id="datePicker" onchange="onDateChange()" style="width:100%;padding:8px 12px;border:1px solid var(--iw-border);border-radius:8px;font-size:14px;font-family:Inter,sans-serif;color:var(--iw-dark);background:#fff;cursor:pointer;">
-    <div id="dateStatus" style="font-size:11px;color:var(--iw-gray);margin-top:4px;"></div>
+    <div id="timeSlotContainer" style="display:none;margin-top:8px;">
+      <label style="font-size:11px;font-weight:600;color:var(--iw-dark);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:4px;">Time Slot</label>
+      <div id="timeSlotButtons" style="display:flex;gap:6px;"></div>
+    </div>
+    <div id="dateStatus" style="font-size:11px;color:var(--iw-gray);margin-top:6px;"></div>
   </div>
   <div class="iw-sidebar-body" id="sidebarBody">
     <!-- Injected by JS -->
@@ -1617,8 +1642,11 @@ function closeBookingModal() {
 function bookingModalEsc(e) { if (e.key === 'Escape') closeBookingModal(); }
 
 /* ================================================================
-   DATE PICKER
+   DATE PICKER + TIME SLOTS
    ================================================================ */
+var lastAvailData = null;
+var selectedSlotIndex = 0;
+
 (function initDatePicker() {
   var picker = document.getElementById('datePicker');
   if (!picker) return;
@@ -1630,12 +1658,65 @@ function bookingModalEsc(e) { if (e.key === 'Escape') closeBookingModal(); }
 function onDateChange() {
   var statusEl = document.getElementById('dateStatus');
   if (statusEl) statusEl.textContent = 'Loading availability...';
+  selectedSlotIndex = 0;
+  hideTimeSlots();
+  resetAvailability();
+  fetchAvailability();
+}
 
-  /* Reset all cabanas to available before fetching */
+function resetAvailability() {
   CABANAS.forEach(function(c) { c.available = true; });
   pinElements.forEach(function(p) { p.el.classList.remove('booked'); });
+}
 
-  fetchAvailability();
+function hideTimeSlots() {
+  var container = document.getElementById('timeSlotContainer');
+  if (container) container.style.display = 'none';
+}
+
+function renderTimeSlots(data) {
+  var container = document.getElementById('timeSlotContainer');
+  var buttonsEl = document.getElementById('timeSlotButtons');
+  if (!container || !buttonsEl) return;
+
+  if (data.slotCount <= 1) {
+    container.style.display = 'none';
+    return;
+  }
+
+  buttonsEl.innerHTML = '';
+  data.timeSlots.forEach(function(slot, idx) {
+    var btn = document.createElement('button');
+    btn.className = 'iw-slot-btn' + (idx === selectedSlotIndex ? ' active' : '');
+    btn.textContent = slot.label;
+    btn.onclick = function() {
+      selectedSlotIndex = idx;
+      /* Update active state */
+      buttonsEl.querySelectorAll('.iw-slot-btn').forEach(function(b, i) {
+        b.className = 'iw-slot-btn' + (i === idx ? ' active' : '');
+      });
+      /* Apply this slot's availability */
+      applySlotAvailability(data, idx);
+    };
+    buttonsEl.appendChild(btn);
+  });
+  container.style.display = 'block';
+}
+
+function applySlotAvailability(data, slotIdx) {
+  var slot = data.timeSlots[slotIdx];
+  if (!slot) return;
+
+  resetAvailability();
+  applyAvailability({ zones: slot.zones, hasSchedules: true });
+
+  var statusEl = document.getElementById('dateStatus');
+  if (statusEl) {
+    var totalAvail = 0, totalCap = 0;
+    slot.zones.forEach(function(z) { totalAvail += z.available; totalCap += z.capacity; });
+    statusEl.textContent = totalAvail + ' of ' + totalCap + ' cabanas available';
+    statusEl.style.color = totalAvail > 0 ? '#15803D' : '#DC2626';
+  }
 }
 
 /* ================================================================
@@ -1683,20 +1764,25 @@ function fetchAvailability() {
     if (!res.ok) throw new Error('Availability fetch failed: ' + res.status);
     return res.json();
   }).then(function(data) {
-    applyAvailability(data);
-    if (statusEl) {
-      if (!data.hasSchedules) {
+    lastAvailData = data;
+
+    if (!data.hasSchedules) {
+      hideTimeSlots();
+      if (statusEl) {
         statusEl.textContent = 'No cabanas available on this date';
         statusEl.style.color = '#DC2626';
-      } else {
-        var totalAvail = 0, totalCap = 0;
-        data.zones.forEach(function(z) { totalAvail += z.available; totalCap += z.capacity; });
-        var booked = totalCap - totalAvail;
-        statusEl.textContent = totalAvail + ' of ' + totalCap + ' cabanas available';
-        statusEl.style.color = totalAvail > 0 ? '#15803D' : '#DC2626';
       }
+      return;
     }
+
+    /* Render time slot buttons if multiple slots */
+    renderTimeSlots(data);
+
+    /* Apply availability for the selected slot */
+    applySlotAvailability(data, selectedSlotIndex);
+
   }).catch(function(err) {
+    hideTimeSlots();
     if (statusEl) {
       statusEl.textContent = 'All cabanas shown as available';
       statusEl.style.color = 'var(--iw-gray)';
