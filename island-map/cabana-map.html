@@ -1568,8 +1568,10 @@ document.addEventListener('keydown', function(e) {
    BOOKING STUB
    ================================================================ */
 function openBooking(rateCode, eid) {
-  /* Will be replaced with RocketRez iframe integration */
-  console.log('[CabanaMap] openBooking called — rateCode:', rateCode, 'eid:', eid);
+  /* Opens the park's cabana booking page.
+     When RocketRez headless API is enabled, this will deep-link
+     to the specific cabana using rateCode and eid. */
+  window.open('https://islandwaterpark.com/cabanas/', '_blank');
 }
 
 /* ================================================================
@@ -1607,7 +1609,12 @@ function fetchAvailability() {
    *             schedules[].seatTypes[].rates[].name = individual cabana
    */
 
-  var url = '/api/cabana-availability';
+  /* Live availability disabled until RocketRez enables headless integration.
+     All cabanas default to "available". Uncomment when API is ready. */
+  var AVAILABILITY_API = 'https://dailyfishfacts.com/api/cabana-availability';
+  var url = AVAILABILITY_API + '?date=' + new Date().toISOString().split('T')[0];
+
+  return; /* DISABLED — remove this line when headless API is enabled */
 
   fetch(url).then(function(res) {
     if (!res.ok) throw new Error('Availability fetch failed: ' + res.status);
