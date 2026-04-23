@@ -115,6 +115,7 @@
   <button class="secondary" onclick="undoLast()">↩ Undo</button>
   <button onclick="exportData()">⬇ Export JSON</button>
   <button onclick="exportCSV()">⬇ Export CSV</button>
+  <button class="secondary" onclick="clearAll()" style="background:#c0392b;border-color:#c0392b;">🗑 Clear All</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -246,7 +247,7 @@ function addMarker(placement, index) {
   
   marker.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (confirm(`Remove ${placement.unit}?`)) {
+    {
       placements.splice(index, 1);
       renderAllMarkers();
       updateCounter();
@@ -355,6 +356,16 @@ try {
 setInterval(() => {
   localStorage.setItem('cabana-placements', JSON.stringify(placements));
 }, 5000);
+
+function clearAll() {
+  if (!confirm("Clear ALL placements? This cannot be undone.")) return;
+  placements = [];
+  renderAllMarkers();
+  updateCounter();
+  localStorage.removeItem("cabana-placements");
+  showToast("Cleared all placements");
+  zoneSelect.dispatchEvent(new Event("change"));
+}
 
 // Keyboard shortcuts
 document.addEventListener('keydown', (e) => {
