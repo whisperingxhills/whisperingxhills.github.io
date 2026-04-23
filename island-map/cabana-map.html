@@ -1568,29 +1568,34 @@ document.addEventListener('keydown', function(e) {
    BOOKING STUB
    ================================================================ */
 function openBooking(root, eid, unitName) {
-  /* Opens RocketRez web engine in a modal for the selected cabana's zone */
+  /* Opens RocketRez web engine in an iframe so each click gets a fresh instance */
   var modal = document.getElementById('bookingModal');
   var container = document.getElementById('bookingEngineContainer');
   var title = document.getElementById('bookingModalTitle');
 
   title.textContent = unitName ? ('Book ' + unitName) : 'Book Cabana';
 
-  /* Clear previous engine instance */
+  /* Build a self-contained HTML page for the iframe */
+  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<style>body{margin:0;padding:16px;font-family:Inter,sans-serif;}</style>' +
+    '</head><body>' +
+    '<div eid="' + eid + '" root="' + root + '" id="FlatlandWebEngine"></div>' +
+    '<script type="text/javascript" src="https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js" async><\/script>' +
+    '</body></html>';
+
+  /* Create fresh iframe each time */
   container.innerHTML = '';
+  var iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width:100%;height:100%;border:none;';
+  iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox');
+  container.appendChild(iframe);
 
-  /* Create the RocketRez embed div */
-  var engineDiv = document.createElement('div');
-  engineDiv.setAttribute('eid', eid);
-  engineDiv.setAttribute('root', root);
-  engineDiv.setAttribute('id', 'FlatlandWebEngine');
-  container.appendChild(engineDiv);
-
-  /* Load the RocketRez web engine script */
-  var script = document.createElement('script');
-  script.type = 'text/javascript';
-  script.src = 'https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js';
-  script.async = true;
-  container.appendChild(script);
+  /* Write the HTML into the iframe */
+  var doc = iframe.contentDocument || iframe.contentWindow.document;
+  doc.open();
+  doc.write(html);
+  doc.close();
 
   modal.classList.add('active');
   document.addEventListener('keydown', bookingModalEsc);
