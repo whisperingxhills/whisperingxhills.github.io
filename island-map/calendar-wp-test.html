@@ -425,33 +425,38 @@
  overlay.classList.add('active');
  }
 
- /* Ticket booking */
+ /* Ticket booking — load engine once, then just toggle visibility */
+ var ticketEngineLoaded = false;
+
  document.getElementById('iwcBuyBtn').addEventListener('click', function() {
  if (!selectedCalDate) return;
 
  /* Close popup */
  document.getElementById('iwcPopupOverlay').classList.remove('active');
 
- /* Load RocketRez engine */
+ /* Update title */
+ document.getElementById('iwcTicketTitle').textContent = 'Buy Tickets \u2014 ' + selectedCalDate.label;
+
+ /* Load RocketRez engine only on first open */
+ if (!ticketEngineLoaded) {
  var container = document.getElementById('iwcTicketEngine');
- document.getElementById('iwcTicketTitle').textContent = 'Buy Tickets — ' + selectedCalDate.label;
  container.innerHTML = '<div eid="9f5be16b3a6b913c" root="bNp" id="FlatlandWebEngine"></div>';
  var script = document.createElement('script');
  script.src = 'https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js';
  script.async = true;
  container.appendChild(script);
+ ticketEngineLoaded = true;
+ }
 
  document.getElementById('iwcTicketOverlay').classList.add('active');
  });
 
  document.getElementById('iwcTicketClose').addEventListener('click', function() {
  document.getElementById('iwcTicketOverlay').classList.remove('active');
- document.getElementById('iwcTicketEngine').innerHTML = '';
  });
  document.getElementById('iwcTicketOverlay').addEventListener('click', function(e) {
  if (e.target === e.currentTarget) {
  document.getElementById('iwcTicketOverlay').classList.remove('active');
- document.getElementById('iwcTicketEngine').innerHTML = '';
  }
  });
 
@@ -490,7 +495,6 @@
  if (document.getElementById('iwcTicketOverlay').classList.contains('active')) {
  if (e.key === 'Escape') {
  document.getElementById('iwcTicketOverlay').classList.remove('active');
- document.getElementById('iwcTicketEngine').innerHTML = '';
  }
  return;
  }
