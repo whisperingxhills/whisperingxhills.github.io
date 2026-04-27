@@ -1232,6 +1232,7 @@ mapImg.onload = function() {
   renderClusters();
   updatePinVisibility();
   fetchAvailability();
+  startAvailRefresh();
 };
 
 function updateTransform() {
@@ -1656,6 +1657,12 @@ var selectedSlotIndex = 0;
   picker.min = today;
 })();
 
+var availRefreshTimer = null;
+function startAvailRefresh() {
+  if (availRefreshTimer) clearInterval(availRefreshTimer);
+  availRefreshTimer = setInterval(fetchAvailability, 30000);
+}
+
 function onDateChange() {
   var statusEl = document.getElementById('dateStatus');
   if (statusEl) statusEl.textContent = 'Loading availability...';
@@ -1663,6 +1670,7 @@ function onDateChange() {
   hideTimeSlots();
   resetAvailability();
   fetchAvailability();
+  startAvailRefresh();
 }
 
 function resetAvailability() {
@@ -1727,7 +1735,8 @@ function fetchAvailability() {
   /*
    * Calls our backend proxy which handles RocketRez OAuth + API calls.
    * The proxy caches responses server-side (~10s TTL) to stay within
-   * RocketRez rate limits (60 req/min).
+   * RocketRez rate limits (100 req/rolling minute per James @ RocketRez).
+   * Auto-refreshes every 30s to keep availability current.
    *
    * Expected response format from /api/cabana-availability:
    * {
