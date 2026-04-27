@@ -1985,7 +1985,7 @@ function hexToRgba(hex, alpha) {
     <div style="font-size:40px;margin-bottom:12px;">🏝️</div>
     <h2 style="font-size:22px;font-weight:800;color:#1E293B;margin:0 0 16px;">Welcome to the Cabana Map</h2>
     <div style="text-align:left;font-size:14px;color:#475569;line-height:1.7;">
-      <p style="margin:0 0 12px;"><strong>Step 1:</strong> Use the date picker in the sidebar to select the date of your visit. Available cabanas will appear in <span style="color:#22C55E;font-weight:700;">green</span> and booked cabanas in <span style="color:#EF4444;font-weight:700;">red</span>.</p>
+      <p style="margin:0 0 12px;"><strong>Step 1:</strong> Use the date picker in the sidebar to select the date of your visit. Cabana pins are color-coded by zone. Available cabanas are bright and clickable, while booked cabanas appear dimmed.</p>
       <p style="margin:0 0 12px;"><strong>Step 2:</strong> Browse the map to find a cabana you like. You can drag to move around and pinch or scroll to zoom in and out.</p>
       <p style="margin:0 0 12px;"><strong>Step 3:</strong> Tap on any cabana pin to view details including size, capacity, seating, and a video walkthrough.</p>
       <p style="margin:0 0 12px;"><strong>Step 4:</strong> Click the <strong>"Book Now"</strong> button to reserve your cabana. You'll be taken to a secure checkout.</p>
@@ -1994,11 +1994,53 @@ function hexToRgba(hex, alpha) {
     <button onclick="dismissWelcome()" style="margin-top:20px;padding:14px 40px;background:#0EA5E9;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:background 0.2s;">Got It, Let's Go!</button>
   </div>
 </div>
+<!-- Start Here Arrow -->
+<div id="startHereArrow" style="display:none;position:fixed;z-index:9999;pointer-events:none;" onclick="dismissStartHere()">
+  <div style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:6px;animation:startHereBounce 1s ease-in-out infinite;">
+    <div style="background:#EF4444;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:800;font-family:Inter,sans-serif;white-space:nowrap;box-shadow:0 4px 12px rgba(239,68,68,0.4);letter-spacing:0.5px;">START HERE</div>
+    <div style="font-size:24px;">👈</div>
+  </div>
+</div>
+<style>
+@keyframes startHereBounce {
+  0%, 100% { transform: translateX(0); }
+  50% { transform: translateX(-6px); }
+}
+</style>
+
 <script>
 function dismissWelcome() {
   document.getElementById('welcomeOverlay').style.display = 'none';
   try { localStorage.setItem('iwCabanaWelcomeSeen', '1'); } catch(e) {}
+  showStartHere();
 }
+
+function showStartHere() {
+  var arrow = document.getElementById('startHereArrow');
+  var picker = document.getElementById('datePicker');
+  if (!arrow || !picker) return;
+
+  /* Position the arrow next to the date picker */
+  var rect = picker.getBoundingClientRect();
+  arrow.style.top = (rect.top + rect.height / 2 - 18) + 'px';
+  arrow.style.left = (rect.right + 10) + 'px';
+  arrow.style.display = 'block';
+
+  /* Auto-dismiss after 5 seconds */
+  setTimeout(dismissStartHere, 5000);
+}
+
+function dismissStartHere() {
+  var arrow = document.getElementById('startHereArrow');
+  if (arrow) arrow.style.display = 'none';
+}
+
+/* Also dismiss when they interact with the date picker */
+(function() {
+  var picker = document.getElementById('datePicker');
+  if (picker) picker.addEventListener('focus', dismissStartHere);
+})();
+
 /* Skip overlay for returning visitors */
 try { if (localStorage.getItem('iwCabanaWelcomeSeen')) document.getElementById('welcomeOverlay').style.display = 'none'; } catch(e) {}
 </script>
