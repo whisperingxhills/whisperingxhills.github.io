@@ -1994,17 +1994,44 @@ function hexToRgba(hex, alpha) {
     <button onclick="dismissWelcome()" style="margin-top:20px;padding:14px 40px;background:#0EA5E9;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:background 0.2s;">Got It, Let's Go!</button>
   </div>
 </div>
-<!-- Start Here Arrow -->
-<div id="startHereArrow" style="display:none;position:absolute;z-index:9999;pointer-events:none;">
-  <div style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:0;animation:startHereBounce 1s ease-in-out infinite;" onclick="dismissStartHere()">
-    <div style="width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:10px solid #EF4444;flex-shrink:0;"></div>
-    <div style="background:#EF4444;color:#fff;padding:6px 12px;border-radius:0 6px 6px 0;font-size:12px;font-weight:800;font-family:Inter,sans-serif;white-space:nowrap;box-shadow:0 2px 8px rgba(239,68,68,0.3);letter-spacing:0.5px;">START HERE ↓</div>
-  </div>
-</div>
 <style>
-@keyframes startHereBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+@keyframes startHereFlash {
+  0%, 100% { box-shadow: inset 0 0 0 2px #EF4444, 0 0 8px rgba(239,68,68,0.3); }
+  50% { box-shadow: inset 0 0 0 2px #EF4444, 0 0 20px rgba(239,68,68,0.6); }
+}
+.start-here-highlight {
+  animation: startHereFlash 1s ease-in-out infinite;
+  border-radius: 10px;
+  position: relative;
+}
+.start-here-label {
+  position: absolute;
+  left: -90px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #EF4444;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  font-family: Inter, sans-serif;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(239,68,68,0.4);
+  cursor: pointer;
+}
+.start-here-label::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid #EF4444;
 }
 </style>
 
@@ -2016,27 +2043,32 @@ function dismissWelcome() {
 }
 
 function showStartHere() {
-  var arrow = document.getElementById('startHereArrow');
   var picker = document.getElementById('datePicker');
-  if (!arrow || !picker) return;
+  if (!picker) return;
 
-  /* Move arrow into the date picker's parent so it positions relative to the input */
-  var parent = picker.parentElement;
-  parent.style.position = 'relative';
-  parent.appendChild(arrow);
+  /* Highlight the whole date picker zone */
+  var zone = picker.parentElement;
+  zone.style.position = 'relative';
+  zone.style.overflow = 'visible';
+  zone.classList.add('start-here-highlight');
 
-  /* Position directly above the date input, left-aligned */
-  arrow.style.top = '-28px';
-  arrow.style.left = '0';
-  arrow.style.display = 'block';
+  /* Add START HERE label */
+  var label = document.createElement('div');
+  label.className = 'start-here-label';
+  label.id = 'startHereLabel';
+  label.textContent = 'START HERE';
+  label.onclick = dismissStartHere;
+  zone.appendChild(label);
 
   /* Auto-dismiss after 5 seconds */
   setTimeout(dismissStartHere, 5000);
 }
 
 function dismissStartHere() {
-  var arrow = document.getElementById('startHereArrow');
-  if (arrow) arrow.style.display = 'none';
+  var label = document.getElementById('startHereLabel');
+  if (label) label.remove();
+  var picker = document.getElementById('datePicker');
+  if (picker) picker.parentElement.classList.remove('start-here-highlight');
 }
 
 /* Also dismiss when they interact with the date picker */
