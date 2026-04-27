@@ -1660,7 +1660,7 @@ var selectedSlotIndex = 0;
 var availRefreshTimer = null;
 function startAvailRefresh() {
   if (availRefreshTimer) clearInterval(availRefreshTimer);
-  availRefreshTimer = setInterval(fetchAvailability, 30000);
+  availRefreshTimer = setInterval(fetchAvailability, 10000);
 }
 
 function onDateChange() {
@@ -1736,7 +1736,7 @@ function fetchAvailability() {
    * Calls our backend proxy which handles RocketRez OAuth + API calls.
    * The proxy caches responses server-side (~10s TTL) to stay within
    * RocketRez rate limits (100 req/rolling minute per James @ RocketRez).
-   * Auto-refreshes every 30s to keep availability current.
+   * Auto-refreshes every 10s to keep availability current.
    *
    * Expected response format from /api/cabana-availability:
    * {
