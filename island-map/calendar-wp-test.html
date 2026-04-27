@@ -425,8 +425,8 @@
  overlay.classList.add('active');
  }
 
- /* Ticket booking — load engine once, then just toggle visibility */
- var ticketEngineLoaded = false;
+ /* Ticket booking — use iframe so each date gets a fresh engine */
+ var lastTicketDate = null;
 
  document.getElementById('iwcBuyBtn').addEventListener('click', function() {
  if (!selectedCalDate) return;
@@ -437,15 +437,28 @@
  /* Update title */
  document.getElementById('iwcTicketTitle').textContent = 'Buy Tickets \u2014 ' + selectedCalDate.label;
 
- /* Load RocketRez engine only on first open */
- if (!ticketEngineLoaded) {
+ /* Reload engine if date changed or first open */
  var container = document.getElementById('iwcTicketEngine');
- container.innerHTML = '<div eid="9f5be16b3a6b913c" root="bNp" id="FlatlandWebEngine"></div>';
- var script = document.createElement('script');
- script.src = 'https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js';
- script.async = true;
- container.appendChild(script);
- ticketEngineLoaded = true;
+ if (lastTicketDate !== selectedCalDate.iso) {
+ container.innerHTML = '';
+ var iframe = document.createElement('iframe');
+ iframe.style.cssText = 'width:100%;height:100%;border:none;';
+ iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox');
+ container.appendChild(iframe);
+
+ var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
+ '<meta name="viewport" content="width=device-width,initial-scale=1">' +
+ '<style>body{margin:0;padding:16px;font-family:Inter,sans-serif;}</style>' +
+ '</head><body>' +
+ '<div eid="9f5be16b3a6b913c" root="bNp" startDate="' + selectedCalDate.iso + '" endDate="' + selectedCalDate.iso + '" id="FlatlandWebEngine"></div>' +
+ '<script type="text/javascript" src="https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js" async><\/script>' +
+ '</body></html>';
+
+ var doc = iframe.contentDocument || iframe.contentWindow.document;
+ doc.open();
+ doc.write(html);
+ doc.close();
+ lastTicketDate = selectedCalDate.iso;
  }
 
  document.getElementById('iwcTicketOverlay').classList.add('active');

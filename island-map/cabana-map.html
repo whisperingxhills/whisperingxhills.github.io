@@ -1599,6 +1599,7 @@ document.addEventListener('keydown', function(e) {
    ================================================================ */
 function openBooking(root, eid, unitName) {
   /* Opens RocketRez web engine in an iframe so each click gets a fresh instance */
+  var selectedDate = document.getElementById('datePicker') ? document.getElementById('datePicker').value : '';
   var modal = document.getElementById('bookingModal');
   var container = document.getElementById('bookingEngineContainer');
   var title = document.getElementById('bookingModalTitle');
@@ -1610,7 +1611,7 @@ function openBooking(root, eid, unitName) {
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<style>body{margin:0;padding:16px;font-family:Inter,sans-serif;}</style>' +
     '</head><body>' +
-    '<div eid="' + eid + '" root="' + root + '" id="FlatlandWebEngine"></div>' +
+    '<div eid="' + eid + '" root="' + root + '"' + (selectedDate ? ' startDate="' + selectedDate + '" endDate="' + selectedDate + '"' : '') + ' id="FlatlandWebEngine"></div>' +
     '<script type="text/javascript" src="https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js" async><\/script>' +
     '</body></html>';
 
