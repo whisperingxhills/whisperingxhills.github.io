@@ -508,7 +508,19 @@ body {
       <p id="popupSubtitle"></p>
     </div>
     <div class="cal-popup-body" id="popupBody"></div>
+    <button id="popupBuyBtn" onclick="openTicketBooking()" style="display:none;width:100%;padding:14px;background:#0EA5E9;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;margin-top:16px;transition:background 0.2s;">🎟️ Buy Tickets</button>
     <button class="cal-popup-close" id="popupClose">Close</button>
+  </div>
+</div>
+
+<!-- Ticket Booking Modal -->
+<div id="ticketModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.85);z-index:10000;padding:20px;">
+  <div style="max-width:600px;width:100%;height:90vh;margin:auto;position:relative;background:#fff;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #E2E8F0;">
+      <h3 id="ticketModalTitle" style="margin:0;font-size:18px;font-weight:700;color:#1E293B;font-family:Inter,sans-serif;">Buy Tickets</h3>
+      <button onclick="closeTicketModal()" style="background:none;border:none;font-size:24px;cursor:pointer;color:#94A3B8;padding:4px 8px;">✕</button>
+    </div>
+    <div id="ticketEngineContainer" style="flex:1;overflow:auto;padding:0;"></div>
   </div>
 </div>
 
@@ -902,8 +914,53 @@ function showPopup(month, day, entry) {
   }
 
   document.getElementById('popupBody').innerHTML = bodyHTML;
+
+  /* Store selected date and show Buy Tickets button */
+  var mm = String(month + 1).padStart(2, '0');
+  var dd = String(day).padStart(2, '0');
+  selectedCalDate = {
+    iso: '2026-' + mm + '-' + dd,
+    label: MONTHS[month] + ' ' + day + ', 2026'
+  };
+  document.getElementById('popupBuyBtn').style.display = 'block';
+
   overlay.classList.add('active');
 }
+
+// ── Ticket Booking ──
+var selectedCalDate = null;
+
+function openTicketBooking() {
+  if (!selectedCalDate) return;
+  var container = document.getElementById('ticketEngineContainer');
+  var title = document.getElementById('ticketModalTitle');
+  title.textContent = 'Buy Tickets — ' + selectedCalDate.label;
+
+  /* Close the popup */
+  document.getElementById('popupOverlay').classList.remove('active');
+
+  /* Load RocketRez engine */
+  container.innerHTML = '<div eid="9f5be16b3a6b913c" root="bNp" id="FlatlandWebEngine"></div>';
+
+  /* Load the script */
+  var script = document.createElement('script');
+  script.src = 'https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js';
+  script.async = true;
+  container.appendChild(script);
+
+  document.getElementById('ticketModal').style.display = 'flex';
+  document.getElementById('ticketModal').style.alignItems = 'center';
+  document.getElementById('ticketModal').style.justifyContent = 'center';
+}
+
+function closeTicketModal() {
+  document.getElementById('ticketModal').style.display = 'none';
+  document.getElementById('ticketEngineContainer').innerHTML = '';
+}
+
+document.getElementById('ticketModal').addEventListener('click', function(e) {
+  if (e.target === e.currentTarget) closeTicketModal();
+});
 
 document.getElementById('popupClose').addEventListener('click', () => {
   document.getElementById('popupOverlay').classList.remove('active');
