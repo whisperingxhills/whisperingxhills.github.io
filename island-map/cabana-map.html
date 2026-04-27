@@ -1678,6 +1678,19 @@ function resetAvailability() {
   pinElements.forEach(function(p) { p.el.classList.remove('booked'); });
 }
 
+function markAllUnavailable() {
+  CABANAS.forEach(function(c) { c.available = false; });
+  pinElements.forEach(function(p) { p.el.classList.add('booked'); });
+  /* Update sidebar status badges */
+  CABANAS.forEach(function(cabana) {
+    var badge = document.querySelector('[data-cabana-status="' + cabana.unit + '"]');
+    if (badge) {
+      badge.className = 'iw-zone-item-status booked';
+      badge.textContent = 'Booked';
+    }
+  });
+}
+
 function hideTimeSlots() {
   var container = document.getElementById('timeSlotContainer');
   if (container) container.style.display = 'none';
@@ -1778,6 +1791,7 @@ function fetchAvailability() {
 
     if (!data.hasSchedules) {
       hideTimeSlots();
+      markAllUnavailable();
       if (statusEl) {
         statusEl.textContent = 'No cabanas available on this date';
         statusEl.style.color = '#DC2626';
@@ -1793,11 +1807,12 @@ function fetchAvailability() {
 
   }).catch(function(err) {
     hideTimeSlots();
+    markAllUnavailable();
     if (statusEl) {
-      statusEl.textContent = 'All cabanas shown as available';
-      statusEl.style.color = 'var(--iw-gray)';
+      statusEl.textContent = 'Unable to load availability';
+      statusEl.style.color = '#DC2626';
     }
-    console.warn('[CabanaMap] Availability fetch failed, using defaults:', err.message);
+    console.warn('[CabanaMap] Availability fetch failed:', err.message);
   });
 }
 
