@@ -519,9 +519,41 @@
  dotsEl.appendChild(dot);
  });
 
+ // Welcome overlay
+ function showWelcome() {
+ var seen = false;
+ try { seen = localStorage.getItem('iwcCalendarWelcomeSeen') === '1'; } catch(e) {}
+ if (seen) return;
+
+ var overlay = document.createElement('div');
+ overlay.id = 'iwcWelcomeOverlay';
+ overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.85);z-index:1000001;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+ overlay.innerHTML = '<div style="background:#fff;border-radius:16px;max-width:480px;width:100%;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;">'
+ + '<div style="font-size:40px;margin-bottom:12px;">🗓️</div>'
+ + '<h2 style="font-size:22px;font-weight:800;color:#1E293B;margin:0 0 16px;font-family:Inter,sans-serif;">Welcome to the Event Calendar</h2>'
+ + '<div style="text-align:left;font-size:14px;color:#475569;line-height:1.7;font-family:Inter,sans-serif;">'
+ + '<p style="margin:0 0 12px;"><strong>Step 1:</strong> Use the arrows or swipe to browse through the months of the 2026 season (May through September).</p>'
+ + '<p style="margin:0 0 12px;"><strong>Step 2:</strong> Tap any open day to see park hours, special events, and details for that date.</p>'
+ + '<p style="margin:0 0 12px;"><strong>Step 3:</strong> Click the <strong>"🎟️ Buy Tickets"</strong> button to purchase admission for that day. You\'ll be taken to a secure checkout.</p>'
+ + '<p style="margin:0 0 12px;"><strong>Color Tags:</strong> Each day shows colored tags for special events — <span style="background:#DBEAFE;color:#1D4ED8;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:700;">2 for Tues</span> <span style="background:#D1FAE5;color:#047857;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:700;">Wavy Wed</span> <span style="background:#FDE68A;color:#92400E;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:700;">Family Night</span> and more.</p>'
+ + '<p style="margin:0;"><strong>Tip:</strong> Days marked <span style="color:#CBD5E1;font-weight:600;">CLOSED</span> are not available for visits.</p>'
+ + '</div>'
+ + '<button id="iwcWelcomeBtn" style="margin-top:20px;padding:14px 40px;background:#0EA5E9;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:background 0.2s;">Got It, Let\'s Go!</button>'
+ + '</div>';
+
+ document.getElementById('iwp-calendar').appendChild(overlay);
+
+ document.getElementById('iwcWelcomeBtn').addEventListener('click', function() {
+ overlay.remove();
+ try { localStorage.setItem('iwcCalendarWelcomeSeen', '1'); } catch(e) {}
+ });
+ }
+
  // Init
  currentMonthIdx = getInitialMonth();
  renderMonth(SEASON_MONTHS[currentMonthIdx], null);
+ showWelcome();
 })();
 </script>
 </div>
