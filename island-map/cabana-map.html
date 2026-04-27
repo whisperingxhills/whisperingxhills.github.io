@@ -1995,16 +1995,16 @@ function hexToRgba(hex, alpha) {
   </div>
 </div>
 <!-- Start Here Arrow -->
-<div id="startHereArrow" style="display:none;position:fixed;z-index:9999;pointer-events:none;" onclick="dismissStartHere()">
-  <div style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:6px;animation:startHereBounce 1s ease-in-out infinite;">
-    <div style="background:#EF4444;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;font-weight:800;font-family:Inter,sans-serif;white-space:nowrap;box-shadow:0 4px 12px rgba(239,68,68,0.4);letter-spacing:0.5px;">START HERE</div>
-    <div style="font-size:24px;">👈</div>
+<div id="startHereArrow" style="display:none;position:absolute;z-index:9999;pointer-events:none;">
+  <div style="pointer-events:auto;cursor:pointer;display:flex;align-items:center;gap:0;animation:startHereBounce 1s ease-in-out infinite;" onclick="dismissStartHere()">
+    <div style="width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-right:10px solid #EF4444;flex-shrink:0;"></div>
+    <div style="background:#EF4444;color:#fff;padding:6px 12px;border-radius:0 6px 6px 0;font-size:12px;font-weight:800;font-family:Inter,sans-serif;white-space:nowrap;box-shadow:0 2px 8px rgba(239,68,68,0.3);letter-spacing:0.5px;">START HERE ↓</div>
   </div>
 </div>
 <style>
 @keyframes startHereBounce {
-  0%, 100% { transform: translateX(0); }
-  50% { transform: translateX(-6px); }
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
 }
 </style>
 
@@ -2020,10 +2020,14 @@ function showStartHere() {
   var picker = document.getElementById('datePicker');
   if (!arrow || !picker) return;
 
-  /* Position the arrow next to the date picker */
-  var rect = picker.getBoundingClientRect();
-  arrow.style.top = (rect.top + rect.height / 2 - 18) + 'px';
-  arrow.style.left = (rect.right + 10) + 'px';
+  /* Move arrow into the date picker's parent so it positions relative to the input */
+  var parent = picker.parentElement;
+  parent.style.position = 'relative';
+  parent.appendChild(arrow);
+
+  /* Position directly above the date input, left-aligned */
+  arrow.style.top = '-28px';
+  arrow.style.left = '0';
   arrow.style.display = 'block';
 
   /* Auto-dismiss after 5 seconds */
