@@ -1607,27 +1607,23 @@ function openBooking(root, eid, unitName, rate) {
 
   title.textContent = unitName ? ('Book ' + unitName) : 'Book Cabana';
 
-  /* Build a self-contained HTML page for the iframe */
-  var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
-    '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-    '<style>body{margin:0;padding:16px;font-family:Inter,sans-serif;}</style>' +
-    '</head><body>' +
-    '<div eid="' + eid + '" root="' + root + '"' + (rate ? ' rate="' + rate + '"' : '') + (selectedDate ? ' startDate="' + selectedDate + '" endDate="' + selectedDate + '"' : '') + ' id="FlatlandWebEngine"></div>' +
-    '<script type="text/javascript" src="https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js" async><\/script>' +
-    '</body></html>';
+  /* Build RocketRez engine URL directly — bypasses iframe doc.write timing issues */
+  var rrBase = 'https://secure.rocket-rez.com/RocketWeb2/' + eid;
+  var rrParams = [];
+  rrParams.push('puri=' + encodeURIComponent(document.location.href));
+  if (root) rrParams.push('ro=' + root);
+  if (rate) rrParams.push('ra=' + rate);
+  if (selectedDate) { rrParams.push('sd=' + selectedDate); rrParams.push('ed=' + selectedDate); }
+  var rrUrl = rrBase + '?' + rrParams.join('&');
 
   /* Create fresh iframe each time */
   container.innerHTML = '';
   var iframe = document.createElement('iframe');
   iframe.style.cssText = 'width:100%;height:100%;border:none;';
-  iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox');
+  iframe.src = rrUrl;
+  iframe.allow = 'payment';
+  iframe.setAttribute('allowTransparency', 'true');
   container.appendChild(iframe);
-
-  /* Write the HTML into the iframe */
-  var doc = iframe.contentDocument || iframe.contentWindow.document;
-  doc.open();
-  doc.write(html);
-  doc.close();
 
   modal.classList.add('active');
   document.addEventListener('keydown', bookingModalEsc);
