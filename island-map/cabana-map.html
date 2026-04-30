@@ -1564,7 +1564,7 @@ function openPanel(cabana) {
 
   /* Availability status */
   if (cabana.available) {
-    html += '<button class="iw-book-btn" onclick="openBooking(\'' + escapeAttr(cabana.root || '') + '\', \'' + escapeAttr(cabana.eid) + '\', \'' + escapeAttr(cabana.unit) + '\')">Book Now</button>';
+    html += '<button class="iw-book-btn" onclick="openBooking(\'' + escapeAttr(cabana.root || '') + '\', \'' + escapeAttr(cabana.eid) + '\', \'' + escapeAttr(cabana.unit) + '\', \'' + escapeAttr(cabana.rate || '') + '\')">Book Now</button>';
   } else {
     html += '<div class="iw-sold-out">Sold Out Today</div>';
   }
@@ -1598,7 +1598,7 @@ document.addEventListener('keydown', function(e) {
 /* ================================================================
    BOOKING STUB
    ================================================================ */
-function openBooking(root, eid, unitName) {
+function openBooking(root, eid, unitName, rate) {
   /* Opens RocketRez web engine in an iframe so each click gets a fresh instance */
   var selectedDate = document.getElementById('datePicker') ? document.getElementById('datePicker').value : '';
   var modal = document.getElementById('bookingModal');
@@ -1612,7 +1612,7 @@ function openBooking(root, eid, unitName) {
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<style>body{margin:0;padding:16px;font-family:Inter,sans-serif;}</style>' +
     '</head><body>' +
-    '<div eid="' + eid + '" root="' + root + '"' + (selectedDate ? ' startDate="' + selectedDate + '" endDate="' + selectedDate + '"' : '') + ' id="FlatlandWebEngine"></div>' +
+    '<div eid="' + eid + '" root="' + root + '"' + (rate ? ' rate="' + rate + '"' : '') + (selectedDate ? ' startDate="' + selectedDate + '" endDate="' + selectedDate + '"' : '') + ' id="FlatlandWebEngine"></div>' +
     '<script type="text/javascript" src="https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js" async><\/script>' +
     '</body></html>';
 
