@@ -1773,7 +1773,7 @@ function fetchAvailability() {
    *             schedules[].seatTypes[].rates[].name = individual cabana
    */
 
-  var AVAILABILITY_API = 'https://dailyfishfacts.com/api/cabana-availability';
+  var AVAILABILITY_API = 'http://143.110.206.44:3737/api/cabana-availability';
   var selectedDate = document.getElementById('datePicker') ? document.getElementById('datePicker').value : new Date().toISOString().split('T')[0];
   var url = AVAILABILITY_API + '?date=' + selectedDate;
 
