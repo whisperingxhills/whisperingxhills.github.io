@@ -1816,22 +1816,11 @@ function applyAvailability(data) {
   if (!data || !data.zones) return;
 
   /* Build lookup: cabana name -> available boolean */
-  /* Use zone-level available count to correct per-cabana availability
-     since RocketRez API doesn't expose which specific cabanas are booked */
   var availability = {};
   data.zones.forEach(function(zone) {
     if (!zone.cabanas) return;
-    var zoneAvail = typeof zone.available === 'number' ? zone.available : zone.cabanas.length;
-    var remaining = zoneAvail;
     zone.cabanas.forEach(function(c) {
-      if (c.disabled) {
-        availability[c.name] = false;
-      } else if (remaining > 0) {
-        availability[c.name] = true;
-        remaining--;
-      } else {
-        availability[c.name] = false;
-      }
+      availability[c.name] = !!c.available;
     });
   });
 
