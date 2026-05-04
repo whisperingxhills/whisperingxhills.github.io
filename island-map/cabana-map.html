@@ -1564,7 +1564,7 @@ function openPanel(cabana) {
 
   /* Availability status */
   if (cabana.available) {
-    html += '<button class="iw-book-btn" onclick="openBooking(\'' + escapeAttr(cabana.root || '') + '\', \'' + escapeAttr(cabana.eid) + '\', \'' + escapeAttr(cabana.unit) + '\', \'' + escapeAttr(cabana.rate || '') + '\')">Book Now</button>';
+    html += '<button class="iw-book-btn" data-root="' + escapeAttr(cabana.root || '') + '" data-eid="' + escapeAttr(cabana.eid) + '" data-unit="' + escapeAttr(cabana.unit) + '" data-rate="' + escapeAttr(cabana.rate || '') + '" onclick="openBooking(this.dataset.root, this.dataset.eid, this.dataset.unit, this.dataset.rate)">Book Now</button>';
   } else {
     html += '<div class="iw-sold-out">Sold Out Today</div>';
   }
