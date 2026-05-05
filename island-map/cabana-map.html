@@ -1203,8 +1203,9 @@ Object.keys(ZONES).forEach(function(z) {
   zone.cx = sx / zone.cabanas.length;
   zone.cy = sy / zone.cabanas.length;
 });
-/* Nudge Beach Bungalow cluster right to avoid overlap with Beach Villa */
-if (ZONES['Beach Bungalow']) { ZONES['Beach Bungalow'].cx += 5; }
+/* Nudge clusters to avoid Beach Villa / Beach Bungalow overlap */
+if (ZONES['Beach Villa']) { ZONES['Beach Villa'].cx -= 2; }
+if (ZONES['Beach Bungalow']) { ZONES['Beach Bungalow'].cx += 2; }
 
 /* ================================================================
    STATE
