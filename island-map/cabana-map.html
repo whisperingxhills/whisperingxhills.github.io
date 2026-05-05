@@ -613,14 +613,15 @@ body {
 .iw-panel-meta-row {
   display: flex;
   justify-content: space-between;
+  gap: 12px;
   padding: 6px 0;
   font-size: 13px;
 }
 
 .iw-panel-meta-row:not(:last-child) { border-bottom: 1px solid var(--iw-border); }
 
-.iw-panel-meta-label { color: var(--iw-gray); }
-.iw-panel-meta-value { font-weight: 600; color: var(--iw-dark); }
+.iw-panel-meta-label { color: var(--iw-gray); white-space: nowrap; }
+.iw-panel-meta-value { font-weight: 600; color: var(--iw-dark); text-align: right; }
 
 .iw-book-btn {
   display: block;
