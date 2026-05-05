@@ -844,7 +844,7 @@ var ZONE_COLORS = {
 
 /* Zone details: video (YouTube ID), size, capacity, seating — populate as content becomes available */
 var ZONE_DETAILS = {
-  "BBQ Cove":        { video:"yiR3TFMfBg0", size:"12' x 12'", capacity:"Up to 40", seating:"2 Large Picnic Tables", features:"Covered pavilion, corrugated metal roof, concrete pad, hibachi style BBQ with adjustable cooking surface. Guests can bring shade structures and additional seating." },
+  "BBQ Cove":        { photo:"bbq-cove-thumb.jpg", video:"yiR3TFMfBg0", size:"12' x 12'", capacity:"Up to 40", seating:"2 Large Picnic Tables", features:"Covered pavilion, corrugated metal roof, concrete pad, hibachi style BBQ with adjustable cooking surface. Guests can bring shade structures and additional seating." },
   "Tide Pool":       { video:"Jo2dnZtW_RM", size:"10' x 11'", capacity:"8 Seated", seating:"Sling Chairs", features:"South end of the island in the heart of the Waimea Lazy River. Near a river entrance for direct lazy river access from your cabana. Surrounds the tranquil tide pool — a small wading pool for cooling off. Spacious rectangular dining table." },
   "Family":          { video:"jn3-bM9lLEE", size:"10' x 12'", capacity:"8 Seated, 12 Max", seating:"Sling Chairs", features:"Located on the Ohana Bay deck near sea creatures, spraying mushrooms, and the best play structure in the valley. Bamboo table and sling chairs included. Cabana service included." },
   "Premium":         { video:"g97KApFTbtM", size:"12' x 14' Plus Back Patio", capacity:"10 Seated, 16 Max", seating:"Wicker Style Chaise Lounges, Chairs", features:"Vibrant blue and white color scheme with spacious back patio. RED BULL Refrigerator, variable-speed ceiling fans, device charging outlets. Finished wood construction with pitched metal roofs. Wicker style dining, coffee, and cocktail tables. Prime location on Ohana Bay deck. Cabana service included." },
@@ -1538,8 +1538,12 @@ function openPanel(cabana) {
   /* Zone tag */
   html += '<span class="iw-panel-tag" style="background:' + hexToRgba(color, 0.12) + ';color:' + color + ';">' + escapeHtml(cabana.zone) + '</span>';
 
-  /* Video thumbnail — click to open modal */
-  if (details.video) {
+  /* Video thumbnail or static photo */
+  if (details.photo) {
+    html += '<div class="iw-video-thumb" style="cursor:default;">';
+    html += '<img src="' + escapeAttr(details.photo) + '" alt="' + escapeAttr(cabana.zone) + '" loading="lazy">';
+    html += '</div>';
+  } else if (details.video) {
     html += '<div class="iw-video-thumb" onclick="openVideoModal(\'' + escapeAttr(details.video) + '\')">';
     html += '<img src="https://img.youtube.com/vi/' + escapeAttr(details.video) + '/hqdefault.jpg" alt="Watch video" loading="lazy">';
     html += '<div class="iw-video-play-btn"></div>';
