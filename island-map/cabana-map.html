@@ -1539,7 +1539,12 @@ function openPanel(cabana) {
   html += '<span class="iw-panel-tag" style="background:' + hexToRgba(color, 0.12) + ';color:' + color + ';">' + escapeHtml(cabana.zone) + '</span>';
 
   /* Video thumbnail or static photo */
-  if (details.photo) {
+  if (details.photo && details.video) {
+    html += '<div class="iw-video-thumb" onclick="openVideoModal(\'' + escapeAttr(details.video) + '\')">';
+    html += '<img src="' + escapeAttr(details.photo) + '" alt="' + escapeAttr(cabana.zone) + '" loading="lazy">';
+    html += '<div class="iw-video-play-btn"></div>';
+    html += '</div>';
+  } else if (details.photo) {
     html += '<div class="iw-video-thumb" style="cursor:default;">';
     html += '<img src="' + escapeAttr(details.photo) + '" alt="' + escapeAttr(cabana.zone) + '" loading="lazy">';
     html += '</div>';
