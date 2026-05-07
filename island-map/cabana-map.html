@@ -1600,7 +1600,7 @@ function openPanel(cabana) {
   var isEvening = selectedSlotIndex > 0; /* second slot = evening */
   var dayPrice = getPriceForDate(pricing, selectedDate, isEvening);
   if (dayPrice && dayPrice !== 'N/A') {
-    html += '<div style="font-size:22px;font-weight:800;color:var(--iw-blue-dark);margin:8px 0;">' + escapeHtml(dayPrice) + '</div>';
+    html += '<div style="font-size:22px;font-weight:800;color:#15803D;margin:8px 0;text-align:center;">' + escapeHtml(dayPrice) + '</div>';
   }
 
   /* Availability status */
