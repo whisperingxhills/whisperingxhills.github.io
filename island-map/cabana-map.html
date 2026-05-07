@@ -1359,6 +1359,26 @@ function getStartPrice(pricing) {
   return '$' + Math.min.apply(null, prices);
 }
 
+function getPriceForDate(pricing, dateStr, isEvening) {
+  if (!pricing || !dateStr) return '';
+  /* Special dates first */
+  if (dateStr === '2026-07-03') return isEvening ? (pricing['Jul 3 Night'] || '') : (pricing['Jul 3'] || '');
+  if (dateStr === '2026-07-04') return pricing['Jul 4'] || '';
+  /* Day of week */
+  var d = new Date(dateStr + 'T12:00:00');
+  var day = d.getDay(); /* 0=Sun, 1=Mon, ..., 6=Sat */
+  if (isEvening) {
+    if (day === 5) return pricing['Fri Night'] || '';
+    return ''; /* most nights don't have separate pricing */
+  }
+  if (day === 0) return pricing['Sun'] || '';
+  if (day === 1 || day === 4) return pricing['M/Th'] || '';
+  if (day === 2 || day === 3) return pricing['T/W'] || '';
+  if (day === 5) return pricing['Fri'] || '';
+  if (day === 6) return pricing['Sat'] || '';
+  return '';
+}
+
 function toggleLegend() {
   document.querySelector('.iw-legend').classList.toggle('open');
 }
@@ -1573,6 +1593,14 @@ function openPanel(cabana) {
       html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Seating</span><span class="iw-panel-meta-value">' + escapeHtml(details.seating) + '</span></div>';
     }
     html += '</div>';
+  }
+
+  /* Price for selected date */
+  var selectedDate = document.getElementById('datePicker') ? document.getElementById('datePicker').value : '';
+  var isEvening = selectedSlotIndex > 0; /* second slot = evening */
+  var dayPrice = getPriceForDate(pricing, selectedDate, isEvening);
+  if (dayPrice && dayPrice !== 'N/A') {
+    html += '<div style="font-size:22px;font-weight:800;color:var(--iw-blue-dark);margin:8px 0;">' + escapeHtml(dayPrice) + '</div>';
   }
 
   /* Availability status */
