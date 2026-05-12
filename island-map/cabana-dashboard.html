@@ -446,11 +446,11 @@ function fetchAvailability() {
 
   fetch(url).then(function(r) { return r.json(); }).then(function(data) {
     if (!data.hasSchedules) { markAll(false); updatePanel(); updateCounts(); return; }
-    /* Handle time slots */
-    if (data.slotCount > 1 && data.timeSlots && data.timeSlots[selectedSlotIndex]) {
+    /* Apply availability from the selected time slot */
+    if (data.timeSlots && data.timeSlots[selectedSlotIndex]) {
       applySlot(data.timeSlots[selectedSlotIndex]);
-    } else if (data.zones) {
-      applyZones(data);
+    } else if (data.timeSlots && data.timeSlots[0]) {
+      applySlot(data.timeSlots[0]);
     }
     updatePanel(); updateCounts();
     var now = new Date();
