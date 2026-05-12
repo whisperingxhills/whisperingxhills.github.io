@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Island Waterpark - Rentals Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --iw-green: #22C55E; --iw-green-light: #F0FDF4; --iw-green-dark: #15803D;
+  --iw-red: #EF4444; --iw-red-light: #FEF2F2; --iw-red-dark: #DC2626;
+  --iw-dark: #1E293B; --iw-darker: #0F172A; --iw-light: #F8FAFC;
+  --iw-gray: #64748B; --iw-gray-light: #94A3B8; --iw-border: #E2E8F0;
+}
+html, body { height: 100%; overflow: hidden; font-family: 'Inter', sans-serif; background: var(--iw-dark); color: var(--iw-dark); }
+body { display: flex; flex-direction: column; }
+
+/* ── Top Bar ── */
+.dash-topbar {
+  display: flex; align-items: center; gap: 20px; padding: 12px 24px;
+  background: var(--iw-darker); border-bottom: 1px solid rgba(255,255,255,0.08);
+  flex-shrink: 0; z-index: 20;
+}
+.dash-title { font-size: 20px; font-weight: 800; color: #fff; letter-spacing: 0.5px; white-space: nowrap; }
+.dash-title span { color: var(--iw-gray-light); font-weight: 500; font-size: 13px; margin-left: 8px; }
+.dash-date-wrap { display: flex; align-items: center; gap: 8px; }
+.dash-date-wrap label { font-size: 12px; font-weight: 600; color: var(--iw-gray-light); text-transform: uppercase; letter-spacing: 0.5px; }
+.dash-date-input { padding: 6px 12px; border: 1px solid rgba(255,255,255,0.15); border-radius: 8px; background: rgba(255,255,255,0.08); color: #fff; font-size: 14px; font-family: inherit; cursor: pointer; }
+.dash-date-input::-webkit-calendar-picker-indicator { filter: invert(1); }
+.dash-counts { display: flex; gap: 16px; margin-left: auto; }
+.dash-count { font-size: 14px; font-weight: 700; padding: 6px 14px; border-radius: 8px; }
+.dash-count.green { background: rgba(34,197,94,0.15); color: #4ADE80; }
+.dash-count.red { background: rgba(239,68,68,0.15); color: #FCA5A5; }
+.dash-refresh { font-size: 11px; color: var(--iw-gray-light); white-space: nowrap; }
+
+/* ── Main Content ── */
+.dash-main { flex: 1; display: flex; overflow: hidden; }
+
+/* ── Map Side ── */
+.dash-map { flex: 1; position: relative; overflow: hidden; background: #87CEEB; cursor: grab; }
+.dash-map.grabbing { cursor: grabbing; }
+.dash-map-inner { position: absolute; transform-origin: 0 0; }
+.dash-map-inner img { display: block; user-select: none; -webkit-user-drag: none; }
+.dash-zoom { position: absolute; bottom: 16px; right: 16px; z-index: 10; display: flex; flex-direction: column; gap: 4px; }
+.dash-zoom button { width: 36px; height: 36px; border-radius: 8px; border: none; background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: pointer; font-size: 18px; font-weight: 700; color: var(--iw-dark); display: flex; align-items: center; justify-content: center; transition: background 0.2s; }
+.dash-zoom button:hover { background: var(--iw-light); }
+
+/* ── Pins ── */
+.dash-pin {
+  position: absolute; transform: translate(-50%, -100%);
+  cursor: pointer; z-index: 10; transition: transform 0.15s;
+}
+.dash-pin:hover { transform: translate(-50%, -100%) scale(1.2); z-index: 15; }
+.dash-pin-dot {
+  width: 28px; height: 28px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg);
+  display: flex; align-items: center; justify-content: center; color: white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.9);
+  font-size: 9px; font-weight: 700; transition: background 0.3s;
+}
+.dash-pin-dot span { transform: rotate(45deg); line-height: 1; }
+.dash-pin-shadow { width: 8px; height: 3px; border-radius: 50%; background: rgba(0,0,0,0.15); margin: 1px auto 0; }
+.dash-pin.avail .dash-pin-dot { background: var(--iw-green) !important; }
+.dash-pin.booked .dash-pin-dot { background: var(--iw-red) !important; opacity: 0.8; }
+
+/* Clusters */
+.dash-cluster {
+  position: absolute; transform: translate(-50%, -50%);
+  cursor: pointer; z-index: 12; transition: transform 0.15s;
+}
+.dash-cluster:hover { transform: translate(-50%, -50%) scale(1.15); z-index: 16; }
+.dash-cluster.hidden { opacity: 0; pointer-events: none; }
+.dash-pin.hidden { opacity: 0; pointer-events: none; }
+.dash-cluster-dot {
+  width: 42px; height: 42px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: white; font-size: 13px; font-weight: 800;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3); border: 3px solid rgba(255,255,255,0.9);
+  position: relative;
+}
+.dash-cluster-label {
+  position: absolute; bottom: -18px; left: 50%; transform: translateX(-50%);
+  font-size: 9px; font-weight: 700; color: white; white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7); letter-spacing: 0.3px;
+}
+
+/* ── Status Panel (right) ── */
+.dash-panel { width: 340px; height: 100%; background: white; border-left: 1px solid var(--iw-border); display: flex; flex-direction: column; flex-shrink: 0; overflow: hidden; }
+.dash-panel-header { padding: 16px 20px; border-bottom: 1px solid var(--iw-border); background: var(--iw-light); }
+.dash-panel-header h2 { font-size: 15px; font-weight: 800; color: var(--iw-dark); text-transform: uppercase; letter-spacing: 0.5px; }
+.dash-panel-body { flex: 1; overflow-y: auto; scrollbar-width: thin; }
+.dash-panel-body::-webkit-scrollbar { width: 4px; }
+.dash-panel-body::-webkit-scrollbar-thumb { background: var(--iw-border); border-radius: 4px; }
+
+.dash-section { border-bottom: 1px solid var(--iw-border); }
+.dash-section-header { display: flex; align-items: center; gap: 8px; padding: 12px 20px; cursor: pointer; user-select: none; transition: background 0.15s; }
+.dash-section-header:hover { background: var(--iw-light); }
+.dash-section-header .dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.dash-section-header .label { font-size: 13px; font-weight: 700; flex: 1; }
+.dash-section-header .cnt { font-size: 12px; font-weight: 800; padding: 2px 8px; border-radius: 10px; }
+.dash-section-header .chevron { font-size: 11px; color: var(--iw-gray-light); transition: transform 0.2s; }
+.dash-section.open .chevron { transform: rotate(180deg); }
+.dash-section-items { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.dash-section.open .dash-section-items { max-height: 3000px; }
+
+.dash-zone-group { padding: 4px 0; }
+.dash-zone-label { font-size: 10px; font-weight: 700; color: var(--iw-gray); text-transform: uppercase; letter-spacing: 0.5px; padding: 6px 20px 2px; }
+.dash-cabana-item { display: flex; align-items: center; gap: 8px; padding: 5px 20px 5px 28px; font-size: 12px; color: var(--iw-dark); cursor: pointer; transition: background 0.15s; }
+.dash-cabana-item:hover { background: var(--iw-light); }
+.dash-cabana-item .cdot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.dash-cabana-item .cname { flex: 1; font-weight: 500; }
+.dash-cabana-item .cstatus { font-size: 10px; font-weight: 600; }
+
+/* ── Detail Panel (slide-over) ── */
+.dash-detail-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.3); z-index: 60; opacity: 0; pointer-events: none; transition: opacity 0.3s; }
+.dash-detail-backdrop.open { opacity: 1; pointer-events: auto; }
+.dash-detail { position: fixed; top: 0; right: 0; width: 400px; max-width: 90vw; height: 100vh; background: white; z-index: 70; transform: translateX(100%); transition: transform 0.3s ease; display: flex; flex-direction: column; box-shadow: -4px 0 24px rgba(0,0,0,0.15); }
+.dash-detail.open { transform: translateX(0); }
+.dash-detail-header { padding: 20px; border-bottom: 1px solid var(--iw-border); display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.dash-detail-header h2 { font-size: 20px; font-weight: 800; line-height: 1.2; }
+.dash-detail-close { width: 32px; height: 32px; border-radius: 50%; border: none; background: var(--iw-light); cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: var(--iw-gray); flex-shrink: 0; transition: all 0.2s; }
+.dash-detail-close:hover { background: var(--iw-border); color: var(--iw-dark); }
+.dash-detail-body { flex: 1; overflow-y: auto; padding: 20px; }
+.dash-detail-tag { display: inline-block; padding: 4px 12px; border-radius: 6px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+.dash-detail-desc { font-size: 14px; color: var(--iw-gray); line-height: 1.7; margin-bottom: 16px; }
+.dash-detail-meta { padding: 12px 16px; background: var(--iw-light); border-radius: 8px; margin-bottom: 12px; }
+.dash-detail-row { display: flex; justify-content: space-between; gap: 12px; padding: 6px 0; font-size: 13px; }
+.dash-detail-row:not(:last-child) { border-bottom: 1px solid var(--iw-border); }
+.dash-detail-label { color: var(--iw-gray); white-space: nowrap; }
+.dash-detail-value { font-weight: 600; color: var(--iw-dark); text-align: right; }
+.dash-status-badge { display: inline-block; padding: 6px 16px; border-radius: 8px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
+.dash-status-badge.avail { background: var(--iw-green-light); color: var(--iw-green-dark); }
+.dash-status-badge.booked { background: var(--iw-red-light); color: var(--iw-red-dark); }
+</style>
+</head>
+<body>
+
+<!-- Top Bar -->
+<div class="dash-topbar">
+  <div class="dash-title">🏝️ Rentals Dashboard</div>
+  <div class="dash-date-wrap">
+    <label>Date:</label>
+    <input type="date" class="dash-date-input" id="dashDate">
+  </div>
+  <div class="dash-counts">
+    <div class="dash-count green" id="dashAvailCount">— Available</div>
+    <div class="dash-count red" id="dashBookedCount">— Booked</div>
+  </div>
+  <div class="dash-refresh" id="dashRefresh">Refreshing...</div>
+</div>
+
+<!-- Main Content -->
+<div class="dash-main">
+  <!-- Map -->
+  <div class="dash-map" id="dashMap">
+    <div class="dash-zoom">
+      <button onclick="zoomMap(1)">+</button>
+      <button onclick="zoomMap(-1)">−</button>
+      <button onclick="resetMap()" style="font-size:14px;">↻</button>
+    </div>
+    <div class="dash-map-inner" id="dashMapInner">
+      <img src="https://whisperingxhills.github.io/island-map/map-base.png" id="dashMapImg" draggable="false">
+    </div>
+  </div>
+
+  <!-- Status Panel -->
+  <div class="dash-panel">
+    <div class="dash-panel-header"><h2>Cabana Status</h2></div>
+    <div class="dash-panel-body" id="dashPanelBody"></div>
+  </div>
+</div>
+
+<!-- Detail Panel -->
+<div class="dash-detail-backdrop" id="detailBackdrop" onclick="closeDetail()"></div>
+<div class="dash-detail" id="detailPanel">
+  <div class="dash-detail-header">
+    <h2 id="detailTitle">—</h2>
+    <button class="dash-detail-close" onclick="closeDetail()">✕</button>
+  </div>
+  <div class="dash-detail-body" id="detailBody"></div>
+</div>
+
+<script>
+/* ================================================================
+   DATA — copied from cabana-map.html
+   ================================================================ */
+var ZONE_COLORS = {
+  "BBQ Cove":"#E85D04","Tide Pool":"#0EA5E9","Family":"#22C55E","Premium":"#8B5CF6",
+  "Kailua":"#EC4899","Honu":"#14B8A6","Waikiki Cove":"#3B82F6","Bayou Bungalow":"#A855F7",
+  "Waimea Falls":"#06B6D4","Wave Bungalow":"#F59E0B","Beach Bungalow":"#F97316",
+  "Beach Villa":"#EF4444","Bamboo Bay":"#10B981","Pete's Retreat":"#6366F1","Sharky's":"#DC2626"
+};
+
+var ZONE_DETAILS = {
+  "BBQ Cove":{size:"12' x 12'",capacity:"Up to 40",seating:"2 Large Picnic Tables",features:"Covered pavilion, corrugated metal roof, concrete pad, hibachi style BBQ with adjustable cooking surface."},
+  "Tide Pool":{size:"10' x 11'",capacity:"8 Seated",seating:"Sling Chairs",features:"South end of island, heart of Waimea Lazy River. Direct lazy river access. Tranquil tide pool for cooling off."},
+  "Family":{size:"10' x 12'",capacity:"8 Seated, 12 Max",seating:"Sling Chairs",features:"Ohana Bay deck near sea creatures, spraying mushrooms, and play structure. Cabana service included."},
+  "Premium":{size:"12' x 14' Plus Back Patio",capacity:"10 Seated, 16 Max",seating:"Wicker Chaise Lounges, Chairs",features:"RED BULL fridge, ceiling fans, charging outlets. Prime Ohana Bay location. Cabana service included."},
+  "Kailua":{size:"10' x 12'",capacity:"Up to 8",seating:"Sling & Adirondack Chairs",features:"Adjacent to Lazy River, steps from Ohana Bay Kiddies area and Waikiki Willies Bar."},
+  "Honu":{size:"20' x 14'",capacity:"20 Seated, 24 Max",seating:"Picnic Table Benches, Adirondack Chairs",features:"Between Lazy River entrance and Ohana Bay. Perfect for parties and groups."},
+  "Waikiki Cove":{size:"10' x 11'",capacity:"8 Seated, 12 Max",seating:"Wicker Love Seat, Wicker Chairs",features:"Secluded cul-de-sac next to Waimea Lazy River entrance and Waikiki Willies bar."},
+  "Bayou Bungalow":{size:"24' x 12'",capacity:"Large Groups",seating:"HDPE Chaise Loungers, Dining Sets",features:"Park's largest bungalow. Front-row views of Bayou River Tours Lazy River."},
+  "Waimea Falls":{size:"10' x 11'",capacity:"8 Seated, 12 Max",seating:"Sling Chairs, Chaise Loungers",features:"North end of island in middle of Waimea Lazy River. Own Lazy River entrance."},
+  "Wave Bungalow":{size:"12' x 20'",capacity:"12 Seated, 20 Max",seating:"Chairs, Chaise Loungers, Wicker",features:"Near wave pool, two ceiling fans, sink w/ running water, Jarritos fridge. Cabana service included."},
+  "Beach Bungalow":{size:"12' x 10'",capacity:"10",seating:"8 Sling Chairs, 2 Chaise Loungers",features:"On wave pool deck, steps from water. Back shade curtain. Cabana service included."},
+  "Beach Villa":{size:"20' x 12'",capacity:"16 Seated, 20 Max",seating:"8 Sling, 4 Chaise, Adirondack",features:"Largest cabanas. Directly on wave pool deck at water's edge. Cabana service included."},
+  "Bamboo Bay":{size:"15' x 10'",capacity:"12",seating:"Director & Adirondack Chairs",features:"High-grade bamboo construction, red corrugated metal roof. Beside Ohana Kids Play Structure."},
+  "Pete's Retreat":{size:"Approx 900 sq ft",capacity:"60 Guests",seating:"Bar Stools",features:"Large BBQ grill, tiled countertop, Jarritos fridge, sink, running water. Perfect for large events."},
+  "Sharky's":{size:"15' x 40'",capacity:"12 Seated, 20 Capacity",seating:"Chaise Loungers, Dining Chairs",features:"Synthetic grass, Air Hockey, Foosball, Giant Jenga, Corn Hole. Unlimited beverages for up to 20."}
+};
+
+var CABANA_COORDS = [
+  {"zone":"BBQ Cove","unit":"BBQ Cove 01","x":19.5,"y":33.1},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 03","x":19.1,"y":30.2},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 04","x":17,"y":32.4},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 05","x":15.9,"y":34.6},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 06","x":16.5,"y":29.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 07","x":14.9,"y":32.1},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 08","x":13.1,"y":34},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 09","x":11.5,"y":35.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 10","x":9.8,"y":37.3},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 11","x":15.5,"y":37.8},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 12","x":13.5,"y":38.3},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 13","x":14,"y":40.6},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 14","x":15.6,"y":42.5},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 15","x":7.1,"y":40.2},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 16","x":4.9,"y":43.4},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 17","x":4.1,"y":45.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 18","x":3.5,"y":49},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 19","x":2.7,"y":51.8},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 20","x":3,"y":54.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 21","x":2.8,"y":59.8},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 22","x":9.4,"y":40.2},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 23","x":10.5,"y":43.4},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 24","x":8.4,"y":43.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 25","x":6.3,"y":46.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 26","x":8.3,"y":49.7},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 27","x":7.9,"y":57.5},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 28","x":12,"y":52.1},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 29","x":11.7,"y":54.9},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 30","x":10.6,"y":59.4},
+  {"zone":"Pete's Retreat","unit":"Pete's Retreat","x":73.5,"y":56.8},
+  {"zone":"Family","unit":"Family 01","x":41.8,"y":68.3},
+  {"zone":"Family","unit":"Family 02","x":43,"y":67.6},
+  {"zone":"Family","unit":"Family 03","x":44.2,"y":66.9},
+  {"zone":"Family","unit":"Family 04","x":45,"y":66.3},
+  {"zone":"Family","unit":"Family 05","x":45.7,"y":65.3},
+  {"zone":"Family","unit":"Family 06","x":46.7,"y":64.3},
+  {"zone":"Family","unit":"Family 07","x":47.9,"y":63.6},
+  {"zone":"Family","unit":"Family 08","x":49.1,"y":62.7},
+  {"zone":"Family","unit":"Family 09","x":50.1,"y":61.8},
+  {"zone":"Family","unit":"Family 10","x":50.3,"y":59.1},
+  {"zone":"Family","unit":"Family 11","x":49.8,"y":57.3},
+  {"zone":"Family","unit":"Family 12","x":48.9,"y":56.4},
+  {"zone":"Family","unit":"Family 13","x":48,"y":55.5},
+  {"zone":"Family","unit":"Family 14","x":43.5,"y":51.9},
+  {"zone":"Family","unit":"Family 15","x":41.4,"y":50.7},
+  {"zone":"Family","unit":"Family 16","x":39.8,"y":51.3},
+  {"zone":"Family","unit":"Family 17","x":38.8,"y":51.8},
+  {"zone":"Family","unit":"Family 18","x":37,"y":53.8},
+  {"zone":"Family","unit":"Family 19","x":35.9,"y":54.4},
+  {"zone":"Family","unit":"Family 20","x":34.7,"y":55.2},
+  {"zone":"Honu","unit":"Honu 01","x":53.1,"y":62.6},
+  {"zone":"Honu","unit":"Honu 02","x":53.6,"y":61.3},
+  {"zone":"Honu","unit":"Honu 03","x":54.2,"y":60},
+  {"zone":"Honu","unit":"Honu 04","x":54.6,"y":59},
+  {"zone":"Honu","unit":"Honu 05","x":55.1,"y":57.7},
+  {"zone":"Honu","unit":"Honu 06","x":55.8,"y":56.4},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 01","x":61.4,"y":55.3},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 02","x":61.8,"y":54.3},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 03","x":62.1,"y":53},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 04","x":62.5,"y":52},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 05","x":62,"y":50.7},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 06","x":60.9,"y":49.8},
+  {"zone":"Waikiki Cove","unit":"Waikiki Cove 07","x":60.1,"y":49.1},
+  {"zone":"Sharky's","unit":"Sharky's","x":53.1,"y":49.6},
+  {"zone":"Wave Bungalow","unit":"Wave Bungalow 01","x":40.4,"y":45.1},
+  {"zone":"Wave Bungalow","unit":"Wave Bungalow 02","x":41.6,"y":45.4},
+  {"zone":"Bayou Bungalow","unit":"Bayou Bungalow 01","x":59.7,"y":57.4},
+  {"zone":"Bayou Bungalow","unit":"Bayou Bungalow 02","x":61.5,"y":57.5},
+  {"zone":"Premium","unit":"Premium 01","x":34.2,"y":56.5},
+  {"zone":"Premium","unit":"Premium 02","x":33.7,"y":57.7},
+  {"zone":"Premium","unit":"Premium 03","x":33.4,"y":59.2},
+  {"zone":"Premium","unit":"Premium 04","x":33.4,"y":60.6},
+  {"zone":"Premium","unit":"Premium 05","x":33.1,"y":61.8},
+  {"zone":"Premium","unit":"Premium 06","x":33.4,"y":63},
+  {"zone":"Premium","unit":"Premium 07","x":34.5,"y":63.9},
+  {"zone":"Premium","unit":"Premium 08","x":35.5,"y":65},
+  {"zone":"Premium","unit":"Premium 09","x":36.6,"y":65.7},
+  {"zone":"Premium","unit":"Premium 10","x":37.6,"y":66.5},
+  {"zone":"Premium","unit":"Premium 11","x":38.6,"y":67.2},
+  {"zone":"Premium","unit":"Premium 12","x":39.4,"y":68.2},
+  {"zone":"Kailua","unit":"Kailua 01","x":45.7,"y":71},
+  {"zone":"Kailua","unit":"Kailua 02","x":46.7,"y":70},
+  {"zone":"Kailua","unit":"Kailua 03","x":47.8,"y":68.6},
+  {"zone":"Kailua","unit":"Kailua 04","x":49.1,"y":67.7},
+  {"zone":"Kailua","unit":"Kailua 05","x":50.4,"y":67},
+  {"zone":"Kailua","unit":"Kailua 06","x":51.5,"y":66.1},
+  {"zone":"Kailua","unit":"Kailua 07","x":52.8,"y":65},
+  {"zone":"Waimea Falls","unit":"Waimea 01","x":57.1,"y":66.4},
+  {"zone":"Waimea Falls","unit":"Waimea 02","x":54.9,"y":68.5},
+  {"zone":"Waimea Falls","unit":"Waimea 03","x":52.8,"y":70.5},
+  {"zone":"Waimea Falls","unit":"Waimea 04","x":50.4,"y":72},
+  {"zone":"Waimea Falls","unit":"Waimea 05","x":51.9,"y":73.9},
+  {"zone":"Waimea Falls","unit":"Waimea 06","x":54.1,"y":74},
+  {"zone":"Waimea Falls","unit":"Waimea 07","x":55.9,"y":73.1},
+  {"zone":"Waimea Falls","unit":"Waimea 08","x":58.8,"y":71.5},
+  {"zone":"Waimea Falls","unit":"Waimea 09","x":58.6,"y":69.8},
+  {"zone":"Waimea Falls","unit":"Waimea 10","x":62.2,"y":70},
+  {"zone":"Waimea Falls","unit":"Waimea 11","x":61.2,"y":67.7},
+  {"zone":"Waimea Falls","unit":"Waimea 12","x":59.7,"y":66.6},
+  {"zone":"Waimea Falls","unit":"Waimea 13","x":58.6,"y":67.9},
+  {"zone":"Tide Pool","unit":"Tide Pool 01","x":69.4,"y":61.2},
+  {"zone":"Tide Pool","unit":"Tide Pool 02","x":71.7,"y":60.7},
+  {"zone":"Tide Pool","unit":"Tide Pool 03","x":73,"y":53.7},
+  {"zone":"Tide Pool","unit":"Tide Pool 04","x":70.9,"y":53.1},
+  {"zone":"Tide Pool","unit":"Tide Pool 05","x":68.8,"y":52.6},
+  {"zone":"Tide Pool","unit":"Tide Pool 06","x":66.3,"y":53.4},
+  {"zone":"Tide Pool","unit":"Tide Pool 07","x":65.8,"y":56},
+  {"zone":"Tide Pool","unit":"Tide Pool 08","x":65,"y":59},
+  {"zone":"Tide Pool","unit":"Tide Pool 09","x":66.9,"y":61.1},
+  {"zone":"Wave Bungalow","unit":"Wave Bungalow 03","x":43.2,"y":45.8},
+  {"zone":"Wave Bungalow","unit":"Wave Bungalow 04","x":44.3,"y":46},
+  {"zone":"Beach Bungalow","unit":"Beach Bungalow 01","x":50.1,"y":44.6},
+  {"zone":"Beach Bungalow","unit":"Beach Bungalow 02","x":53.5,"y":44.7},
+  {"zone":"Beach Bungalow","unit":"Beach Bungalow 03","x":56.2,"y":43.9},
+  {"zone":"Beach Bungalow","unit":"Beach Bungalow 04","x":58.4,"y":42.2},
+  {"zone":"Beach Villa","unit":"Beach Villa 01","x":51.9,"y":44.7},
+  {"zone":"Beach Villa","unit":"Beach Villa 02","x":54.8,"y":44.4},
+  {"zone":"Beach Villa","unit":"Beach Villa 03","x":57.1,"y":43},
+  {"zone":"Bamboo Bay","unit":"Bamboo Bay","x":46,"y":52.2},
+  {"zone":"BBQ Cove","unit":"BBQ Cove 02","x":18,"y":35.2}
+];
+
+var ZONE_ORDER = [
+  "BBQ Cove","Family","Premium","Kailua","Honu","Waikiki Cove",
+  "Waimea Falls","Tide Pool","Wave Bungalow","Beach Bungalow",
+  "Beach Villa","Bayou Bungalow","Bamboo Bay","Pete's Retreat","Sharky's"
+];
+
+/* Build CABANAS array */
+var CABANAS = [];
+CABANA_COORDS.forEach(function(c) {
+  var numMatch = c.unit.match(/(\d+)$/);
+  var displayNum = numMatch ? numMatch[1].replace(/^0+/,'') : '';
+  CABANAS.push({ zone: c.zone, unit: c.unit, x: c.x, y: c.y, displayNum: displayNum, available: true });
+});
+
+var ZONES = {};
+CABANAS.forEach(function(c) {
+  if (!ZONES[c.zone]) ZONES[c.zone] = { name: c.zone, cabanas: [], cx: 0, cy: 0 };
+  ZONES[c.zone].cabanas.push(c);
+});
+Object.keys(ZONES).forEach(function(z) {
+  var zone = ZONES[z], sx = 0, sy = 0;
+  zone.cabanas.forEach(function(c) { sx += c.x; sy += c.y; });
+  zone.cx = sx / zone.cabanas.length;
+  zone.cy = sy / zone.cabanas.length;
+});
+if (ZONES['Beach Villa']) ZONES['Beach Villa'].cx -= 2;
+if (ZONES['Beach Bungalow']) ZONES['Beach Bungalow'].cx += 2;
+
+/* ================================================================
+   STATE
+   ================================================================ */
+var scale = 1, panX = 0, panY = 0;
+var isDragging = false, dragStartX = 0, dragStartY = 0, startPanX = 0, startPanY = 0;
+var imgW = 0, imgH = 0;
+var CLUSTER_THRESHOLD = 0.7;
+var pinElements = [], clusterElements = [];
+var selectedSlotIndex = 0;
+
+/* ================================================================
+   INIT
+   ================================================================ */
+var mapImg = document.getElementById('dashMapImg');
+var mapInner = document.getElementById('dashMapInner');
+var mapArea = document.getElementById('dashMap');
+
+/* Date picker default */
+(function() {
+  var dp = document.getElementById('dashDate');
+  dp.value = new Date().toISOString().split('T')[0];
+  dp.addEventListener('change', function() { selectedSlotIndex = 0; fetchAvailability(); });
+})();
+
+mapImg.onload = function() {
+  imgW = mapImg.naturalWidth; imgH = mapImg.naturalHeight;
+  mapImg.style.width = imgW + 'px'; mapImg.style.height = imgH + 'px';
+  resetMap(); renderPins(); renderClusters(); updatePinVis(); fetchAvailability();
+  setInterval(fetchAvailability, 10000);
+};
+
+function updateTransform() {
+  mapInner.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + scale + ')';
+}
+
+/* ================================================================
+   PINS
+   ================================================================ */
+function renderPins() {
+  CABANAS.forEach(function(c) {
+    var pin = document.createElement('div');
+    pin.className = 'dash-pin avail';
+    pin.dataset.unit = c.unit;
+    pin.style.left = c.x + '%'; pin.style.top = c.y + '%';
+    var label = c.displayNum || '●';
+    pin.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;">' +
+      '<div class="dash-pin-dot" style="background:' + (ZONE_COLORS[c.zone]||'#888') + '"><span>' + label + '</span></div>' +
+      '<div class="dash-pin-shadow"></div></div>';
+    pin.addEventListener('click', function() { openDetail(c); });
+    mapInner.appendChild(pin);
+    pinElements.push({ el: pin, cabana: c });
+  });
+}
+
+function renderClusters() {
+  ZONE_ORDER.forEach(function(zn) {
+    var z = ZONES[zn]; if (!z) return;
+    var cl = document.createElement('div');
+    cl.className = 'dash-cluster'; cl.dataset.zone = zn;
+    cl.style.left = z.cx + '%'; cl.style.top = z.cy + '%';
+    cl.innerHTML = '<div class="dash-cluster-dot" style="background:' + (ZONE_COLORS[zn]||'#888') + '">' +
+      z.cabanas.length + '<div class="dash-cluster-label">' + esc(zn) + '</div></div>';
+    cl.addEventListener('click', function() { flyToZone(zn); });
+    mapInner.appendChild(cl);
+    clusterElements.push({ el: cl, zone: zn });
+  });
+}
+
+function updatePinVis() {
+  var showCl = scale < CLUSTER_THRESHOLD;
+  pinElements.forEach(function(p) { p.el.classList.toggle('hidden', showCl); });
+  clusterElements.forEach(function(c) { c.el.classList.toggle('hidden', !showCl); });
+}
+
+/* ================================================================
+   AVAILABILITY
+   ================================================================ */
+function fetchAvailability() {
+  var date = document.getElementById('dashDate').value || new Date().toISOString().split('T')[0];
+  var url = 'https://api.whisperingxhills.com/api/cabana-availability?date=' + date;
+  document.getElementById('dashRefresh').textContent = 'Refreshing...';
+
+  fetch(url).then(function(r) { return r.json(); }).then(function(data) {
+    if (!data.hasSchedules) { markAll(false); updatePanel(); updateCounts(); return; }
+    /* Handle time slots */
+    if (data.slotCount > 1 && data.timeSlots && data.timeSlots[selectedSlotIndex]) {
+      applySlot(data.timeSlots[selectedSlotIndex]);
+    } else if (data.zones) {
+      applyZones(data);
+    }
+    updatePanel(); updateCounts();
+    var now = new Date();
+    document.getElementById('dashRefresh').textContent = 'Last updated: ' + now.toLocaleTimeString();
+  }).catch(function() {
+    markAll(false); updatePanel(); updateCounts();
+    document.getElementById('dashRefresh').textContent = 'Fetch failed — retrying...';
+  });
+}
+
+function applySlot(slot) {
+  markAll(true);
+  var avail = {};
+  slot.zones.forEach(function(z) {
+    if (!z.cabanas) return;
+    z.cabanas.forEach(function(c) { avail[c.name] = !!c.available; });
+  });
+  CABANAS.forEach(function(c) { if (c.unit in avail) c.available = avail[c.unit]; });
+  updatePinColors();
+}
+
+function applyZones(data) {
+  markAll(true);
+  var avail = {};
+  data.zones.forEach(function(z) {
+    if (!z.cabanas) return;
+    z.cabanas.forEach(function(c) { avail[c.name] = !!c.available; });
+  });
+  CABANAS.forEach(function(c) { if (c.unit in avail) c.available = avail[c.unit]; });
+  updatePinColors();
+}
+
+function markAll(val) {
+  CABANAS.forEach(function(c) { c.available = val; });
+  updatePinColors();
+}
+
+function updatePinColors() {
+  pinElements.forEach(function(p) {
+    var a = p.cabana.available;
+    p.el.classList.toggle('avail', a);
+    p.el.classList.toggle('booked', !a);
+  });
+}
+
+function updateCounts() {
+  var av = 0, bk = 0;
+  CABANAS.forEach(function(c) { if (c.available) av++; else bk++; });
+  document.getElementById('dashAvailCount').textContent = av + ' Available';
+  document.getElementById('dashBookedCount').textContent = bk + ' Booked';
+}
+
+/* ================================================================
+   STATUS PANEL
+   ================================================================ */
+function updatePanel() {
+  var body = document.getElementById('dashPanelBody');
+  var availByZone = {}, bookedByZone = {};
+  ZONE_ORDER.forEach(function(z) { availByZone[z] = []; bookedByZone[z] = []; });
+  CABANAS.forEach(function(c) {
+    if (c.available) availByZone[c.zone].push(c);
+    else bookedByZone[c.zone].push(c);
+  });
+  var totalAvail = 0, totalBooked = 0;
+  CABANAS.forEach(function(c) { if (c.available) totalAvail++; else totalBooked++; });
+
+  var html = '';
+  /* Available section */
+  html += '<div class="dash-section open" id="secAvail">';
+  html += '<div class="dash-section-header" onclick="toggleSec(\'secAvail\')">';
+  html += '<div class="dot" style="background:#22C55E"></div>';
+  html += '<span class="label" style="color:#15803D">Available</span>';
+  html += '<span class="cnt" style="background:#F0FDF4;color:#15803D">' + totalAvail + '</span>';
+  html += '<span class="chevron">▼</span></div>';
+  html += '<div class="dash-section-items">';
+  ZONE_ORDER.forEach(function(z) {
+    var list = availByZone[z]; if (!list.length) return;
+    html += '<div class="dash-zone-group"><div class="dash-zone-label" style="color:' + (ZONE_COLORS[z]||'#888') + '">' + esc(z) + ' (' + list.length + ')</div>';
+    list.forEach(function(c) {
+      html += '<div class="dash-cabana-item" onclick="flyToCabana(\'' + escA(c.unit) + '\')">';
+      html += '<div class="cdot" style="background:#22C55E"></div>';
+      html += '<span class="cname">' + esc(c.unit) + '</span>';
+      html += '<span class="cstatus" style="color:#15803D">Available</span></div>';
+    });
+    html += '</div>';
+  });
+  html += '</div></div>';
+
+  /* Booked section */
+  html += '<div class="dash-section open" id="secBooked">';
+  html += '<div class="dash-section-header" onclick="toggleSec(\'secBooked\')">';
+  html += '<div class="dot" style="background:#EF4444"></div>';
+  html += '<span class="label" style="color:#DC2626">Booked</span>';
+  html += '<span class="cnt" style="background:#FEF2F2;color:#DC2626">' + totalBooked + '</span>';
+  html += '<span class="chevron">▼</span></div>';
+  html += '<div class="dash-section-items">';
+  ZONE_ORDER.forEach(function(z) {
+    var list = bookedByZone[z]; if (!list.length) return;
+    html += '<div class="dash-zone-group"><div class="dash-zone-label" style="color:' + (ZONE_COLORS[z]||'#888') + '">' + esc(z) + ' (' + list.length + ')</div>';
+    list.forEach(function(c) {
+      html += '<div class="dash-cabana-item" onclick="flyToCabana(\'' + escA(c.unit) + '\')">';
+      html += '<div class="cdot" style="background:#EF4444"></div>';
+      html += '<span class="cname">' + esc(c.unit) + '</span>';
+      html += '<span class="cstatus" style="color:#DC2626">Booked</span></div>';
+    });
+    html += '</div>';
+  });
+  html += '</div></div>';
+
+  body.innerHTML = html;
+}
+
+function toggleSec(id) { document.getElementById(id).classList.toggle('open'); }
+
+/* ================================================================
+   DETAIL PANEL
+   ================================================================ */
+function openDetail(cabana) {
+  var panel = document.getElementById('detailPanel');
+  var backdrop = document.getElementById('detailBackdrop');
+  document.getElementById('detailTitle').textContent = cabana.unit;
+  var color = ZONE_COLORS[cabana.zone] || '#888';
+  var details = ZONE_DETAILS[cabana.zone] || {};
+  var html = '';
+  html += '<span class="dash-detail-tag" style="background:' + hexRgba(color,0.12) + ';color:' + color + ';">' + esc(cabana.zone) + '</span>';
+  html += '<div class="dash-status-badge ' + (cabana.available ? 'avail' : 'booked') + '">' + (cabana.available ? '✓ Available' : '✗ Booked') + '</div>';
+  if (details.size || details.capacity || details.seating) {
+    html += '<div class="dash-detail-meta">';
+    if (details.size) html += '<div class="dash-detail-row"><span class="dash-detail-label">Size</span><span class="dash-detail-value">' + esc(details.size) + '</span></div>';
+    if (details.capacity) html += '<div class="dash-detail-row"><span class="dash-detail-label">Capacity</span><span class="dash-detail-value">' + esc(details.capacity) + '</span></div>';
+    if (details.seating) html += '<div class="dash-detail-row"><span class="dash-detail-label">Seating</span><span class="dash-detail-value">' + esc(details.seating) + '</span></div>';
+    html += '</div>';
+  }
+  if (details.features) html += '<p class="dash-detail-desc">' + esc(details.features) + '</p>';
+  html += '<div class="dash-detail-meta">';
+  html += '<div class="dash-detail-row"><span class="dash-detail-label">Zone</span><span class="dash-detail-value">' + esc(cabana.zone) + '</span></div>';
+  html += '<div class="dash-detail-row"><span class="dash-detail-label">Unit</span><span class="dash-detail-value">' + esc(cabana.unit) + '</span></div>';
+  html += '<div class="dash-detail-row"><span class="dash-detail-label">Status</span><span class="dash-detail-value" style="color:' + (cabana.available ? '#15803D' : '#DC2626') + ';">' + (cabana.available ? 'Available' : 'Booked') + '</span></div>';
+  html += '</div>';
+  document.getElementById('detailBody').innerHTML = html;
+  panel.classList.add('open'); backdrop.classList.add('open');
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('open');
+  document.getElementById('detailBackdrop').classList.remove('open');
+}
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeDetail(); });
+
+/* ================================================================
+   NAV
+   ================================================================ */
+function flyToZone(zn) {
+  var z = ZONES[zn]; if (!z) return;
+  var ww = mapArea.clientWidth, wh = mapArea.clientHeight;
+  scale = 1.8;
+  panX = ww/2 - (z.cx/100*imgW)*scale;
+  panY = wh/2 - (z.cy/100*imgH)*scale;
+  mapInner.style.transition = 'transform 0.5s ease';
+  updateTransform(); updatePinVis();
+  setTimeout(function() { mapInner.style.transition = ''; }, 500);
+}
+
+function flyToCabana(unitName) {
+  var c = null;
+  for (var i = 0; i < CABANAS.length; i++) { if (CABANAS[i].unit === unitName) { c = CABANAS[i]; break; } }
+  if (!c) return;
+  var ww = mapArea.clientWidth, wh = mapArea.clientHeight;
+  scale = 2.2;
+  panX = ww/2 - (c.x/100*imgW)*scale;
+  panY = wh/2 - (c.y/100*imgH)*scale;
+  mapInner.style.transition = 'transform 0.5s ease';
+  updateTransform(); updatePinVis();
+  setTimeout(function() { mapInner.style.transition = ''; }, 500);
+  openDetail(c);
+}
+
+/* ================================================================
+   PAN & ZOOM
+   ================================================================ */
+mapArea.addEventListener('mousedown', function(e) {
+  if (e.target.closest('.dash-pin') || e.target.closest('.dash-cluster')) return;
+  isDragging = true; dragStartX = e.clientX; dragStartY = e.clientY;
+  startPanX = panX; startPanY = panY; mapArea.classList.add('grabbing');
+});
+window.addEventListener('mousemove', function(e) {
+  if (!isDragging) return;
+  panX = startPanX + (e.clientX - dragStartX);
+  panY = startPanY + (e.clientY - dragStartY);
+  updateTransform();
+});
+window.addEventListener('mouseup', function() { isDragging = false; mapArea.classList.remove('grabbing'); });
+
+var lastTouchDist = 0;
+mapArea.addEventListener('touchstart', function(e) {
+  if (e.touches.length === 1) {
+    isDragging = true; dragStartX = e.touches[0].clientX; dragStartY = e.touches[0].clientY;
+    startPanX = panX; startPanY = panY;
+  } else if (e.touches.length === 2) {
+    isDragging = false;
+    lastTouchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }
+}, { passive: true });
+mapArea.addEventListener('touchmove', function(e) {
+  if (e.touches.length === 1 && isDragging) {
+    panX = startPanX + (e.touches[0].clientX - dragStartX);
+    panY = startPanY + (e.touches[0].clientY - dragStartY);
+    updateTransform();
+  } else if (e.touches.length === 2) {
+    var dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    scale = Math.max(0.3, Math.min(3, scale + (dist - lastTouchDist) * 0.003));
+    lastTouchDist = dist; updateTransform(); updatePinVis();
+  }
+}, { passive: true });
+mapArea.addEventListener('touchend', function() { isDragging = false; });
+
+mapArea.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  var factor = e.deltaY > 0 ? 0.9 : 1.1;
+  var rect = mapArea.getBoundingClientRect();
+  var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+  var ns = Math.max(0.3, Math.min(3, scale * factor));
+  panX = mx - (mx - panX) * (ns / scale);
+  panY = my - (my - panY) * (ns / scale);
+  scale = ns; updateTransform(); updatePinVis();
+}, { passive: false });
+
+function zoomMap(dir) {
+  var f = dir > 0 ? 1.25 : 0.8;
+  var ww = mapArea.clientWidth/2, wh = mapArea.clientHeight/2;
+  var ns = Math.max(0.3, Math.min(3, scale * f));
+  panX = ww - (ww - panX) * (ns / scale);
+  panY = wh - (wh - panY) * (ns / scale);
+  scale = ns; updateTransform(); updatePinVis();
+}
+
+function resetMap() {
+  var ww = mapArea.clientWidth, wh = mapArea.clientHeight;
+  scale = Math.min(ww / imgW, wh / imgH);
+  panX = (ww - imgW * scale) / 2;
+  panY = (wh - imgH * scale) / 2;
+  updateTransform(); updatePinVis();
+}
+
+/* ================================================================
+   UTILS
+   ================================================================ */
+function esc(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
+function escA(s) { return s.replace(/&/g,'&amp;').replace(/'/g,'&#39;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function hexRgba(hex, a) { var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return 'rgba('+r+','+g+','+b+','+a+')'; }
+</script>
+</body>
+</html>
