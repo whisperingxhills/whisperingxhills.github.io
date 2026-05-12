@@ -447,14 +447,12 @@
  document.getElementById('iwcPopupOverlay').classList.remove('active');
  document.getElementById('iwcTicketTitle').textContent = title;
  var container = document.getElementById('iwcTicketEngine');
- var attrs = 'eid="9f5be16b3a6b913c" root="' + root + '"';
- if (rate) attrs += ' rate="' + rate + '"';
- attrs += ' id="FlatlandWebEngine"';
- container.innerHTML = '<div ' + attrs + '></div>';
- var script = document.createElement('script');
- script.src = 'https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js';
- script.async = true;
- container.appendChild(script);
+ var url = 'https://secure.rocket-rez.com/RocketWeb2/9f5be16b3a6b913c?ro=' + encodeURIComponent(root);
+ if (rate) url += '&ra=' + encodeURIComponent(rate);
+ if (selectedCalDate) {
+ url += '&sd=' + selectedCalDate.iso + '&ed=' + selectedCalDate.iso;
+ }
+ container.innerHTML = '<iframe src="' + url + '" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>';
  document.getElementById('iwcTicketOverlay').classList.add('active');
  }
 
@@ -477,13 +475,13 @@
  openTicketEngine('NBj', rate, 'After Hours Tickets \u2014 ' + selectedCalDate.label);
  });
 
- document.getElementById('iwcTicketClose').addEventListener('click', function() {
+ function closeTicketOverlay() {
  document.getElementById('iwcTicketOverlay').classList.remove('active');
- });
- document.getElementById('iwcTicketOverlay').addEventListener('click', function(e) {
- if (e.target === e.currentTarget) {
- document.getElementById('iwcTicketOverlay').classList.remove('active');
+ document.getElementById('iwcTicketEngine').innerHTML = '';
  }
+ document.getElementById('iwcTicketClose').addEventListener('click', closeTicketOverlay);
+ document.getElementById('iwcTicketOverlay').addEventListener('click', function(e) {
+ if (e.target === e.currentTarget) closeTicketOverlay();
  });
 
  document.getElementById('iwcPopupClose').addEventListener('click', function() {
@@ -517,7 +515,7 @@
 
  document.addEventListener('keydown', function(e) {
  if (document.getElementById('iwcTicketOverlay').classList.contains('active')) {
- if (e.key === 'Escape') document.getElementById('iwcTicketOverlay').classList.remove('active');
+ if (e.key === 'Escape') closeTicketOverlay();
  return;
  }
  if (document.getElementById('iwcPopupOverlay').classList.contains('active')) {
