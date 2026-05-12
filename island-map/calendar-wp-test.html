@@ -1,8 +1,3 @@
-<!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Calendar WP Test</title>
-<style>body{margin:0;padding:0;background:#f0f0f0;}</style>
-</head><body>
 <div style="width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -90,6 +85,10 @@
 #iwp-calendar .iwc-popup-close:hover { background: var(--iw-border); color: var(--iw-dark); }
 #iwp-calendar .iwc-buy-btn { display: block; width: calc(100% - 48px); margin: 0 24px; padding: 14px; background: #0EA5E9; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
 #iwp-calendar .iwc-buy-btn:hover { background: #0284C7; }
+#iwp-calendar .iwc-buy-2for-btn { display: none; width: calc(100% - 48px); margin: 8px 24px 0; padding: 14px; background: #1D4ED8; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
+#iwp-calendar .iwc-buy-2for-btn:hover { background: #1E40AF; }
+#iwp-calendar .iwc-buy-afterhours-btn { display: none; width: calc(100% - 48px); margin: 8px 24px 0; padding: 14px; background: #7C3AED; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
+#iwp-calendar .iwc-buy-afterhours-btn:hover { background: #6D28D9; }
 #iwp-calendar .iwc-ticket-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.85); z-index: 1000000; display: none; align-items: center; justify-content: center; padding: 20px; }
 #iwp-calendar .iwc-ticket-overlay.active { display: flex; }
 #iwp-calendar .iwc-ticket-modal { max-width: 600px; width: 100%; height: 90vh; background: #fff; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 48px rgba(0,0,0,0.4); }
@@ -109,6 +108,8 @@
  #iwp-calendar .iwc-legend { padding: 6px 12px; gap: 4px 8px; }
  #iwp-calendar .iwc-legend-item { font-size: 9px; }
  #iwp-calendar .iwc-buy-btn { width: calc(100% - 32px); margin: 0 16px; font-size: 14px; padding: 12px; }
+ #iwp-calendar .iwc-buy-2for-btn { width: calc(100% - 32px); margin: 8px 16px 0; font-size: 13px; padding: 12px; }
+ #iwp-calendar .iwc-buy-afterhours-btn { width: calc(100% - 32px); margin: 8px 16px 0; font-size: 13px; padding: 12px; }
 }
 @media (min-width: 641px) {
  #iwp-calendar .iwc-day { padding: 6px 8px; }
@@ -158,6 +159,9 @@
  </div>
  <div class="iwc-popup-body" id="iwcPopupBody"></div>
  <button class="iwc-buy-btn" id="iwcBuyBtn">🎟️ Buy Tickets</button>
+ <button class="iwc-buy-2for-btn" id="iwcBuy2forBtn">🎟️ Purchase 2 for Tuesday Tickets</button>
+ <button class="iwc-buy-afterhours-btn" id="iwcBuyAfterHoursBtn">🎟️ Purchase After Hours Tickets</button>
+ <div style="height:12px"></div>
  <button class="iwc-popup-close" id="iwcPopupClose">Close</button>
  </div>
  </div>
@@ -180,98 +184,105 @@
  var selectedCalDate = null;
 
  var EVENT_TYPES = {
- '2for': { label: '2 for Tuesday', cls: 'iwc-tag--2for', emoji: '🎟', desc: 'Buy one get one admission every Tuesday' },
- 'wavy': { label: 'Wavy Wednesday', cls: 'iwc-tag--wavy', emoji: '🌊', desc: 'Special pricing and vibes every Wednesday' },
- 'family': { label: 'Family Night', cls: 'iwc-tag--family', emoji: '👨‍👩‍👧‍👦', desc: 'Extended evening hours for families, 6:00–10:00 PM' },
- 'adult': { label: 'Adult Swim', cls: 'iwc-tag--adult', emoji: '🍹', desc: '21+ event with late night hours, 7:00–11:00 PM' },
- 'fireworks': { label: 'Fireworks', cls: 'iwc-tag--fireworks', emoji: '🎆', desc: 'Independence Day fireworks celebration' },
- 'univision': { label: 'Univision Day', cls: 'iwc-tag--univision', emoji: '📺', desc: 'Univision community celebration day' },
- 'memorial': { label: 'Memorial Day', cls: 'iwc-tag--holiday', emoji: '🇺🇸', desc: 'Memorial Day Weekend' },
- 'juneteenth':{ label: 'Juneteenth', cls: 'iwc-tag--holiday', emoji: '✊', desc: 'Juneteenth' },
- 'fathers': { label: "Father's Day", cls: 'iwc-tag--holiday', emoji: '👔', desc: "Father's Day" },
- 'july4': { label: 'July 4th', cls: 'iwc-tag--holiday', emoji: '🇺🇸', desc: 'Independence Day' },
- 'laborday': { label: 'Labor Day', cls: 'iwc-tag--holiday', emoji: '🇺🇸', desc: 'Labor Day' }
+ '2for': { label: '2 for Tuesday', cls: 'iwc-tag--2for', emoji: '\u{1F3AB}', desc: 'Buy one get one admission every Tuesday' },
+ 'wavy': { label: 'Wavy Wednesday', cls: 'iwc-tag--wavy', emoji: '\u{1F30A}', desc: 'Special pricing and vibes every Wednesday' },
+ 'family': { label: 'Family Night', cls: 'iwc-tag--family', emoji: '\u{1F468}\u200D\u{1F469}\u200D\u{1F467}\u200D\u{1F466}', desc: 'Extended evening hours for families, 6:00\u201310:00 PM' },
+ 'adult': { label: 'Adult Swim', cls: 'iwc-tag--adult', emoji: '\u{1F379}', desc: '21+ event with late night hours, 7:00\u201311:00 PM' },
+ 'fireworks': { label: 'Fireworks', cls: 'iwc-tag--fireworks', emoji: '\u{1F386}', desc: 'Independence Day fireworks celebration' },
+ 'univision': { label: 'Univision Day', cls: 'iwc-tag--univision', emoji: '\u{1F4FA}', desc: 'Univision community celebration day' },
+ 'memorial': { label: 'Memorial Day', cls: 'iwc-tag--holiday', emoji: '\u{1F1FA}\u{1F1F8}', desc: 'Memorial Day Weekend' },
+ 'juneteenth':{ label: 'Juneteenth', cls: 'iwc-tag--holiday', emoji: '\u270A', desc: 'Juneteenth' },
+ 'fathers': { label: "Father's Day", cls: 'iwc-tag--holiday', emoji: '\u{1F454}', desc: "Father's Day" },
+ 'july4': { label: 'July 4th', cls: 'iwc-tag--holiday', emoji: '\u{1F1FA}\u{1F1F8}', desc: 'Independence Day' },
+ 'laborday': { label: 'Labor Day', cls: 'iwc-tag--holiday', emoji: '\u{1F1FA}\u{1F1F8}', desc: 'Labor Day' }
+ };
+
+ var AFTER_HOURS_RATES = {
+ '5-19': 'TR-nqj', '5-26': 'TR-nqj',
+ '6-10': 'TR-nqj', '6-17': 'TR-nqj', '6-24': 'TR-nqj', '6-31': 'TR-nqj',
+ '5-12': 'TR-NdA',
+ '7-7': 'TR-Kkr',
+ '6-3': 'TR-YZj'
  };
 
  var CALENDAR = [
- [4,23,'11:00–6:00',[],{}],
- [4,24,'11:00–6:00',[],{}],
- [4,25,'11:00–6:00',['memorial'],{}],
- [4,31,'11:00–6:00',[],{}],
-
- [5,7,'11:00–7:00',[],{}],
- [5,8,'11:00–6:00',[],{}],
- [5,9,'11:00–6:00',['2for'],{}],
- [5,10,'11:00–6:00',['wavy'],{}],
- [5,11,'11:00–6:00',[],{}],
- [5,12,'11:00–11:00',['adult'],{note:'Adult Swim 7–11 PM'}],
- [5,13,'11:00–8:00',[],{}],
- [5,14,'11:00–7:00',[],{}],
- [5,16,'11:00–6:00',['2for'],{}],
- [5,18,'11:00–6:00',[],{}],
- [5,19,'11:00–10:00',['family','juneteenth'],{note:'Family Night 6–10 PM / Juneteenth'}],
- [5,20,'11:00–8:00',[],{}],
- [5,21,'11:00–7:00',['fathers'],{}],
- [5,22,'11:00–6:00',[],{}],
- [5,23,'11:00–6:00',['2for'],{}],
- [5,24,'11:00–6:00',['wavy'],{}],
- [5,25,'11:00–6:00',[],{}],
- [5,26,'11:00–10:00',['family'],{note:'Family Night 6–10 PM'}],
- [5,27,'11:00–8:00',[],{}],
- [5,28,'11:00–7:00',[],{}],
- [5,29,'11:00–6:00',[],{}],
- [5,30,'11:00–6:00',['2for'],{}],
- [6,1,'11:00–6:00',['wavy'],{}],
- [6,2,'11:00–6:00',[],{}],
- [6,3,'11:00–10:00',['fireworks','family'],{note:'Fireworks + Family Night 6–10 PM'}],
- [6,4,'10:30–9:00',['fireworks','july4'],{note:'Independence Day Fireworks'}],
- [6,5,'11:00–7:00',['univision'],{note:'Univision Community Day'}],
- [6,6,'11:00–7:00',[],{}],
- [6,7,'11:00–7:00',['2for'],{}],
- [6,8,'11:00–7:00',['wavy'],{}],
- [6,9,'11:00–7:00',[],{}],
- [6,10,'11:00–10:00',['family'],{note:'Family Night 6–10 PM'}],
- [6,11,'10:30–8:00',[],{}],
- [6,12,'11:00–7:00',[],{}],
- [6,13,'11:00–7:00',[],{}],
- [6,14,'11:00–7:00',['2for'],{}],
- [6,15,'11:00–7:00',['wavy'],{}],
- [6,16,'11:00–7:00',[],{}],
- [6,17,'11:00–10:00',['family'],{note:'Family Night 6–10 PM'}],
- [6,18,'10:30–8:00',[],{}],
- [6,19,'11:00–7:00',[],{}],
- [6,20,'11:00–7:00',[],{}],
- [6,21,'11:00–7:00',['2for'],{}],
- [6,22,'11:00–7:00',['wavy'],{}],
- [6,23,'11:00–7:00',[],{}],
- [6,24,'11:00–10:00',['family'],{note:'Family Night 6–10 PM'}],
- [6,25,'10:30–8:00',[],{}],
- [6,26,'11:00–7:00',[],{}],
- [6,27,'11:00–7:00',[],{}],
- [6,28,'11:00–7:00',['2for'],{}],
- [6,29,'11:00–7:00',['wavy'],{}],
- [6,30,'11:00–7:00',[],{}],
- [6,31,'11:00–10:00',['family'],{note:'Family Night 6–10 PM'}],
- [7,1,'10:30–8:00',[],{}],
- [7,2,'11:00–7:00',[],{}],
- [7,3,'11:00–6:00',[],{}],
- [7,4,'11:00–6:00',['2for'],{}],
- [7,5,'11:00–6:00',['wavy'],{}],
- [7,6,'11:00–6:00',[],{}],
- [7,7,'11:00–11:00',['adult'],{note:'Adult Swim 7–11 PM'}],
- [7,8,'10:30–8:00',[],{}],
- [7,9,'11:00–7:00',[],{}],
- [7,10,'11:00–6:00',[],{}],
- [7,11,'11:00–6:00',['2for'],{}],
- [7,15,'11:00–7:00',[],{}],
- [7,16,'11:00–7:00',[],{}],
- [7,22,'11:00–6:00',[],{}],
- [7,23,'11:00–6:00',[],{}],
- [7,29,'11:00–6:00',[],{}],
- [7,30,'11:00–6:00',[],{}],
- [8,5,'11:00–6:00',[],{}],
- [8,6,'11:00–6:00',[],{}],
- [8,7,'11:00–6:00',['laborday'],{}]
+ [4,23,'11:00\u20136:00',[],{}],
+ [4,24,'11:00\u20136:00',[],{}],
+ [4,25,'11:00\u20136:00',['memorial'],{}],
+ [4,31,'11:00\u20136:00',[],{}],
+ [5,7,'11:00\u20137:00',[],{}],
+ [5,8,'11:00\u20136:00',[],{}],
+ [5,9,'11:00\u20136:00',['2for'],{}],
+ [5,10,'11:00\u20136:00',['wavy'],{}],
+ [5,11,'11:00\u20136:00',[],{}],
+ [5,12,'11:00\u201311:00',['adult'],{note:'Adult Swim 7\u201311 PM'}],
+ [5,13,'11:00\u20138:00',[],{}],
+ [5,14,'11:00\u20137:00',[],{}],
+ [5,16,'11:00\u20136:00',['2for'],{}],
+ [5,18,'11:00\u20136:00',[],{}],
+ [5,19,'11:00\u201310:00',['family','juneteenth'],{note:'Family Night 6\u201310 PM / Juneteenth'}],
+ [5,20,'11:00\u20138:00',[],{}],
+ [5,21,'11:00\u20137:00',['fathers'],{}],
+ [5,22,'11:00\u20136:00',[],{}],
+ [5,23,'11:00\u20136:00',['2for'],{}],
+ [5,24,'11:00\u20136:00',['wavy'],{}],
+ [5,25,'11:00\u20136:00',[],{}],
+ [5,26,'11:00\u201310:00',['family'],{note:'Family Night 6\u201310 PM'}],
+ [5,27,'11:00\u20138:00',[],{}],
+ [5,28,'11:00\u20137:00',[],{}],
+ [5,29,'11:00\u20136:00',[],{}],
+ [5,30,'11:00\u20136:00',['2for'],{}],
+ [6,1,'11:00\u20136:00',['wavy'],{}],
+ [6,2,'11:00\u20136:00',[],{}],
+ [6,3,'11:00\u201310:00',['fireworks','family'],{note:'Fireworks + Family Night 6\u201310 PM'}],
+ [6,4,'10:30\u20139:00',['fireworks','july4'],{note:'Independence Day Fireworks'}],
+ [6,5,'11:00\u20137:00',['univision'],{note:'Univision Community Day'}],
+ [6,6,'11:00\u20137:00',[],{}],
+ [6,7,'11:00\u20137:00',['2for'],{}],
+ [6,8,'11:00\u20137:00',['wavy'],{}],
+ [6,9,'11:00\u20137:00',[],{}],
+ [6,10,'11:00\u201310:00',['family'],{note:'Family Night 6\u201310 PM'}],
+ [6,11,'10:30\u20138:00',[],{}],
+ [6,12,'11:00\u20137:00',[],{}],
+ [6,13,'11:00\u20137:00',[],{}],
+ [6,14,'11:00\u20137:00',['2for'],{}],
+ [6,15,'11:00\u20137:00',['wavy'],{}],
+ [6,16,'11:00\u20137:00',[],{}],
+ [6,17,'11:00\u201310:00',['family'],{note:'Family Night 6\u201310 PM'}],
+ [6,18,'10:30\u20138:00',[],{}],
+ [6,19,'11:00\u20137:00',[],{}],
+ [6,20,'11:00\u20137:00',[],{}],
+ [6,21,'11:00\u20137:00',['2for'],{}],
+ [6,22,'11:00\u20137:00',['wavy'],{}],
+ [6,23,'11:00\u20137:00',[],{}],
+ [6,24,'11:00\u201310:00',['family'],{note:'Family Night 6\u201310 PM'}],
+ [6,25,'10:30\u20138:00',[],{}],
+ [6,26,'11:00\u20137:00',[],{}],
+ [6,27,'11:00\u20137:00',[],{}],
+ [6,28,'11:00\u20137:00',['2for'],{}],
+ [6,29,'11:00\u20137:00',['wavy'],{}],
+ [6,30,'11:00\u20137:00',[],{}],
+ [6,31,'11:00\u201310:00',['family'],{note:'Family Night 6\u201310 PM'}],
+ [7,1,'10:30\u20138:00',[],{}],
+ [7,2,'11:00\u20137:00',[],{}],
+ [7,3,'11:00\u20136:00',[],{}],
+ [7,4,'11:00\u20136:00',['2for'],{}],
+ [7,5,'11:00\u20136:00',['wavy'],{}],
+ [7,6,'11:00\u20136:00',[],{}],
+ [7,7,'11:00\u201311:00',['adult'],{note:'Adult Swim 7\u201311 PM'}],
+ [7,8,'10:30\u20138:00',[],{}],
+ [7,9,'11:00\u20137:00',[],{}],
+ [7,10,'11:00\u20136:00',[],{}],
+ [7,11,'11:00\u20136:00',['2for'],{}],
+ [7,15,'11:00\u20137:00',[],{}],
+ [7,16,'11:00\u20137:00',[],{}],
+ [7,22,'11:00\u20136:00',[],{}],
+ [7,23,'11:00\u20136:00',[],{}],
+ [7,29,'11:00\u20136:00',[],{}],
+ [7,30,'11:00\u20136:00',[],{}],
+ [8,5,'11:00\u20136:00',[],{}],
+ [8,6,'11:00\u20136:00',[],{}],
+ [8,7,'11:00\u20136:00',['laborday'],{}]
  ];
 
  var calLookup = {};
@@ -314,17 +325,16 @@
  dots[i].className = 'iwc-nav-dot' + (i === currentMonthIdx ? ' active' : '');
  }
 
- var openDays = 0, eventCount = 0;
+ var openDays = 0;
  for (var d = 1; d <= daysInMonth; d++) {
- var entry = calLookup[monthNum + '-' + d];
- if (entry) { openDays++; eventCount += entry[3].length; }
+ if (calLookup[monthNum + '-' + d]) openDays++;
  }
  document.getElementById('iwcMonthInfo').innerHTML = '<span class="iwc-month-stat"><span>' + openDays + '</span> DAYS TO SPLASH WITH US!</span>';
  }
 
  function buildGrid(grid, monthNum, firstDay, daysInMonth, today) {
  grid.innerHTML = '';
- var totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+ var totalCells = Math.ceil((firstDay + daysInMonth) /7) * 7;
 
  for (var i = 0; i < totalCells; i++) {
  var d = i - firstDay + 1;
@@ -368,7 +378,6 @@
  cell.appendChild(tagWrap);
  }
 
- /* Make ALL open days clickable — not just event days */
  if (entry) {
  cell.style.cursor = 'pointer';
  (function(m, day, e) {
@@ -388,10 +397,10 @@
  document.getElementById('iwcPopupTitle').textContent = MONTHS[month] + ' ' + day + ', 2026';
  document.getElementById('iwcPopupSubtitle').textContent = DAYS_FULL[date.getDay()];
 
- var bodyHTML = '<div class="iwc-popup-row"><span class="iwc-popup-icon">🕐</span><div><div class="iwc-popup-label">Park Hours</div><div class="iwc-popup-value">' + entry[2] + '</div></div></div>';
+ var bodyHTML = '<div class="iwc-popup-row"><span class="iwc-popup-icon">\u{1F550}</span><div><div class="iwc-popup-label">Park Hours</div><div class="iwc-popup-value">' + entry[2] + '</div></div></div>';
 
  if (entry[3].length > 0) {
- bodyHTML += '<div class="iwc-popup-row"><span class="iwc-popup-icon">🎉</span><div><div class="iwc-popup-label">Special Events</div><div class="iwc-popup-events">';
+ bodyHTML += '<div class="iwc-popup-row"><span class="iwc-popup-icon">\u{1F389}</span><div><div class="iwc-popup-label">Special Events</div><div class="iwc-popup-events">';
  entry[3].forEach(function(e) {
  var t = EVENT_TYPES[e];
  if (t) bodyHTML += '<span class="iwc-tag ' + t.cls + '" style="font-size:10px;padding:3px 8px;">' + t.emoji + ' ' + t.label + '</span>';
@@ -406,62 +415,66 @@
  }
 
  if (entry[4] && entry[4].note) {
- bodyHTML += '<div class="iwc-popup-row"><span class="iwc-popup-icon">📋</span><div><div class="iwc-popup-label">Details</div><div class="iwc-popup-value" style="font-size:13px;">' + entry[4].note + '</div></div></div>';
+ bodyHTML += '<div class="iwc-popup-row"><span class="iwc-popup-icon">\u{1F4CB}</span><div><div class="iwc-popup-label">Details</div><div class="iwc-popup-value" style="font-size:13px;">' + entry[4].note + '</div></div></div>';
  }
 
  document.getElementById('iwcPopupBody').innerHTML = bodyHTML;
 
- /* Store selected date for ticket purchase */
  var mm = String(month + 1).padStart(2, '0');
  var dd = String(day).padStart(2, '0');
  selectedCalDate = {
  iso: '2026-' + mm + '-' + dd,
- label: MONTHS[month] + ' ' + day + ', 2026'
+ label: MONTHS[month] + ' ' + day + ', 2026',
+ month: month,
+ day: day
  };
 
- /* Show buy button */
  document.getElementById('iwcBuyBtn').style.display = 'block';
+
+ /* Show/hide 2-for-Tuesday button */
+ var is2for = entry[3].indexOf('2for') !== -1;
+ document.getElementById('iwcBuy2forBtn').style.display = is2for ? 'block' : 'none';
+
+ /* Show/hide After Hours button */
+ var afterHoursKey = month + '-' + day;
+ var afterHoursRate = AFTER_HOURS_RATES[afterHoursKey];
+ document.getElementById('iwcBuyAfterHoursBtn').style.display = afterHoursRate ? 'block' : 'none';
 
  overlay.classList.add('active');
  }
 
- /* Ticket booking — use iframe so each date gets a fresh engine */
- var lastTicketDate = null;
-
- document.getElementById('iwcBuyBtn').addEventListener('click', function() {
- if (!selectedCalDate) return;
-
- /* Close popup */
+ function openTicketEngine(root, rate, title) {
  document.getElementById('iwcPopupOverlay').classList.remove('active');
-
- /* Update title */
- document.getElementById('iwcTicketTitle').textContent = 'Buy Tickets \u2014 ' + selectedCalDate.label;
-
- /* Reload engine if date changed or first open */
+ document.getElementById('iwcTicketTitle').textContent = title;
  var container = document.getElementById('iwcTicketEngine');
- if (lastTicketDate !== selectedCalDate.iso) {
- container.innerHTML = '';
- var iframe = document.createElement('iframe');
- iframe.style.cssText = 'width:100%;height:100%;border:none;';
- iframe.setAttribute('sandbox', 'allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox');
- container.appendChild(iframe);
-
- var html = '<!DOCTYPE html><html><head><meta charset="UTF-8">' +
- '<meta name="viewport" content="width=device-width,initial-scale=1">' +
- '<style>body{margin:0;padding:16px;font-family:Inter,sans-serif;}</style>' +
- '</head><body>' +
- '<div eid="9f5be16b3a6b913c" root="bNp" startDate="' + selectedCalDate.iso + '" endDate="' + selectedCalDate.iso + '" id="FlatlandWebEngine"></div>' +
- '<script type="text/javascript" src="https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js" async><\/script>' +
- '</body></html>';
-
- var doc = iframe.contentDocument || iframe.contentWindow.document;
- doc.open();
- doc.write(html);
- doc.close();
- lastTicketDate = selectedCalDate.iso;
+ var attrs = 'eid="9f5be16b3a6b913c" root="' + root + '"';
+ if (rate) attrs += ' rate="' + rate + '"';
+ attrs += ' id="FlatlandWebEngine"';
+ container.innerHTML = '<div ' + attrs + '></div>';
+ var script = document.createElement('script');
+ script.src = 'https://secure.rocket-rez.com/RocketWeb2/assets/scripts/webengine_load.js';
+ script.async = true;
+ container.appendChild(script);
+ document.getElementById('iwcTicketOverlay').classList.add('active');
  }
 
- document.getElementById('iwcTicketOverlay').classList.add('active');
+ /* Buy Tickets (regular admission) */
+ document.getElementById('iwcBuyBtn').addEventListener('click', function() {
+ if (!selectedCalDate) return;
+ openTicketEngine('bNp', '', 'Buy Tickets \u2014 ' + selectedCalDate.label);
+ });
+
+ /* 2 for Tuesday */
+ document.getElementById('iwcBuy2forBtn').addEventListener('click', function() {
+ if (!selectedCalDate) return;
+ openTicketEngine('bzY', '', '2 for Tuesday Tickets \u2014 ' + selectedCalDate.label);
+ });
+
+ /* After Hours */
+ document.getElementById('iwcBuyAfterHoursBtn').addEventListener('click', function() {
+ if (!selectedCalDate) return;
+ var rate = AFTER_HOURS_RATES[selectedCalDate.month + '-' + selectedCalDate.day] || '';
+ openTicketEngine('NBj', rate, 'After Hours Tickets \u2014 ' + selectedCalDate.label);
  });
 
  document.getElementById('iwcTicketClose').addEventListener('click', function() {
@@ -487,7 +500,6 @@
  if (currentMonthIdx < SEASON_MONTHS.length - 1) { currentMonthIdx++; renderMonth(SEASON_MONTHS[currentMonthIdx], 'left'); }
  });
 
- // Swipe
  var touchStartX = 0, touchStartY = 0;
  var wrap = document.getElementById('iwcSheetWrap');
  wrap.addEventListener('touchstart', function(e) {
@@ -503,12 +515,9 @@
  }
  }, { passive: true });
 
- // Keyboard
  document.addEventListener('keydown', function(e) {
  if (document.getElementById('iwcTicketOverlay').classList.contains('active')) {
- if (e.key === 'Escape') {
- document.getElementById('iwcTicketOverlay').classList.remove('active');
- }
+ if (e.key === 'Escape') document.getElementById('iwcTicketOverlay').classList.remove('active');
  return;
  }
  if (document.getElementById('iwcPopupOverlay').classList.contains('active')) {
@@ -519,7 +528,6 @@
  if (e.key === 'ArrowRight' && currentMonthIdx < SEASON_MONTHS.length - 1) { currentMonthIdx++; renderMonth(SEASON_MONTHS[currentMonthIdx], 'left'); }
  });
 
- // Build dots
  var dotsEl = document.getElementById('iwcNavDots');
  SEASON_MONTHS.forEach(function(m, i) {
  var dot = document.createElement('div');
@@ -532,7 +540,6 @@
  dotsEl.appendChild(dot);
  });
 
- // Welcome overlay
  function showWelcome() {
  var seen = false;
  try { seen = localStorage.getItem('iwcCalendarWelcomeSeen') === '1'; } catch(e) {}
@@ -543,13 +550,13 @@
  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.85);z-index:1000001;display:flex;align-items:center;justify-content:center;padding:20px;';
 
  overlay.innerHTML = '<div style="background:#fff;border-radius:16px;max-width:480px;width:100%;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;">'
- + '<div style="font-size:40px;margin-bottom:12px;">🗓️</div>'
+ + '<div style="font-size:40px;margin-bottom:12px;">\u{1F5D3}\uFE0F</div>'
  + '<h2 style="font-size:22px;font-weight:800;color:#1E293B;margin:0 0 16px;font-family:Inter,sans-serif;">Welcome to the Event Calendar</h2>'
  + '<div style="text-align:left;font-size:14px;color:#475569;line-height:1.7;font-family:Inter,sans-serif;">'
  + '<p style="margin:0 0 12px;"><strong>Step 1:</strong> Use the arrows or swipe to browse through the months of the 2026 season (May through September).</p>'
  + '<p style="margin:0 0 12px;"><strong>Step 2:</strong> Tap any open day to see park hours, special events, and details for that date.</p>'
- + '<p style="margin:0 0 12px;"><strong>Step 3:</strong> Click the <strong>"🎟️ Buy Tickets"</strong> button to purchase admission for that day. You\'ll be taken to a secure checkout.</p>'
- + '<p style="margin:0 0 12px;"><strong>Color Tags:</strong> Each day shows colored tags for special events — <span style="background:#DBEAFE;color:#1D4ED8;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:700;">2 for Tues</span> <span style="background:#D1FAE5;color:#047857;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:700;">Wavy Wed</span> <span style="background:#FDE68A;color:#92400E;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:700;">Family Night</span> and more.</p>'
+ + '<p style="margin:0 0 12px;"><strong>Step 3:</strong> Click the <strong>"\u{1F3AB}\uFE0F Buy Tickets"</strong> button to purchase admission for that day.</p>'
+ + '<p style="margin:0 0 12px;"><strong>Color Tags:</strong> Each day shows colored tags for special events \u2014 <span style="background:#DBEAFE;color:#1D4ED8;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:700;">2 for Tues</span> <span style="background:#D1FAE5;color:#047857;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:700;">Wavy Wed</span> <span style="background:#FDE68A;color:#92400E;padding:1px 6px;border-radius:3px;font-size:12px;font-weight:700;">Family Night</span> and more.</p>'
  + '<p style="margin:0;"><strong>Tip:</strong> Days marked <span style="color:#CBD5E1;font-weight:600;">CLOSED</span> are not available for visits.</p>'
  + '</div>'
  + '<button id="iwcWelcomeBtn" style="margin-top:20px;padding:14px 40px;background:#0EA5E9;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:background 0.2s;">Got It, Let\'s Go!</button>'
@@ -563,11 +570,9 @@
  });
  }
 
- // Init
  currentMonthIdx = getInitialMonth();
  renderMonth(SEASON_MONTHS[currentMonthIdx], null);
  showWelcome();
 })();
 </script>
 </div>
-</body></html>
