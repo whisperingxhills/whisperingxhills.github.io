@@ -1050,8 +1050,14 @@ const mapInner = document.getElementById('mapInner');
 const mapArea = document.getElementById('mapArea');
 const preview = document.getElementById('preview');
 
+var mapInited = false;
 function initMap() {
+  if (mapInited) return;
   if (!mapImg.naturalWidth) return;
+  var ww = mapArea.clientWidth;
+  var wh = mapArea.clientHeight;
+  if (!ww || !wh) { setTimeout(initMap, 100); return; }
+  mapInited = true;
   imgW = mapImg.naturalWidth;
   imgH = mapImg.naturalHeight;
   mapImg.style.width = imgW + 'px';
@@ -1062,6 +1068,7 @@ function initMap() {
 }
 mapImg.onload = initMap;
 if (mapImg.complete && mapImg.naturalWidth) initMap();
+window.addEventListener('load', initMap);
 
 function updateTransform() {
   mapInner.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
