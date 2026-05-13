@@ -133,6 +133,21 @@ body { display: flex; flex-direction: column; }
 .dash-status-badge { display: inline-block; padding: 6px 16px; border-radius: 8px; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px; }
 .dash-status-badge.avail { background: var(--iw-green-light); color: var(--iw-green-dark); }
 .dash-status-badge.booked { background: var(--iw-red-light); color: var(--iw-red-dark); }
+/* ── Help Bar ── */
+.dash-help { background: var(--iw-darker); border-top: 1px solid rgba(255,255,255,0.08); flex-shrink: 0; z-index: 20; }
+.dash-help-toggle { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; cursor: pointer; user-select: none; transition: background 0.15s; }
+.dash-help-toggle:hover { background: rgba(255,255,255,0.05); }
+.dash-help-toggle span { font-size: 12px; font-weight: 600; color: var(--iw-gray-light); }
+.dash-help-toggle .icon { font-size: 16px; }
+.dash-help-toggle .chevron { font-size: 10px; color: var(--iw-gray-light); transition: transform 0.2s; }
+.dash-help.open .dash-help-toggle .chevron { transform: rotate(180deg); }
+.dash-help-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease; }
+.dash-help.open .dash-help-content { max-height: 300px; }
+.dash-help-inner { display: flex; gap: 24px; padding: 12px 24px 16px; flex-wrap: wrap; }
+.dash-help-item { display: flex; align-items: flex-start; gap: 8px; flex: 1; min-width: 200px; }
+.dash-help-item .step { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.dash-help-item p { font-size: 12px; color: var(--iw-gray-light); line-height: 1.5; }
+.dash-help-item p strong { color: #fff; }
 </style>
 </head>
 <body>
@@ -169,6 +184,23 @@ body { display: flex; flex-direction: column; }
   <div class="dash-panel">
     <div class="dash-panel-header"><h2>Cabana Status</h2></div>
     <div class="dash-panel-body" id="dashPanelBody"></div>
+  </div>
+</div>
+
+<!-- Help Bar -->
+<div class="dash-help" id="dashHelp">
+  <div class="dash-help-toggle" onclick="document.getElementById('dashHelp').classList.toggle('open')">
+    <span class="icon">❓</span>
+    <span>Click here for help using the map</span>
+    <span class="chevron">▲</span>
+  </div>
+  <div class="dash-help-content">
+    <div class="dash-help-inner">
+      <div class="dash-help-item"><div class="step">1</div><p><strong>Pick a date</strong> using the date picker in the top bar. Defaults to today. Availability auto-refreshes every 10 seconds.</p></div>
+      <div class="dash-help-item"><div class="step">2</div><p><strong>Read the map.</strong> Green pins = available. Red pins = booked. Drag to pan, scroll to zoom, or use the +/- buttons.</p></div>
+      <div class="dash-help-item"><div class="step">3</div><p><strong>Click any pin</strong> on the map to see cabana details (size, capacity, seating, features) and current status.</p></div>
+      <div class="dash-help-item"><div class="step">4</div><p><strong>Use the right panel</strong> for a quick-glance list of all booked and available cabanas, grouped by zone. Click any name to fly to it on the map.</p></div>
+    </div>
   </div>
 </div>
 
