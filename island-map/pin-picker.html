@@ -54,7 +54,9 @@ body { font-family: Inter, sans-serif; background: #1E293B; color: #fff; display
   <span class="coords" id="coordsDisplay">Hover over map...</span>
 </div>
 <div class="map-wrap" id="mapWrap">
-  <img src="https://whisperingxhills.github.io/island-map/map-base.png" id="mapImg" draggable="false">
+  <div id="mapContainer" style="position:relative;display:inline-block;">
+    <img src="https://whisperingxhills.github.io/island-map/map-base.png" id="mapImg" draggable="false">
+  </div>
 </div>
 <div class="output-panel">
   <h3>Placed Pins (click "Copy Output" to grab)</h3>
@@ -75,16 +77,16 @@ var mapImg = document.getElementById('mapImg');
 var mapWrap = document.getElementById('mapWrap');
 
 mapWrap.addEventListener('mousemove', function(e) {
-  var rect = mapImg.getBoundingClientRect();
-  var x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
-  var y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2);
+  var imgRect = mapImg.getBoundingClientRect();
+  var x = ((e.clientX - imgRect.left) / mapImg.offsetWidth * 100).toFixed(2);
+  var y = ((e.clientY - imgRect.top) / mapImg.offsetHeight * 100).toFixed(2);
   document.getElementById('coordsDisplay').textContent = 'x: ' + x + '%, y: ' + y + '%';
 });
 
 mapWrap.addEventListener('click', function(e) {
-  var rect = mapImg.getBoundingClientRect();
-  var x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
-  var y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2);
+  var imgRect = mapImg.getBoundingClientRect();
+  var x = ((e.clientX - imgRect.left) / mapImg.offsetWidth * 100).toFixed(2);
+  var y = ((e.clientY - imgRect.top) / mapImg.offsetHeight * 100).toFixed(2);
   pendingClick = { x: parseFloat(x), y: parseFloat(y) };
   placePin();
 });
@@ -122,7 +124,7 @@ function renderPins() {
     var color = ZONE_COLORS[p.zone] || '#888';
     marker.innerHTML = '<div class="pin-label">' + p.zone + '</div>' +
       '<div class="pin-dot" style="background:' + color + '"><span>C</span></div>';
-    mapImg.parentElement.appendChild(marker);
+    document.getElementById('mapContainer').appendChild(marker);
   });
 }
 
