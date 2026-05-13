@@ -1053,10 +1053,10 @@ const preview = document.getElementById('preview');
 var mapInited = false;
 function initMap() {
   if (mapInited) return;
-  if (!mapImg.naturalWidth) return;
+  if (!mapImg.naturalWidth) { setTimeout(initMap, 50); return; }
   var ww = mapArea.clientWidth;
   var wh = mapArea.clientHeight;
-  if (!ww || !wh) { setTimeout(initMap, 100); return; }
+  if (!ww || !wh) { setTimeout(initMap, 50); return; }
   mapInited = true;
   imgW = mapImg.naturalWidth;
   imgH = mapImg.naturalHeight;
@@ -1067,8 +1067,14 @@ function initMap() {
   renderPins();
 }
 mapImg.onload = initMap;
-if (mapImg.complete && mapImg.naturalWidth) initMap();
+document.addEventListener('DOMContentLoaded', initMap);
 window.addEventListener('load', initMap);
+if (mapImg.complete) initMap();
+// ResizeObserver as final fallback for iframe embedding
+if (typeof ResizeObserver !== 'undefined') {
+  var ro = new ResizeObserver(function() { if (!mapInited) initMap(); else resetMap(); });
+  ro.observe(mapArea);
+}
 
 function updateTransform() {
   mapInner.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
@@ -1083,7 +1089,7 @@ function renderSidebar() {
 
   CATEGORIES.forEach(cat => {
     const items = cat.data;
-    html += `<div class="iw-cat-section open" data-cat="${cat.key}">`;
+    html += `<div class="iw-cat-section" data-cat="${cat.key}">`;
     html += `<div class="iw-cat-header" onclick="toggleCategory('${cat.key}')">`;
     html += `<div class="iw-cat-header-left">`;
     html += `<div class="iw-cat-icon ${cat.color}">${cat.icon}</div>`;
