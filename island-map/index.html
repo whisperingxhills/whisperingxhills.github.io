@@ -993,13 +993,10 @@ const MAP_DATA = {
   cabanas: [
     { id:21, name:"BBQ Cove", x:9.42, y:47.17, desc:"12' x 12' covered pavilion with corrugated metal roof, concrete pad, 2 large picnic tables, and a hibachi style BBQ with adjustable cooking surface. Surrounded by grass. Guests can bring multiple shade structures and additional seating for up to 40 people.", img:"", video:"yiR3TFMfBg0",
       size:'12\' x 12\'', capacity:"Up to 40", seating:"2 Large Picnic Tables",
-      pricing:[
-        {days:"Mon, Tue, Thu", price:"$50"},
-        {days:"Wednesday", price:"$29"},
-        {days:"Friday", price:"$50"},
-        {days:"Weekend", price:"$149"},
-        {days:"July 3rd/4th", price:"$199"}
-      ]
+      bookUrl:"https://www.islandwaterpark.com/cabanas", bookLabel:"Click Here to Book Cabanas"
+    },
+    { id:22, name:"Cabanas", x:50.5, y:55.0, desc:"Island Waterpark offers over 120 cabanas across 15 unique zones — from intimate poolside spots to large party pavilions. Options include shaded seating, ceiling fans, refrigerators, dining tables, chaise loungers, and even BBQ grills. Whether you're planning a birthday party, family day, or corporate outing, there's a cabana for every group size and budget. Cabana service is included with select zones.",
+      bookUrl:"https://www.islandwaterpark.com/cabanas", bookLabel:"Click Here to Book Cabanas"
     }
   ],
   amenities: [
@@ -1300,10 +1297,11 @@ function openPanel(item, cat) {
     html += `</div>`;
   }
 
-  // Book Now button (for items with pricing)
-  if (item.pricing && item.pricing.length) {
+  // Book Now button (for items with pricing or bookUrl)
+  if ((item.pricing && item.pricing.length) || item.bookUrl) {
     const bookUrl = item.bookUrl || '#';
-    html += `<a href="${bookUrl}" target="_blank" style="display:block;text-align:center;padding:14px;background:var(--iw-red);color:white;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-radius:10px;text-decoration:none;margin-bottom:16px;transition:background 0.2s;${!item.bookUrl?'opacity:0.85;':''}" onmouseover="this.style.background='var(--iw-red-dark)'" onmouseout="this.style.background='var(--iw-red)'">${item.bookUrl ? '🎉 Book Now' : '🎉 Book Now — Link Coming Soon'}</a>`;
+    const bookLabel = item.bookLabel || (item.bookUrl ? '🎉 Book Now' : '🎉 Book Now — Link Coming Soon');
+    html += `<a href="${bookUrl}" target="_blank" style="display:block;text-align:center;padding:14px;background:var(--iw-red);color:white;font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:1px;border-radius:10px;text-decoration:none;margin-bottom:16px;transition:background 0.2s;" onmouseover="this.style.background='var(--iw-red-dark)'" onmouseout="this.style.background='var(--iw-red)'">${bookLabel}</a>`;
   }
 
   // Cabana/pavilion details
