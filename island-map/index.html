@@ -1450,6 +1450,7 @@ function zoomMap(dir) {
 function resetMap() {
   const ww = mapArea.clientWidth;
   const wh = mapArea.clientHeight;
+  if (!ww || !wh) { setTimeout(resetMap, 200); return; }
   scale = Math.min(ww / imgW, wh / imgH);
   panX = (ww - imgW * scale) / 2;
   panY = (wh - imgH * scale) / 2;
