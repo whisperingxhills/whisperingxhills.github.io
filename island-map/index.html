@@ -1050,8 +1050,11 @@ const mapInner = document.getElementById('mapInner');
 const mapArea = document.getElementById('mapArea');
 const preview = document.getElementById('preview');
 
+var mapInited = false;
 function initMap() {
+  if (mapInited) return;
   if (!mapImg.naturalWidth) return;
+  mapInited = true;
   imgW = mapImg.naturalWidth;
   imgH = mapImg.naturalHeight;
   mapImg.style.width = imgW + 'px';
@@ -1062,6 +1065,9 @@ function initMap() {
 }
 mapImg.onload = initMap;
 if (mapImg.complete && mapImg.naturalWidth) initMap();
+window.addEventListener('load', initMap);
+setTimeout(initMap, 500);
+setTimeout(initMap, 2000);
 
 function updateTransform() {
   mapInner.style.transform = `translate(${panX}px, ${panY}px) scale(${scale})`;
@@ -1076,7 +1082,7 @@ function renderSidebar() {
 
   CATEGORIES.forEach(cat => {
     const items = cat.data;
-    html += `<div class="iw-cat-section open" data-cat="${cat.key}">`;
+    html += `<div class="iw-cat-section" data-cat="${cat.key}">`;
     html += `<div class="iw-cat-header" onclick="toggleCategory('${cat.key}')">`;
     html += `<div class="iw-cat-header-left">`;
     html += `<div class="iw-cat-icon ${cat.color}">${cat.icon}</div>`;
