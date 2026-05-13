@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pin Picker - Island Waterpark</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: Inter, sans-serif; background: #1E293B; color: #fff; display: flex; flex-direction: column; height: 100vh; }
+.toolbar { padding: 12px 20px; background: #0F172A; display: flex; align-items: center; gap: 16px; flex-shrink: 0; flex-wrap: wrap; border-bottom: 1px solid rgba(255,255,255,0.1); }
+.toolbar h1 { font-size: 16px; font-weight: 800; white-space: nowrap; }
+.toolbar select { padding: 6px 10px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.1); color: #fff; font-size: 13px; font-family: inherit; }
+.toolbar button { padding: 6px 14px; border-radius: 6px; border: none; background: #0EA5E9; color: #fff; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
+.toolbar button:hover { background: #0284C7; }
+.toolbar button.danger { background: #EF4444; }
+.toolbar button.danger:hover { background: #DC2626; }
+.toolbar .coords { font-size: 12px; color: #94A3B8; }
+.map-wrap { flex: 1; overflow: auto; position: relative; cursor: crosshair; }
+.map-wrap img { display: block; max-width: none; }
+.pin-marker { position: absolute; transform: translate(-50%, -100%); pointer-events: none; z-index: 10; }
+.pin-dot { width: 24px; height: 24px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 8px; font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.3); border: 2px solid rgba(255,255,255,0.9); }
+.pin-dot span { transform: rotate(45deg); }
+.pin-label { position: absolute; top: -28px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 10px; font-weight: 600; white-space: nowrap; }
+.output-panel { background: #0F172A; border-top: 1px solid rgba(255,255,255,0.1); padding: 12px 20px; max-height: 200px; overflow-y: auto; flex-shrink: 0; }
+.output-panel h3 { font-size: 13px; margin-bottom: 8px; color: #94A3B8; }
+.output-panel pre { font-size: 11px; color: #E2E8F0; white-space: pre-wrap; background: rgba(255,255,255,0.05); padding: 8px 12px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="toolbar">
+  <h1>📍 Pin Picker</h1>
+  <label style="font-size:12px;color:#94A3B8;">Zone:</label>
+  <select id="zoneSelect">
+    <option value="BBQ Cove">BBQ Cove</option>
+    <option value="Family">Family</option>
+    <option value="Premium">Premium</option>
+    <option value="Kailua">Kailua</option>
+    <option value="Honu">Honu</option>
+    <option value="Waikiki Cove">Waikiki Cove</option>
+    <option value="Waimea Falls">Waimea Falls</option>
+    <option value="Tide Pool">Tide Pool</option>
+    <option value="Wave Bungalow">Wave Bungalow</option>
+    <option value="Beach Bungalow">Beach Bungalow</option>
+    <option value="Beach Villa">Beach Villa</option>
+    <option value="Bayou Bungalow">Bayou Bungalow</option>
+    <option value="Bamboo Bay">Bamboo Bay</option>
+    <option value="Pete's Retreat">Pete's Retreat</option>
+    <option value="Sharky's">Sharky's</option>
+  </select>
+  <button onclick="placePin()">Place Selected Zone</button>
+  <button onclick="undoLast()">Undo Last</button>
+  <button class="danger" onclick="clearAll()">Clear All</button>
+  <button onclick="copyOutput()" style="background:#22C55E;">Copy Output</button>
+  <span class="coords" id="coordsDisplay">Hover over map...</span>
+</div>
+<div class="map-wrap" id="mapWrap">
+  <img src="https://whisperingxhills.github.io/island-map/map-base.png" id="mapImg" draggable="false">
+</div>
+<div class="output-panel">
+  <h3>Placed Pins (click "Copy Output" to grab)</h3>
+  <pre id="outputPre">// Click on the map to place zone pins</pre>
+</div>
+
+<script>
+var pins = [];
+var pendingClick = null;
+var ZONE_COLORS = {
+  "BBQ Cove":"#E85D04","Tide Pool":"#0EA5E9","Family":"#22C55E","Premium":"#8B5CF6",
+  "Kailua":"#EC4899","Honu":"#14B8A6","Waikiki Cove":"#3B82F6","Bayou Bungalow":"#A855F7",
+  "Waimea Falls":"#06B6D4","Wave Bungalow":"#F59E0B","Beach Bungalow":"#F97316",
+  "Beach Villa":"#EF4444","Bamboo Bay":"#10B981","Pete's Retreat":"#6366F1","Sharky's":"#DC2626"
+};
+
+var mapImg = document.getElementById('mapImg');
+var mapWrap = document.getElementById('mapWrap');
+
+mapWrap.addEventListener('mousemove', function(e) {
+  var rect = mapImg.getBoundingClientRect();
+  var x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
+  var y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2);
+  document.getElementById('coordsDisplay').textContent = 'x: ' + x + '%, y: ' + y + '%';
+});
+
+mapWrap.addEventListener('click', function(e) {
+  var rect = mapImg.getBoundingClientRect();
+  var x = ((e.clientX - rect.left) / rect.width * 100).toFixed(2);
+  var y = ((e.clientY - rect.top) / rect.height * 100).toFixed(2);
+  pendingClick = { x: parseFloat(x), y: parseFloat(y) };
+  placePin();
+});
+
+function placePin() {
+  if (!pendingClick) return;
+  var zone = document.getElementById('zoneSelect').value;
+  // Remove existing pin for this zone
+  pins = pins.filter(function(p) { return p.zone !== zone; });
+  pins.push({ zone: zone, x: pendingClick.x, y: pendingClick.y });
+  pendingClick = null;
+  renderPins();
+  updateOutput();
+}
+
+function undoLast() {
+  pins.pop();
+  renderPins();
+  updateOutput();
+}
+
+function clearAll() {
+  pins = [];
+  renderPins();
+  updateOutput();
+}
+
+function renderPins() {
+  document.querySelectorAll('.pin-marker').forEach(function(el) { el.remove(); });
+  pins.forEach(function(p) {
+    var marker = document.createElement('div');
+    marker.className = 'pin-marker';
+    marker.style.left = p.x + '%';
+    marker.style.top = p.y + '%';
+    var color = ZONE_COLORS[p.zone] || '#888';
+    marker.innerHTML = '<div class="pin-label">' + p.zone + '</div>' +
+      '<div class="pin-dot" style="background:' + color + '"><span>C</span></div>';
+    mapImg.parentElement.appendChild(marker);
+  });
+}
+
+function updateOutput() {
+  if (pins.length === 0) {
+    document.getElementById('outputPre').textContent = '// Click on the map to place zone pins';
+    return;
+  }
+  var lines = pins.map(function(p) {
+    return '{ id:' + (20 + pins.indexOf(p) + 1) + ', name:"' + p.zone + '", x:' + p.x + ', y:' + p.y +
+      ', desc:"DESCRIPTION HERE", bookUrl:"https://www.islandwaterpark.com/cabanas", bookLabel:"Click Here to Book Cabanas" }';
+  });
+  document.getElementById('outputPre').textContent = lines.join(',\n');
+}
+
+function copyOutput() {
+  var text = document.getElementById('outputPre').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    alert('Copied to clipboard!');
+  });
+}
+</script>
+</body>
+</html>
