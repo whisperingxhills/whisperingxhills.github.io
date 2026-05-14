@@ -1,0 +1,437 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+#iwp-rules { font-family: 'Inter', sans-serif; max-width: 1200px; margin: 0 auto; color: #1E293B; }
+#iwp-rules * { box-sizing: border-box; margin: 0; padding: 0; }
+
+#iwp-rules .rules-header {
+  background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 40%, #1E293B 100%);
+  padding: 40px 32px;
+  border-radius: 16px 16px 0 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+#iwp-rules .rules-header::before {
+  content: '';
+  position: absolute;
+  top: -30px; right: -30px;
+  width: 200px; height: 200px;
+  background: rgba(255,255,255,0.05);
+  border-radius: 50%;
+}
+#iwp-rules .rules-header h1 {
+  font-size: 32px;
+  font-weight: 900;
+  color: white;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+#iwp-rules .rules-header p {
+  font-size: 14px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+}
+
+#iwp-rules .rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 20px;
+  padding: 24px;
+  background: #F1F5F9;
+}
+
+#iwp-rules .rule-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  transition: box-shadow 0.2s;
+}
+#iwp-rules .rule-card:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+}
+
+#iwp-rules .rule-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+#iwp-rules .rule-card-header:hover {
+  background: #F8FAFC;
+}
+
+#iwp-rules .rule-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+  color: white;
+}
+
+#iwp-rules .rule-icon.blue { background: #0EA5E9; }
+#iwp-rules .rule-icon.teal { background: #14B8A6; }
+#iwp-rules .rule-icon.orange { background: #F97316; }
+#iwp-rules .rule-icon.purple { background: #8B5CF6; }
+#iwp-rules .rule-icon.red { background: #EF4444; }
+#iwp-rules .rule-icon.green { background: #22C55E; }
+#iwp-rules .rule-icon.pink { background: #EC4899; }
+#iwp-rules .rule-icon.indigo { background: #6366F1; }
+#iwp-rules .rule-icon.amber { background: #F59E0B; }
+#iwp-rules .rule-icon.slate { background: #475569; }
+
+#iwp-rules .rule-card-title {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 700;
+  color: #1E293B;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+#iwp-rules .rule-chevron {
+  font-size: 12px;
+  color: #94A3B8;
+  transition: transform 0.25s;
+  flex-shrink: 0;
+}
+
+#iwp-rules .rule-card.open .rule-chevron {
+  transform: rotate(180deg);
+}
+
+#iwp-rules .rule-card-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.35s ease;
+}
+
+#iwp-rules .rule-card.open .rule-card-body {
+  max-height: 1200px;
+}
+
+#iwp-rules .rule-card-content {
+  padding: 0 20px 20px 20px;
+  border-top: 1px solid #F1F5F9;
+}
+
+#iwp-rules .rule-card-content ul {
+  list-style: none;
+  padding: 0;
+}
+
+#iwp-rules .rule-card-content li {
+  font-size: 13px;
+  color: #475569;
+  line-height: 1.6;
+  padding: 8px 0;
+  border-bottom: 1px solid #F8FAFC;
+  padding-left: 20px;
+  position: relative;
+}
+
+#iwp-rules .rule-card-content li::before {
+  content: '•';
+  position: absolute;
+  left: 4px;
+  color: #94A3B8;
+  font-weight: 700;
+}
+
+#iwp-rules .rule-card-content li:last-child {
+  border-bottom: none;
+}
+
+#iwp-rules .rule-subsection {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #0EA5E9;
+  margin-top: 12px;
+  margin-bottom: 4px;
+  padding-left: 4px;
+}
+
+#iwp-rules .rules-footer {
+  background: #1E293B;
+  padding: 24px 32px;
+  border-radius: 0 0 16px 16px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+#iwp-rules .rules-footer-warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 1;
+  min-width: 280px;
+}
+
+#iwp-rules .rules-footer-warning .warn-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+#iwp-rules .rules-footer-warning p {
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  line-height: 1.6;
+}
+
+#iwp-rules .rules-footer-info {
+  text-align: right;
+  min-width: 200px;
+}
+
+#iwp-rules .rules-footer-info p {
+  font-size: 12px;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.8;
+}
+
+#iwp-rules .rules-footer-info a {
+  color: #0EA5E9;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  #iwp-rules .rules-grid {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    gap: 12px;
+  }
+  #iwp-rules .rules-header h1 { font-size: 24px; }
+  #iwp-rules .rules-footer { flex-direction: column; text-align: center; }
+  #iwp-rules .rules-footer-info { text-align: center; }
+}
+</style>
+
+<div id="iwp-rules">
+
+  <div class="rules-header">
+    <h1>🌊 Park Rules & Guest Information</h1>
+    <p>Island Waterpark &bull; Fresno, California</p>
+  </div>
+
+  <div class="rules-grid">
+
+    <!-- Food & Outside Items -->
+    <div class="rule-card open">
+      <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="rule-icon orange">🍔</div>
+        <span class="rule-card-title">Food & Outside Items</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-card-body">
+        <div class="rule-card-content">
+          <ul>
+            <li>Food or drinks may be brought into the park.</li>
+            <li>No glass containers or kitchen knives are allowed.</li>
+            <li>The use of grills or any open flame on park property, including the parking lot, is prohibited.</li>
+            <li>No cooking or warming food of any kind.</li>
+            <li>BBQ Cove Cabanas include a designated grilling area. The only exception for grills. (Cabana reservation required.)</li>
+          </ul>
+          <div class="rule-subsection">Bag Inspections</div>
+          <ul>
+            <li>For guest safety and to ensure proper items are being brought inside the park, our staff at the main gate may inspect ice chests, bags, totes, and purses.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Water Safety -->
+    <div class="rule-card open">
+      <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="rule-icon blue">🏊</div>
+        <span class="rule-card-title">Water Safety</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-card-body">
+        <div class="rule-card-content">
+          <ul>
+            <li>Life vests are available and recommended for all guests.</li>
+            <li>Guests under 48" (4 feet) are encouraged to wear a life vest.</li>
+            <li>In our Wave Pool, guests under 48" require a life vest and be accompanied by an adult in arms reach.</li>
+            <li>Diving is not allowed in any pool or attraction.</li>
+          </ul>
+          <div class="rule-subsection">Flotation Devices</div>
+          <ul>
+            <li>No personal flotation devices may be brought into the park.</li>
+            <li>For infants and toddlers, only foam-based flotation seats are permitted. Devices may not include lap straps or restraining straps. They may be used ONLY in the Lazy River.</li>
+            <li>Personal life vests are permitted, but MUST be U.S. Coast Guard Approved.</li>
+            <li>Non-swimmers are always encouraged to wear a life vest.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Park Conduct -->
+    <div class="rule-card open">
+      <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="rule-icon teal">📋</div>
+        <span class="rule-card-title">Park Conduct</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-card-body">
+        <div class="rule-card-content">
+          <ul>
+            <li>No running or cutting in line.</li>
+            <li>No loitering, unruly behavior, profanity, or line cutting.</li>
+            <li>No amplified audio or TVs are allowed in the park.</li>
+            <li>Guests must refrain from using foul, profane, offensive language or gestures.</li>
+            <li>Guests must abide by posted attraction instructions, lifeguard & management instructions.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Smoking & Shade -->
+    <div class="rule-card open">
+      <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="rule-icon purple">🚭</div>
+        <span class="rule-card-title">Smoking & Shade</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-card-body">
+        <div class="rule-card-content">
+          <div class="rule-subsection">Shade Structures</div>
+          <ul>
+            <li>Personal shade structures are allowed only in one of our 6 designated areas.</li>
+            <li>Shade structures must not obstruct any paths or walkways or other guests' personal space.</li>
+          </ul>
+          <div class="rule-subsection">Smoke-Free Park</div>
+          <ul>
+            <li>Island Waterpark is a smoke-free park.</li>
+            <li>Smoking, including e-cigarettes, is only permitted in designated areas.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Swimwear Policy -->
+    <div class="rule-card open">
+      <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="rule-icon pink">👙</div>
+        <span class="rule-card-title">Swimwear Policy</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-card-body">
+        <div class="rule-card-content">
+          <ul>
+            <li>Proper swimwear must be worn on all rides and attractions. Examples: Dry fit, and spandex material. No cotton.</li>
+            <li>Inappropriate swimwear is not permitted. See below.</li>
+            <li>Any child requiring diapers must wear a waterproof swim diaper with swimwear bottoms over it prior to entering the water. Swim diapers are available for purchase at Gift Shop.</li>
+          </ul>
+          <div class="rule-subsection">Inappropriate Swimwear & Clothing (Not Permitted)</div>
+          <ul>
+            <li>Underwear, boxers, briefs</li>
+            <li>Clothing that is transparent or translucent in private areas</li>
+            <li>Attire with exposed metal, rivets, buttons, zippers, buckles, or snaps</li>
+            <li>Long pants, jeans, denim, slacks, trousers</li>
+            <li>Any clothing or accessory (e.g. belts, jewelry)</li>
+            <li>Clothing that offensively exposes parts of the body</li>
+            <li>Transparent clothing, indecent pictures, slogans or graphics</li>
+            <li>Clothing or tattoos with offensive language, graphics or symbols</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Height & Weight Guidelines -->
+    <div class="rule-card open">
+      <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="rule-icon amber">📏</div>
+        <span class="rule-card-title">Height & Weight Guidelines</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-card-body">
+        <div class="rule-card-content">
+          <ul>
+            <li>Height and weight restrictions are posted for all attractions and enforced.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Park Property & Safety -->
+    <div class="rule-card open">
+      <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="rule-icon slate">🔒</div>
+        <span class="rule-card-title">Park Property & Safety</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-card-body">
+        <div class="rule-card-content">
+          <ul>
+            <li>No alcohol or illegal drugs may be brought into the park.</li>
+            <li>Island Waterpark is private property. We do not allow firearms, weapons, glass containers, alcohol, radios/boom boxes, musical instruments, and unauthorized flotation devices.</li>
+            <li>Medical Marijuana is prohibited in the park or in the parking lot.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Photos & Recordings -->
+    <div class="rule-card open">
+      <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="rule-icon indigo">📷</div>
+        <span class="rule-card-title">Photos & Recordings</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-card-body">
+        <div class="rule-card-content">
+          <ul>
+            <li>Photos or recording are strictly prohibited in restrooms, changing rooms and locker areas.</li>
+            <li>Island Waterpark management reserves the right to stop picture taking or video recording and confiscate any appropriate material.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Injuries & Emergencies -->
+    <div class="rule-card open">
+      <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
+        <div class="rule-icon red">🚑</div>
+        <span class="rule-card-title">Injuries & Emergencies</span>
+        <span class="rule-chevron">▼</span>
+      </div>
+      <div class="rule-card-body">
+        <div class="rule-card-content">
+          <ul>
+            <li>Any injuries sustained at the park must be reported the day of the incident.</li>
+            <li>If you need help due to injury or emergency, immediately notify any employee or visit First Aid Station for any concerns.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="rules-footer">
+    <div class="rules-footer-warning">
+      <span class="warn-icon">⚠️</span>
+      <p>Failure to follow park rules may result in ejection without a refund. Island Waterpark management reserves the right to refuse admission or remove guests who violate park policies. The policies are in place for the safety and enjoyment of all guests. <em>Policies are subject to change without notice.</em></p>
+    </div>
+    <div class="rules-footer-info">
+      <p>🌐 <a href="https://www.islandwaterpark.com" target="_blank">islandwaterpark.com</a></p>
+      <p>📍 Fresno, California</p>
+    </div>
+  </div>
+
+</div>
