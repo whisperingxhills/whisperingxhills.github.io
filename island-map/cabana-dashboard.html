@@ -35,6 +35,8 @@ body { display: flex; flex-direction: column; }
 .dash-count.green { background: rgba(34,197,94,0.15); color: #4ADE80; }
 .dash-count.red { background: rgba(239,68,68,0.15); color: #FCA5A5; }
 .dash-refresh { font-size: 11px; color: var(--iw-gray-light); white-space: nowrap; }
+.dash-print-btn { padding: 6px 16px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.08); color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
+.dash-print-btn:hover { background: rgba(255,255,255,0.15); }
 
 /* ── Main Content ── */
 .dash-main { flex: 1; display: flex; overflow: hidden; }
@@ -148,6 +150,34 @@ body { display: flex; flex-direction: column; }
 .dash-help-item .step { width: 22px; height: 22px; border-radius: 50%; background: rgba(255,255,255,0.1); color: #fff; font-size: 11px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
 .dash-help-item p { font-size: 12px; color: var(--iw-gray-light); line-height: 1.5; }
 .dash-help-item p strong { color: #fff; }
+
+/* ── Print Report ── */
+#printReport { display: none; }
+@media print {
+  body * { visibility: hidden !important; }
+  #printReport, #printReport * { visibility: visible !important; }
+  #printReport {
+    display: block !important; position: fixed; top: 0; left: 0; width: 100%;
+    background: #fff; z-index: 99999; padding: 24px 32px; font-family: 'Inter', sans-serif;
+  }
+  .pr-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #1E293B; padding-bottom: 12px; margin-bottom: 16px; }
+  .pr-title { font-size: 20px; font-weight: 800; color: #1E293B; }
+  .pr-subtitle { font-size: 12px; color: #64748B; }
+  .pr-counts { display: flex; gap: 16px; margin-bottom: 16px; }
+  .pr-count { padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 700; }
+  .pr-count.green { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
+  .pr-count.red { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
+  .pr-columns { display: flex; gap: 32px; }
+  .pr-col { flex: 1; }
+  .pr-col-title { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 6px; margin-bottom: 8px; border-bottom: 1px solid #E2E8F0; }
+  .pr-col-title.booked { color: #DC2626; }
+  .pr-col-title.avail { color: #15803D; }
+  .pr-zone { margin-bottom: 10px; }
+  .pr-zone-name { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
+  .pr-unit { font-size: 11px; color: #1E293B; padding: 1px 0 1px 12px; }
+  .pr-footer { margin-top: 16px; padding-top: 8px; border-top: 1px solid #E2E8F0; font-size: 10px; color: #94A3B8; text-align: center; }
+  @page { margin: 0.5in; size: portrait; }
+}
 </style>
 </head>
 <body>
@@ -163,6 +193,7 @@ body { display: flex; flex-direction: column; }
     <div class="dash-count green" id="dashAvailCount">— Available</div>
     <div class="dash-count red" id="dashBookedCount">— Booked</div>
   </div>
+  <button class="dash-print-btn" onclick="printReport()">🖨️ Print Report</button>
   <div class="dash-refresh" id="dashRefresh">Refreshing...</div>
 </div>
 
@@ -733,6 +764,67 @@ function resetMap() {
 function esc(s) { var d = document.createElement('div'); d.appendChild(document.createTextNode(s)); return d.innerHTML; }
 function escA(s) { return s.replace(/&/g,'&amp;').replace(/'/g,'&#39;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function hexRgba(hex, a) { var r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16); return 'rgba('+r+','+g+','+b+','+a+')'; }
+
+/* ================================================================
+   PRINT REPORT
+   ================================================================ */
+function printReport() {
+  var date = document.getElementById('dashDate').value || new Date().toISOString().split('T')[0];
+  var now = new Date();
+  var timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+  var dateLabel = new Date(date + 'T12:00:00').toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  var availByZone = {}, bookedByZone = {};
+  ZONE_ORDER.forEach(function(z) { availByZone[z] = []; bookedByZone[z] = []; });
+  CABANAS.forEach(function(c) {
+    if (c.available) availByZone[c.zone].push(c);
+    else bookedByZone[c.zone].push(c);
+  });
+  var totalAvail = 0, totalBooked = 0;
+  CABANAS.forEach(function(c) { if (c.available) totalAvail++; else totalBooked++; });
+
+  var html = '';
+  html += '<div class="pr-header">';
+  html += '<div><div class="pr-title">🏝️ Island Waterpark — Cabana Report</div>';
+  html += '<div class="pr-subtitle">' + dateLabel + ' • Generated at ' + timeStr + '</div></div>';
+  html += '</div>';
+  html += '<div class="pr-counts">';
+  html += '<div class="pr-count red">Booked: ' + totalBooked + '</div>';
+  html += '<div class="pr-count green">Available: ' + totalAvail + '</div>';
+  html += '</div>';
+  html += '<div class="pr-columns">';
+
+  /* Booked column */
+  html += '<div class="pr-col"><div class="pr-col-title booked">Booked (' + totalBooked + ')</div>';
+  ZONE_ORDER.forEach(function(z) {
+    var list = bookedByZone[z]; if (!list.length) return;
+    html += '<div class="pr-zone"><div class="pr-zone-name">' + esc(z) + ' (' + list.length + ')</div>';
+    list.forEach(function(c) { html += '<div class="pr-unit">• ' + esc(c.unit) + '</div>'; });
+    html += '</div>';
+  });
+  if (totalBooked === 0) html += '<div class="pr-unit" style="color:#94A3B8;font-style:italic;">None</div>';
+  html += '</div>';
+
+  /* Available column */
+  html += '<div class="pr-col"><div class="pr-col-title avail">Available (' + totalAvail + ')</div>';
+  ZONE_ORDER.forEach(function(z) {
+    var list = availByZone[z]; if (!list.length) return;
+    html += '<div class="pr-zone"><div class="pr-zone-name">' + esc(z) + ' (' + list.length + ')</div>';
+    list.forEach(function(c) { html += '<div class="pr-unit">• ' + esc(c.unit) + '</div>'; });
+    html += '</div>';
+  });
+  if (totalAvail === 0) html += '<div class="pr-unit" style="color:#94A3B8;font-style:italic;">None</div>';
+  html += '</div>';
+
+  html += '</div>';
+  html += '<div class="pr-footer">Island Waterpark Rentals Dashboard — ' + dateLabel + ' — Printed ' + now.toLocaleString() + '</div>';
+
+  var container = document.getElementById('printReport');
+  container.innerHTML = html;
+  setTimeout(function() { window.print(); }, 100);
+}
 </script>
+
+<div id="printReport"></div>
 </body>
 </html>
