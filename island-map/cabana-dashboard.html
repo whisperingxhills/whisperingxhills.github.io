@@ -154,11 +154,11 @@ body { display: flex; flex-direction: column; }
 /* ── Print Report ── */
 #printReport { display: none; }
 @media print {
-  body { height: auto !important; overflow: visible !important; display: block !important; }
+  html, body { height: auto !important; overflow: visible !important; display: block !important; margin: 0; padding: 0; }
   body > *:not(#printReport) { display: none !important; }
   #printReport {
     display: block !important; position: static !important; width: 100%;
-    background: #fff; padding: 24px 32px; font-family: 'Inter', sans-serif;
+    background: #fff; padding: 0; font-family: 'Inter', sans-serif; overflow: visible !important;
   }
   #printReport * { visibility: visible !important; }
   .pr-header { display: flex; align-items: center; justify-content: space-between; border-bottom: 2px solid #1E293B; padding-bottom: 12px; margin-bottom: 16px; }
@@ -168,17 +168,16 @@ body { display: flex; flex-direction: column; }
   .pr-count { padding: 6px 14px; border-radius: 6px; font-size: 13px; font-weight: 700; }
   .pr-count.green { background: #F0FDF4; color: #15803D; border: 1px solid #BBF7D0; }
   .pr-count.red { background: #FEF2F2; color: #DC2626; border: 1px solid #FECACA; }
-  .pr-columns { display: flex; gap: 32px; }
-  .pr-col { flex: 1; break-inside: auto; }
-  .pr-zone { break-inside: avoid; }
-  .pr-col-title { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 6px; margin-bottom: 8px; border-bottom: 1px solid #E2E8F0; }
-  .pr-col-title.booked { color: #DC2626; }
-  .pr-col-title.avail { color: #15803D; }
-  .pr-zone { margin-bottom: 10px; }
-  .pr-zone-name { font-size: 11px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
-  .pr-unit { font-size: 11px; color: #1E293B; padding: 1px 0 1px 12px; }
+  .pr-section { margin-bottom: 12px; }
+  .pr-section-title { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; padding-bottom: 6px; margin-bottom: 8px; border-bottom: 1px solid #E2E8F0; }
+  .pr-section-title.booked { color: #DC2626; }
+  .pr-section-title.avail { color: #15803D; }
+  .pr-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 2px 24px; }
+  .pr-zone { break-inside: avoid; margin-bottom: 8px; }
+  .pr-zone-name { font-size: 10px; font-weight: 700; color: #64748B; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 2px; }
+  .pr-unit { font-size: 10px; color: #1E293B; padding: 1px 0 1px 8px; line-height: 1.4; }
   .pr-footer { margin-top: 16px; padding-top: 8px; border-top: 1px solid #E2E8F0; font-size: 10px; color: #94A3B8; text-align: center; }
-  @page { margin: 0.5in; size: portrait; }
+  @page { margin: 0.4in; size: portrait; }
 }
 </style>
 </head>
@@ -794,30 +793,38 @@ function printReport() {
   html += '<div class="pr-count red">Booked: ' + totalBooked + '</div>';
   html += '<div class="pr-count green">Available: ' + totalAvail + '</div>';
   html += '</div>';
-  html += '<div class="pr-columns">';
-
-  /* Booked column */
-  html += '<div class="pr-col"><div class="pr-col-title booked">Booked (' + totalBooked + ')</div>';
-  ZONE_ORDER.forEach(function(z) {
-    var list = bookedByZone[z]; if (!list.length) return;
-    html += '<div class="pr-zone"><div class="pr-zone-name">' + esc(z) + ' (' + list.length + ')</div>';
-    list.forEach(function(c) { html += '<div class="pr-unit">• ' + esc(c.unit) + '</div>'; });
+  /* Booked section */
+  html += '<div class="pr-section">';
+  html += '<div class="pr-section-title booked">Booked (' + totalBooked + ')</div>';
+  if (totalBooked === 0) {
+    html += '<div class="pr-unit" style="color:#94A3B8;font-style:italic;">None</div>';
+  } else {
+    html += '<div class="pr-grid">';
+    ZONE_ORDER.forEach(function(z) {
+      var list = bookedByZone[z]; if (!list.length) return;
+      html += '<div class="pr-zone"><div class="pr-zone-name">' + esc(z) + ' (' + list.length + ')</div>';
+      list.forEach(function(c) { html += '<div class="pr-unit">• ' + esc(c.unit) + '</div>'; });
+      html += '</div>';
+    });
     html += '</div>';
-  });
-  if (totalBooked === 0) html += '<div class="pr-unit" style="color:#94A3B8;font-style:italic;">None</div>';
+  }
   html += '</div>';
 
-  /* Available column */
-  html += '<div class="pr-col"><div class="pr-col-title avail">Available (' + totalAvail + ')</div>';
-  ZONE_ORDER.forEach(function(z) {
-    var list = availByZone[z]; if (!list.length) return;
-    html += '<div class="pr-zone"><div class="pr-zone-name">' + esc(z) + ' (' + list.length + ')</div>';
-    list.forEach(function(c) { html += '<div class="pr-unit">• ' + esc(c.unit) + '</div>'; });
+  /* Available section */
+  html += '<div class="pr-section">';
+  html += '<div class="pr-section-title avail">Available (' + totalAvail + ')</div>';
+  if (totalAvail === 0) {
+    html += '<div class="pr-unit" style="color:#94A3B8;font-style:italic;">None</div>';
+  } else {
+    html += '<div class="pr-grid">';
+    ZONE_ORDER.forEach(function(z) {
+      var list = availByZone[z]; if (!list.length) return;
+      html += '<div class="pr-zone"><div class="pr-zone-name">' + esc(z) + ' (' + list.length + ')</div>';
+      list.forEach(function(c) { html += '<div class="pr-unit">• ' + esc(c.unit) + '</div>'; });
+      html += '</div>';
+    });
     html += '</div>';
-  });
-  if (totalAvail === 0) html += '<div class="pr-unit" style="color:#94A3B8;font-style:italic;">None</div>';
-  html += '</div>';
-
+  }
   html += '</div>';
   html += '<div class="pr-footer">Island Waterpark Rentals Dashboard — ' + dateLabel + ' — Printed ' + now.toLocaleString() + '</div>';
 
