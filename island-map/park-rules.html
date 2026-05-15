@@ -8,7 +8,7 @@
 
 #iwp-rules .rules-header {
   background: linear-gradient(135deg, #0EA5E9 0%, #0284C7 40%, #1E293B 100%);
-  padding: 40px 32px;
+  padding: 32px 32px 28px;
   border-radius: 16px 16px 0 0;
   text-align: center;
   position: relative;
@@ -22,17 +22,26 @@
   background: rgba(255,255,255,0.05);
   border-radius: 50%;
 }
+#iwp-rules .rules-header-logo {
+  height: 80px;
+  width: auto;
+  display: block;
+  margin: 0 auto 12px;
+  position: relative;
+}
 #iwp-rules .rules-header h1 {
-  font-size: 32px;
+  font-size: 28px;
   font-weight: 900;
   color: white;
   letter-spacing: 0.5px;
-  margin-bottom: 8px;
+  margin-bottom: 6px;
+  position: relative;
 }
 #iwp-rules .rules-header p {
-  font-size: 14px;
+  font-size: 13px;
   color: rgba(255,255,255,0.7);
   font-weight: 500;
+  position: relative;
 }
 
 #iwp-rules .rules-grid {
@@ -141,7 +150,7 @@
 }
 
 #iwp-rules .rule-card-content li::before {
-  content: '•';
+  content: '\2022';
   position: absolute;
   left: 4px;
   color: #94A3B8;
@@ -216,7 +225,8 @@
     padding: 16px;
     gap: 12px;
   }
-  #iwp-rules .rules-header h1 { font-size: 24px; }
+  #iwp-rules .rules-header h1 { font-size: 22px; }
+  #iwp-rules .rules-header-logo { height: 60px; }
   #iwp-rules .rules-footer { flex-direction: column; text-align: center; }
   #iwp-rules .rules-footer-info { text-align: center; }
 }
@@ -225,8 +235,9 @@
 <div id="iwp-rules">
 
   <div class="rules-header">
-    <h1>🌊 Park Rules & Guest Information</h1>
-    <p>Island Waterpark &bull; Fresno, California</p>
+    <img src="https://islandwaterpark.com/wp-content/uploads/2026/03/Transparant-Logo-fixed-scaled.png" alt="Island Waterpark" class="rules-header-logo">
+    <h1>Park Rules & Guest Information</h1>
+    <p>Fresno, California</p>
   </div>
 
   <div class="rules-grid">
@@ -234,9 +245,9 @@
     <!-- Food & Outside Items -->
     <div class="rule-card open">
       <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
-        <div class="rule-icon orange">🍔</div>
+        <div class="rule-icon orange">&#x1F354;</div>
         <span class="rule-card-title">Food & Outside Items</span>
-        <span class="rule-chevron">▼</span>
+        <span class="rule-chevron">&#x25BC;</span>
       </div>
       <div class="rule-card-body">
         <div class="rule-card-content">
@@ -258,22 +269,22 @@
     <!-- Water Safety -->
     <div class="rule-card open">
       <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
-        <div class="rule-icon blue">🏊</div>
+        <div class="rule-icon blue">&#x1F3CA;</div>
         <span class="rule-card-title">Water Safety</span>
-        <span class="rule-chevron">▼</span>
+        <span class="rule-chevron">&#x25BC;</span>
       </div>
       <div class="rule-card-body">
         <div class="rule-card-content">
           <ul>
             <li>Life vests are available and recommended for all guests.</li>
             <li>Guests under 48" (4 feet) are encouraged to wear a life vest.</li>
-            <li>In our Wave Pool, guests under 48" require a life vest and be accompanied by an adult in arms reach.</li>
+            <li>In our Wave Pool, guests under 48" require a life vest and be accompanied by an adult within arms reach.</li>
             <li>Diving is not allowed in any pool or attraction.</li>
           </ul>
           <div class="rule-subsection">Flotation Devices</div>
           <ul>
             <li>No personal flotation devices may be brought into the park.</li>
-            <li>For infants and toddlers, only foam-based flotation seats are permitted. Devices may not include lap straps or restraining straps. They may be used ONLY in the Lazy River.</li>
+            <li>For infants and toddlers, only foam-based flotation seats are permitted. Devices may not include lap straps or restraining strap. They may be used ONLY in the Lazy River.</li>
             <li>Personal life vests are permitted, but MUST be U.S. Coast Guard Approved.</li>
             <li>Non-swimmers are always encouraged to wear a life vest.</li>
           </ul>
@@ -284,17 +295,17 @@
     <!-- Park Conduct -->
     <div class="rule-card open">
       <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
-        <div class="rule-icon teal">📋</div>
+        <div class="rule-icon teal">&#x1F6AB;</div>
         <span class="rule-card-title">Park Conduct</span>
-        <span class="rule-chevron">▼</span>
+        <span class="rule-chevron">&#x25BC;</span>
       </div>
       <div class="rule-card-body">
         <div class="rule-card-content">
           <ul>
-            <li>No running or cutting in line.</li>
-            <li>No loitering, unruly behavior, profanity, or line cutting.</li>
+            <li>No running.</li>
+            <li>No loitering, unruly behavior, or line cutting.</li>
             <li>No amplified audio or TVs are allowed in the park.</li>
-            <li>Guests must refrain from using foul, profane, offensive language or gestures.</li>
+            <li>Guests must refrain from using foul, profane offensive language or gestures.</li>
             <li>Guests must abide by posted attraction instructions, lifeguard & management instructions.</li>
           </ul>
         </div>
@@ -304,15 +315,15 @@
     <!-- Smoking & Shade -->
     <div class="rule-card open">
       <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
-        <div class="rule-icon purple">🚭</div>
+        <div class="rule-icon purple">&#x1F6AD;</div>
         <span class="rule-card-title">Smoking & Shade</span>
-        <span class="rule-chevron">▼</span>
+        <span class="rule-chevron">&#x25BC;</span>
       </div>
       <div class="rule-card-body">
         <div class="rule-card-content">
           <div class="rule-subsection">Shade Structures</div>
           <ul>
-            <li>Personal shade structures are allowed only in one of our 6 designated areas.</li>
+            <li>Personal shade structures are permitted only within our six designated areas.</li>
             <li>Shade structures must not obstruct any paths or walkways or other guests' personal space.</li>
           </ul>
           <div class="rule-subsection">Smoke-Free Park</div>
@@ -327,26 +338,26 @@
     <!-- Swimwear Policy -->
     <div class="rule-card open">
       <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
-        <div class="rule-icon pink">👙</div>
+        <div class="rule-icon pink">&#x1F459;</div>
         <span class="rule-card-title">Swimwear Policy</span>
-        <span class="rule-chevron">▼</span>
+        <span class="rule-chevron">&#x25BC;</span>
       </div>
       <div class="rule-card-body">
         <div class="rule-card-content">
           <ul>
             <li>Proper swimwear must be worn on all rides and attractions. Examples: Dry fit, and spandex material. No cotton.</li>
             <li>Inappropriate swimwear is not permitted. See below.</li>
-            <li>Any child requiring diapers must wear a waterproof swim diaper with swimwear bottoms over it prior to entering the water. Swim diapers are available for purchase at Gift Shop.</li>
+            <li>Any child requiring diapers must wear a waterproof swim diaper with swimwear bottoms over it, prior to entering the water. Swim diapers are available for purchase at the Gift Shop.</li>
           </ul>
           <div class="rule-subsection">Inappropriate Swimwear & Clothing (Not Permitted)</div>
           <ul>
             <li>Underwear, boxers, briefs</li>
             <li>Clothing that is transparent or translucent in private areas</li>
             <li>Attire with exposed metal, rivets, buttons, zippers, buckles, or snaps</li>
-            <li>Long pants, jeans, denim, slacks, trousers</li>
-            <li>Any clothing or accessory (e.g. belts, jewelry)</li>
+            <li>Long pants, jeans, denim, slacks, or trousers</li>
+            <li>Any clothing or accessory (e.g. belts, or jewelry)</li>
             <li>Clothing that offensively exposes parts of the body</li>
-            <li>Transparent clothing, indecent pictures, slogans or graphics</li>
+            <li>Indecent pictures, slogans or graphics</li>
             <li>Clothing or tattoos with offensive language, graphics or symbols</li>
           </ul>
         </div>
@@ -356,9 +367,9 @@
     <!-- Height & Weight Guidelines -->
     <div class="rule-card open">
       <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
-        <div class="rule-icon amber">📏</div>
+        <div class="rule-icon amber">&#x1F4CF;</div>
         <span class="rule-card-title">Height & Weight Guidelines</span>
-        <span class="rule-chevron">▼</span>
+        <span class="rule-chevron">&#x25BC;</span>
       </div>
       <div class="rule-card-body">
         <div class="rule-card-content">
@@ -372,9 +383,9 @@
     <!-- Park Property & Safety -->
     <div class="rule-card open">
       <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
-        <div class="rule-icon slate">🔒</div>
+        <div class="rule-icon slate">&#x1F512;</div>
         <span class="rule-card-title">Park Property & Safety</span>
-        <span class="rule-chevron">▼</span>
+        <span class="rule-chevron">&#x25BC;</span>
       </div>
       <div class="rule-card-body">
         <div class="rule-card-content">
@@ -390,9 +401,9 @@
     <!-- Photos & Recordings -->
     <div class="rule-card open">
       <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
-        <div class="rule-icon indigo">📷</div>
+        <div class="rule-icon indigo">&#x1F4F7;</div>
         <span class="rule-card-title">Photos & Recordings</span>
-        <span class="rule-chevron">▼</span>
+        <span class="rule-chevron">&#x25BC;</span>
       </div>
       <div class="rule-card-body">
         <div class="rule-card-content">
@@ -407,15 +418,15 @@
     <!-- Injuries & Emergencies -->
     <div class="rule-card open">
       <div class="rule-card-header" onclick="this.parentElement.classList.toggle('open')">
-        <div class="rule-icon red">🚑</div>
+        <div class="rule-icon red">&#x1F691;</div>
         <span class="rule-card-title">Injuries & Emergencies</span>
-        <span class="rule-chevron">▼</span>
+        <span class="rule-chevron">&#x25BC;</span>
       </div>
       <div class="rule-card-body">
         <div class="rule-card-content">
           <ul>
             <li>Any injuries sustained at the park must be reported the day of the incident.</li>
-            <li>If you need help due to injury or emergency, immediately notify any employee or visit First Aid Station for any concerns.</li>
+            <li>If you need help due to injury or emergency, immediately notify any employee or visit our First Aid Station for any concerns.</li>
           </ul>
         </div>
       </div>
@@ -425,13 +436,14 @@
 
   <div class="rules-footer">
     <div class="rules-footer-warning">
-      <span class="warn-icon">⚠️</span>
+      <span class="warn-icon">&#x26A0;&#xFE0F;</span>
       <p>Failure to follow park rules may result in ejection without a refund. Island Waterpark management reserves the right to refuse admission or remove guests who violate park policies. The policies are in place for the safety and enjoyment of all guests. <em>Policies are subject to change without notice.</em></p>
     </div>
     <div class="rules-footer-info">
-      <p>🌐 <a href="https://www.islandwaterpark.com" target="_blank">islandwaterpark.com</a></p>
-      <p>📍 Fresno, California</p>
+      <p><a href="https://www.islandwaterpark.com" target="_blank">islandwaterpark.com</a></p>
+      <p>Fresno, California</p>
     </div>
   </div>
 
 </div>
+<script>document.addEventListener("contextmenu",function(e){e.preventDefault()});document.addEventListener("keydown",function(e){if(e.key==="F12"||(e.ctrlKey&&e.shiftKey&&(e.key==="I"||e.key==="J"||e.key==="C"))||(e.ctrlKey&&e.key==="u")){e.preventDefault()}});</script>
