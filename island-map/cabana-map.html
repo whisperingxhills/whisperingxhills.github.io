@@ -736,22 +736,170 @@ body {
 
 .iw-map-link:hover { background: var(--iw-blue-light); }
 
+/* ── Mobile Top Bar ── */
+.iw-mobile-topbar {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  background: var(--iw-darker);
+  padding: 8px 12px;
+  gap: 8px;
+  align-items: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+}
+
+.iw-mobile-topbar .iw-topbar-logo {
+  height: 32px;
+  width: auto;
+  flex-shrink: 0;
+}
+
+.iw-mobile-topbar .iw-topbar-date {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: Inter, sans-serif;
+  color: #fff;
+  background: rgba(255,255,255,0.1);
+  cursor: pointer;
+  -webkit-appearance: none;
+}
+.iw-mobile-topbar .iw-topbar-date::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+.iw-mobile-topbar .iw-topbar-filter-btn {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 10px;
+  border: 1px solid rgba(255,255,255,0.2);
+  background: rgba(255,255,255,0.1);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+.iw-mobile-topbar .iw-topbar-filter-btn:hover { background: rgba(255,255,255,0.2); }
+
+.iw-mobile-topbar .iw-topbar-status {
+  display: none;
+  font-size: 10px;
+  color: var(--iw-gray-light);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Mobile Time Slot Bar (below top bar) ── */
+.iw-mobile-slots {
+  display: none;
+  position: fixed;
+  top: 56px; left: 0; right: 0;
+  z-index: 50;
+  background: var(--iw-blue-light);
+  padding: 6px 12px;
+  gap: 6px;
+  align-items: center;
+  border-bottom: 1px solid var(--iw-border);
+}
+.iw-mobile-slots .iw-slot-btn { font-size: 11px; padding: 6px 8px; }
+
+/* ── Mobile Zone Drawer (bottom sheet) ── */
+.iw-mobile-drawer-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 55;
+}
+.iw-mobile-drawer-backdrop.open { display: block; }
+
+.iw-mobile-drawer {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  z-index: 56;
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  max-height: 70dvh;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 -4px 24px rgba(0,0,0,0.15);
+  overflow: hidden;
+}
+.iw-mobile-drawer.open { transform: translateY(0); }
+
+.iw-mobile-drawer-handle {
+  display: flex;
+  justify-content: center;
+  padding: 10px 0 6px;
+  flex-shrink: 0;
+}
+.iw-mobile-drawer-handle::after {
+  content: '';
+  width: 36px;
+  height: 4px;
+  background: var(--iw-border);
+  border-radius: 2px;
+}
+
+.iw-mobile-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px 12px;
+  border-bottom: 1px solid var(--iw-border);
+  flex-shrink: 0;
+}
+.iw-mobile-drawer-header h3 {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--iw-dark);
+  margin: 0;
+}
+.iw-mobile-drawer-close {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--iw-light);
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--iw-gray);
+}
+
+.iw-mobile-drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
 /* ── Mobile ── */
 @media (max-width: 768px) {
-  .iw-sidebar {
-    position: fixed;
-    left: 0;
-    top: 0;
-    z-index: 50;
-    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
-  }
-  .iw-sidebar-toggle { display: flex; }
+  .iw-sidebar { display: none !important; }
+  .iw-sidebar-toggle { display: none !important; }
+  .iw-mobile-topbar { display: flex; }
+  .iw-map-area { margin-top: 56px; height: calc(100dvh - 56px); }
+  .iw-map-link { bottom: 12px; left: 12px; }
+  .iw-zoom { bottom: 12px; right: 12px; }
   .iw-panel {
     width: 100vw;
     max-width: 100vw;
     top: auto;
     bottom: 0;
-    height: 65vh;
+    height: 65dvh;
     transform: translateY(100%);
     border-radius: 16px 16px 0 0;
   }
@@ -764,8 +912,28 @@ body {
 </head>
 <body>
 
-<!-- Mobile sidebar toggle -->
-<button class="iw-sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">&#9776;</button>
+<!-- Mobile Top Bar -->
+<div class="iw-mobile-topbar" id="mobileTopbar">
+  <img src="iw-logo.png" alt="Island Waterpark" class="iw-topbar-logo">
+  <input type="date" class="iw-topbar-date" id="mobileDatePicker" onchange="onMobileDateChange()">
+  <button class="iw-topbar-filter-btn" onclick="toggleMobileDrawer()" title="Zones & Legend">&#9776;</button>
+</div>
+
+<!-- Mobile Time Slot Bar -->
+<div class="iw-mobile-slots" id="mobileSlots"></div>
+
+<!-- Mobile Zone Drawer -->
+<div class="iw-mobile-drawer-backdrop" id="mobileDrawerBackdrop" onclick="closeMobileDrawer()"></div>
+<div class="iw-mobile-drawer" id="mobileDrawer">
+  <div class="iw-mobile-drawer-handle"></div>
+  <div class="iw-mobile-drawer-header">
+    <h3>Zones &amp; Legend</h3>
+    <button class="iw-mobile-drawer-close" onclick="closeMobileDrawer()">&#10005;</button>
+  </div>
+  <div class="iw-mobile-drawer-body" id="mobileDrawerBody">
+    <!-- Populated by JS — same content as sidebar -->
+  </div>
+</div>
 
 <!-- Sidebar -->
 <aside class="iw-sidebar" id="sidebar">
@@ -1525,8 +1693,9 @@ function flyToCabana(unitName) {
   highlightSidebarItem(unitName);
   openPanel(cabana);
 
-  /* Close mobile sidebar */
+  /* Close mobile sidebar/drawer */
   document.getElementById('sidebar').classList.remove('open');
+  closeMobileDrawer();
 }
 
 function highlightSidebarItem(unitName) {
@@ -1991,7 +2160,7 @@ function resetMap() {
 }
 
 /* ================================================================
-   MOBILE SIDEBAR
+   MOBILE SIDEBAR (legacy — kept for desktop toggle compatibility)
    ================================================================ */
 function toggleSidebar() {
   var sidebar = document.getElementById('sidebar');
@@ -2008,6 +2177,148 @@ function collapseSidebar() {
   sidebar.style.transform = 'translateX(-100%)';
   toggle.classList.add('visible');
 }
+
+/* ================================================================
+   MOBILE TOP BAR + DRAWER
+   ================================================================ */
+/* Initialize mobile date picker to match desktop */
+(function initMobileDatePicker() {
+  var mobilePicker = document.getElementById('mobileDatePicker');
+  var desktopPicker = document.getElementById('datePicker');
+  if (!mobilePicker || !desktopPicker) return;
+  mobilePicker.value = desktopPicker.value;
+  mobilePicker.min = desktopPicker.min;
+})();
+
+function onMobileDateChange() {
+  var mobilePicker = document.getElementById('mobileDatePicker');
+  var desktopPicker = document.getElementById('datePicker');
+  if (mobilePicker && desktopPicker) {
+    desktopPicker.value = mobilePicker.value;
+  }
+  /* Trigger the same flow as the desktop picker */
+  onDateChange();
+  /* Update mobile time slots */
+  updateMobileSlots();
+}
+
+function updateMobileSlots() {
+  var container = document.getElementById('mobileSlots');
+  if (!container) return;
+  if (!lastAvailData || lastAvailData.slotCount <= 1) {
+    container.style.display = 'none';
+    /* Reset map top margin when no slots */
+    updateMobileMapOffset(false);
+    return;
+  }
+  container.innerHTML = '';
+  container.style.display = 'flex';
+  lastAvailData.timeSlots.forEach(function(slot, idx) {
+    var btn = document.createElement('button');
+    btn.className = 'iw-slot-btn' + (idx === selectedSlotIndex ? ' active' : '');
+    btn.textContent = slot.label;
+    btn.onclick = function() {
+      selectedSlotIndex = idx;
+      container.querySelectorAll('.iw-slot-btn').forEach(function(b, i) {
+        b.className = 'iw-slot-btn' + (i === idx ? ' active' : '');
+      });
+      /* Also update desktop slot buttons */
+      var desktopBtns = document.getElementById('timeSlotButtons');
+      if (desktopBtns) {
+        desktopBtns.querySelectorAll('.iw-slot-btn').forEach(function(b, i) {
+          b.className = 'iw-slot-btn' + (i === idx ? ' active' : '');
+        });
+      }
+      applySlotAvailability(lastAvailData, idx);
+    };
+    container.appendChild(btn);
+  });
+  updateMobileMapOffset(true);
+}
+
+function updateMobileMapOffset(hasSlots) {
+  if (window.innerWidth > 768) return;
+  var mapArea = document.getElementById('mapArea');
+  if (!mapArea) return;
+  mapArea.style.marginTop = hasSlots ? '88px' : '56px';
+  mapArea.style.height = hasSlots ? 'calc(100dvh - 88px)' : 'calc(100dvh - 56px)';
+}
+
+/* Populate mobile drawer with same content as sidebar */
+function populateMobileDrawer() {
+  var drawerBody = document.getElementById('mobileDrawerBody');
+  var sidebarBody = document.getElementById('sidebarBody');
+  if (!drawerBody || !sidebarBody) return;
+  drawerBody.innerHTML = sidebarBody.innerHTML;
+  /* Re-bind click handlers in the drawer copy */
+  drawerBody.querySelectorAll('.iw-legend-item').forEach(function(item) {
+    var onclick = item.getAttribute('onclick');
+    if (onclick) {
+      item.addEventListener('click', function() {
+        closeMobileDrawer();
+        eval(onclick);
+      });
+      item.removeAttribute('onclick');
+    }
+  });
+  drawerBody.querySelectorAll('.iw-zone-item').forEach(function(item) {
+    var onclick = item.getAttribute('onclick');
+    if (onclick) {
+      item.addEventListener('click', function() {
+        closeMobileDrawer();
+        eval(onclick);
+      });
+      item.removeAttribute('onclick');
+    }
+  });
+  drawerBody.querySelectorAll('.iw-zone-header').forEach(function(header) {
+    var onclick = header.getAttribute('onclick');
+    if (onclick) {
+      header.addEventListener('click', function() { eval(onclick); });
+      header.removeAttribute('onclick');
+    }
+  });
+  drawerBody.querySelectorAll('.iw-legend-header').forEach(function(header) {
+    var onclick = header.getAttribute('onclick');
+    if (onclick) {
+      header.addEventListener('click', function() { eval(onclick); });
+      header.removeAttribute('onclick');
+    }
+  });
+}
+
+function toggleMobileDrawer() {
+  var drawer = document.getElementById('mobileDrawer');
+  var backdrop = document.getElementById('mobileDrawerBackdrop');
+  if (drawer.classList.contains('open')) {
+    closeMobileDrawer();
+  } else {
+    populateMobileDrawer();
+    drawer.classList.add('open');
+    backdrop.classList.add('open');
+  }
+}
+
+function closeMobileDrawer() {
+  document.getElementById('mobileDrawer').classList.remove('open');
+  document.getElementById('mobileDrawerBackdrop').classList.remove('open');
+}
+
+/* Hook into existing renderTimeSlots to also update mobile */
+var _origRenderTimeSlots = renderTimeSlots;
+renderTimeSlots = function(data) {
+  _origRenderTimeSlots(data);
+  if (window.innerWidth <= 768) updateMobileSlots();
+};
+
+/* Hook into applySlotAvailability to update mobile drawer status badges */
+var _origApplySlotAvail = applySlotAvailability;
+applySlotAvailability = function(data, slotIdx) {
+  _origApplySlotAvail(data, slotIdx);
+  /* Refresh drawer if open */
+  var drawer = document.getElementById('mobileDrawer');
+  if (drawer && drawer.classList.contains('open')) populateMobileDrawer();
+};
 
 /* ================================================================
    UTILITY
@@ -2050,11 +2361,18 @@ function hexToRgba(hex, alpha) {
   <div style="background:#fff;border-radius:16px;max-width:480px;width:100%;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;margin:auto 0;">
     <div style="font-size:36px;margin-bottom:8px;">🏝️</div>
     <h2 style="font-size:20px;font-weight:800;color:#1E293B;margin:0 0 12px;">Welcome to the Cabana Map</h2>
-    <div style="text-align:left;font-size:13px;color:#475569;line-height:1.6;">
+    <div class="welcome-desktop" style="text-align:left;font-size:13px;color:#475569;line-height:1.6;">
       <p style="margin:0 0 10px;"><strong>Step 1:</strong> Use the date picker in the sidebar to select the date of your visit. Cabana pins are color-coded by zone. Available cabanas are bright and clickable, while booked cabanas appear dimmed.</p>
       <p style="margin:0 0 10px;"><strong>Step 2:</strong> Browse the map to find a cabana you like. You can drag to move around and pinch or scroll to zoom in and out.</p>
-      <p style="margin:0 0 10px;"><strong>Step 3:</strong> Tap on any cabana pin to view details including size, capacity, seating, and a video walkthrough.</p>
+      <p style="margin:0 0 10px;"><strong>Step 3:</strong> Click on any cabana pin to view details including size, capacity, seating, and a video walkthrough.</p>
       <p style="margin:0 0 10px;"><strong>Step 4:</strong> Click the <strong>"Book Now"</strong> button to reserve your cabana. You'll be taken to a secure checkout.</p>
+      <p style="margin:0;"><strong>Tip:</strong> On some dates, cabanas are available for both daytime and evening sessions. If time slots appear, select which session you'd like.</p>
+    </div>
+    <div class="welcome-mobile" style="display:none;text-align:left;font-size:13px;color:#475569;line-height:1.6;">
+      <p style="margin:0 0 10px;"><strong>Step 1:</strong> Use the date picker at the top of the screen to select the date of your visit.</p>
+      <p style="margin:0 0 10px;"><strong>Step 2:</strong> Explore the map — drag to move around and pinch to zoom. Cabana pins are color-coded by zone. Bright pins are available, dimmed pins are booked.</p>
+      <p style="margin:0 0 10px;"><strong>Step 3:</strong> Tap any cabana pin to see details, photos, and pricing. Use the &#9776; button for a full zone list.</p>
+      <p style="margin:0 0 10px;"><strong>Step 4:</strong> Tap <strong>"Book Now"</strong> to reserve your cabana.</p>
       <p style="margin:0;"><strong>Tip:</strong> On some dates, cabanas are available for both daytime and evening sessions. If time slots appear, select which session you'd like.</p>
     </div>
     <button onclick="dismissWelcome()" style="margin-top:16px;padding:12px 36px;background:#0EA5E9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:background 0.2s;">Got It, Let's Go!</button>
@@ -2102,6 +2420,19 @@ function hexToRgba(hex, alpha) {
 </style>
 
 <script>
+/* Show correct welcome instructions based on screen size */
+(function() {
+  function updateWelcomeInstructions() {
+    var isMobile = window.innerWidth <= 768;
+    var deskEls = document.querySelectorAll('.welcome-desktop');
+    var mobEls = document.querySelectorAll('.welcome-mobile');
+    deskEls.forEach(function(el) { el.style.display = isMobile ? 'none' : 'block'; });
+    mobEls.forEach(function(el) { el.style.display = isMobile ? 'block' : 'none'; });
+  }
+  updateWelcomeInstructions();
+  window.addEventListener('resize', updateWelcomeInstructions);
+})();
+
 function dismissWelcome() {
   document.getElementById('welcomeOverlay').style.display = 'none';
   try { localStorage.setItem('iwCabanaWelcomeSeen', '1'); } catch(e) {}
@@ -2109,25 +2440,32 @@ function dismissWelcome() {
 }
 
 function showStartHere() {
-  var picker = document.getElementById('datePicker');
+  var isMobile = window.innerWidth <= 768;
+  var picker = isMobile ? document.getElementById('mobileDatePicker') : document.getElementById('datePicker');
   if (!picker) return;
 
-  /* Highlight the whole date picker zone */
-  var zone = picker.parentElement;
-  zone.style.position = 'relative';
-  zone.style.overflow = 'visible';
-  zone.classList.add('start-here-highlight');
+  if (isMobile) {
+    /* On mobile, highlight the date input in the top bar */
+    picker.style.animation = 'startHereFlash 1s ease-in-out infinite';
+    picker.style.borderRadius = '8px';
+    setTimeout(function() { picker.style.animation = ''; }, 5000);
+    picker.addEventListener('focus', function() { picker.style.animation = ''; }, { once: true });
+  } else {
+    /* Desktop: highlight the sidebar date picker zone */
+    var zone = picker.parentElement;
+    zone.style.position = 'relative';
+    zone.style.overflow = 'visible';
+    zone.classList.add('start-here-highlight');
 
-  /* Add START HERE label */
-  var label = document.createElement('div');
-  label.className = 'start-here-label';
-  label.id = 'startHereLabel';
-  label.textContent = 'START HERE';
-  label.onclick = dismissStartHere;
-  zone.appendChild(label);
+    var label = document.createElement('div');
+    label.className = 'start-here-label';
+    label.id = 'startHereLabel';
+    label.textContent = 'START HERE';
+    label.onclick = dismissStartHere;
+    zone.appendChild(label);
 
-  /* Auto-dismiss after 5 seconds */
-  setTimeout(dismissStartHere, 5000);
+    setTimeout(dismissStartHere, 5000);
+  }
 }
 
 function dismissStartHere() {
@@ -2137,10 +2475,12 @@ function dismissStartHere() {
   if (picker) picker.parentElement.classList.remove('start-here-highlight');
 }
 
-/* Also dismiss when they interact with the date picker */
+/* Also dismiss when they interact with either date picker */
 (function() {
   var picker = document.getElementById('datePicker');
   if (picker) picker.addEventListener('focus', dismissStartHere);
+  var mobilePicker = document.getElementById('mobileDatePicker');
+  if (mobilePicker) mobilePicker.addEventListener('focus', function() { mobilePicker.style.animation = ''; });
 })();
 
 /* Skip overlay for returning visitors */
