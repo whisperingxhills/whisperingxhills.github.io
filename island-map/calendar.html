@@ -542,9 +542,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 #iwp-calendar .iwc-tag--univision { background: #FFE4E6; color: #9F1239; }
 #iwp-calendar .iwc-tag--holiday { background: #FED7AA; color: #C2410C; }
 #iwp-calendar .iwc-tag--wlsl { background: #BFDBFE; color: #1E40AF; }
-#iwp-calendar .iwc-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 999999; display: none; align-items: center; justify-content: center; padding: 24px; }
+#iwp-calendar .iwc-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 999999; display: none; align-items: flex-start; justify-content: center; padding: 24px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 #iwp-calendar .iwc-popup-overlay.active { display: flex; }
-#iwp-calendar .iwc-popup { background: white; border-radius: 16px; max-width: 400px; width: 100%; overflow: hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.4); animation: iwcPopIn 0.2s ease; }
+#iwp-calendar .iwc-popup { background: white; border-radius: 16px; max-width: 400px; width: 100%; overflow: hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.4); animation: iwcPopIn 0.2s ease; margin: auto 0; }
 @keyframes iwcPopIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
 #iwp-calendar .iwc-popup-header { padding: 20px 24px; background: linear-gradient(135deg, var(--iw-blue-dark), var(--iw-blue-deep)); color: white; }
 #iwp-calendar .iwc-popup-header h3 { font-size: 18px; font-weight: 800; }
@@ -563,9 +563,9 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 #iwp-calendar .iwc-buy-2for-btn:hover { background: #1E40AF; }
 #iwp-calendar .iwc-buy-afterhours-btn { display: none; width: calc(100% - 48px); margin: 8px 24px 0; padding: 14px; background: #7C3AED; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
 #iwp-calendar .iwc-buy-afterhours-btn:hover { background: #6D28D9; }
-#iwp-calendar .iwc-ticket-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.85); z-index: 1000000; display: none; align-items: center; justify-content: center; padding: 20px; }
+#iwp-calendar .iwc-ticket-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.85); z-index: 1000000; display: none; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; -webkit-overflow-scrolling: touch; }
 #iwp-calendar .iwc-ticket-overlay.active { display: flex; }
-#iwp-calendar .iwc-ticket-modal { max-width: 600px; width: 100%; height: 90vh; background: #fff; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 48px rgba(0,0,0,0.4); }
+#iwp-calendar .iwc-ticket-modal { max-width: 600px; width: 100%; height: 90vh; background: #fff; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 48px rgba(0,0,0,0.4); margin: auto 0; }
 #iwp-calendar .iwc-ticket-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #E2E8F0; }
 #iwp-calendar .iwc-ticket-modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #1E293B; font-family: 'Inter', sans-serif; }
 #iwp-calendar .iwc-ticket-modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #94A3B8; padding: 4px 8px; }
