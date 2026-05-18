@@ -2046,18 +2046,18 @@ function hexToRgba(hex, alpha) {
 </div>
 
 <!-- Welcome Overlay -->
-<div id="welcomeOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.85);z-index:10000;display:flex;align-items:center;justify-content:center;padding:20px;">
-  <div style="background:#fff;border-radius:16px;max-width:480px;width:100%;padding:32px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;">
-    <div style="font-size:40px;margin-bottom:12px;">🏝️</div>
-    <h2 style="font-size:22px;font-weight:800;color:#1E293B;margin:0 0 16px;">Welcome to the Cabana Map</h2>
-    <div style="text-align:left;font-size:14px;color:#475569;line-height:1.7;">
-      <p style="margin:0 0 12px;"><strong>Step 1:</strong> Use the date picker in the sidebar to select the date of your visit. Cabana pins are color-coded by zone. Available cabanas are bright and clickable, while booked cabanas appear dimmed.</p>
-      <p style="margin:0 0 12px;"><strong>Step 2:</strong> Browse the map to find a cabana you like. You can drag to move around and pinch or scroll to zoom in and out.</p>
-      <p style="margin:0 0 12px;"><strong>Step 3:</strong> Tap on any cabana pin to view details including size, capacity, seating, and a video walkthrough.</p>
-      <p style="margin:0 0 12px;"><strong>Step 4:</strong> Click the <strong>"Book Now"</strong> button to reserve your cabana. You'll be taken to a secure checkout.</p>
+<div id="welcomeOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.85);z-index:10000;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+  <div style="background:#fff;border-radius:16px;max-width:480px;width:100%;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;margin:auto 0;">
+    <div style="font-size:36px;margin-bottom:8px;">🏝️</div>
+    <h2 style="font-size:20px;font-weight:800;color:#1E293B;margin:0 0 12px;">Welcome to the Cabana Map</h2>
+    <div style="text-align:left;font-size:13px;color:#475569;line-height:1.6;">
+      <p style="margin:0 0 10px;"><strong>Step 1:</strong> Use the date picker in the sidebar to select the date of your visit. Cabana pins are color-coded by zone. Available cabanas are bright and clickable, while booked cabanas appear dimmed.</p>
+      <p style="margin:0 0 10px;"><strong>Step 2:</strong> Browse the map to find a cabana you like. You can drag to move around and pinch or scroll to zoom in and out.</p>
+      <p style="margin:0 0 10px;"><strong>Step 3:</strong> Tap on any cabana pin to view details including size, capacity, seating, and a video walkthrough.</p>
+      <p style="margin:0 0 10px;"><strong>Step 4:</strong> Click the <strong>"Book Now"</strong> button to reserve your cabana. You'll be taken to a secure checkout.</p>
       <p style="margin:0;"><strong>Tip:</strong> On some dates, cabanas are available for both daytime and evening sessions. If time slots appear, select which session you'd like.</p>
     </div>
-    <button onclick="dismissWelcome()" style="margin-top:20px;padding:14px 40px;background:#0EA5E9;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:background 0.2s;">Got It, Let's Go!</button>
+    <button onclick="dismissWelcome()" style="margin-top:16px;padding:12px 36px;background:#0EA5E9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:background 0.2s;">Got It, Let's Go!</button>
   </div>
 </div>
 <style>
