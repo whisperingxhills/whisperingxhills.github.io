@@ -435,6 +435,7 @@ var imgW = 0, imgH = 0;
 var CLUSTER_THRESHOLD = 0.7;
 var pinElements = [], clusterElements = [];
 var selectedSlotIndex = 0;
+var bookingData = {}; /* cabana unit name -> { firstName, lastName, email, phone, price } */
 
 /* ================================================================
    INIT
@@ -523,6 +524,19 @@ function fetchAvailability() {
     markAll(false); updatePanel(); updateCounts();
     document.getElementById('dashRefresh').textContent = 'Fetch failed — retrying...';
   });
+
+  /* Fetch booking guest names */
+  fetchBookings(date);
+}
+
+function fetchBookings(date) {
+  var burl = 'https://api.whisperingxhills.com/api/cabana-bookings?date=' + date;
+  fetch(burl).then(function(r) { return r.json(); }).then(function(data) {
+    bookingData = data.bookings || {};
+    updatePanel(); /* refresh panel with guest names */
+  }).catch(function() {
+    bookingData = {}; /* fail silently, dashboard still works */
+  });
 }
 
 function applySlot(slot) {
@@ -594,9 +608,11 @@ function updatePanel() {
     var list = bookedByZone[z]; if (!list.length) return;
     html += '<div class="dash-zone-group"><div class="dash-zone-label" style="color:' + (ZONE_COLORS[z]||'#888') + '">' + esc(z) + ' (' + list.length + ')</div>';
     list.forEach(function(c) {
+      var guest = bookingData[c.unit];
+      var guestLabel = guest ? ' <span style="color:#94A3B8;font-weight:400;font-size:11px;">/ ' + esc(guest.lastName || '') + '</span>' : '';
       html += '<div class="dash-cabana-item" onclick="flyToCabana(\'' + escA(c.unit) + '\')">';
       html += '<div class="cdot" style="background:#EF4444"></div>';
-      html += '<span class="cname">' + esc(c.unit) + '</span>';
+      html += '<span class="cname">' + esc(c.unit) + guestLabel + '</span>';
       html += '<span class="cstatus" style="color:#DC2626">Booked</span></div>';
     });
     html += '</div>';
@@ -649,6 +665,19 @@ function openDetail(cabana) {
     html += '</div>';
   }
   if (details.features) html += '<p class="dash-detail-desc">' + esc(details.features) + '</p>';
+
+  /* Guest info for booked cabanas */
+  var guest = bookingData[cabana.unit];
+  if (!cabana.available && guest && guest.lastName) {
+    html += '<div class="dash-detail-meta" style="background:#EEF2FF;border:1px solid #C7D2FE;">';
+    html += '<div style="font-size:11px;font-weight:700;color:#4338CA;text-transform:uppercase;letter-spacing:0.5px;padding-bottom:6px;">Guest Info</div>';
+    html += '<div class="dash-detail-row"><span class="dash-detail-label">Name</span><span class="dash-detail-value">' + esc(guest.firstName + ' ' + guest.lastName) + '</span></div>';
+    if (guest.email) html += '<div class="dash-detail-row"><span class="dash-detail-label">Email</span><span class="dash-detail-value" style="font-size:12px;">' + esc(guest.email) + '</span></div>';
+    if (guest.phone) html += '<div class="dash-detail-row"><span class="dash-detail-label">Phone</span><span class="dash-detail-value">' + esc(guest.phone) + '</span></div>';
+    if (guest.price) html += '<div class="dash-detail-row"><span class="dash-detail-label">Price</span><span class="dash-detail-value" style="color:#15803D;font-weight:700;">$' + parseFloat(guest.price).toFixed(2) + '</span></div>';
+    html += '</div>';
+  }
+
   html += '<div class="dash-detail-meta">';
   html += '<div class="dash-detail-row"><span class="dash-detail-label">Zone</span><span class="dash-detail-value">' + esc(cabana.zone) + '</span></div>';
   html += '<div class="dash-detail-row"><span class="dash-detail-label">Unit</span><span class="dash-detail-value">' + esc(cabana.unit) + '</span></div>';
@@ -803,7 +832,11 @@ function printReport() {
     ZONE_ORDER.forEach(function(z) {
       var list = bookedByZone[z]; if (!list.length) return;
       html += '<div class="pr-zone"><div class="pr-zone-name">' + esc(z) + ' (' + list.length + ')</div>';
-      list.forEach(function(c) { html += '<div class="pr-unit">• ' + esc(c.unit) + '</div>'; });
+      list.forEach(function(c) {
+        var guest = bookingData[c.unit];
+        var guestStr = (guest && guest.firstName) ? ' / ' + esc(guest.firstName + ' ' + guest.lastName) : '';
+        html += '<div class="pr-unit">• ' + esc(c.unit) + guestStr + '</div>';
+      });
       html += '</div>';
     });
     html += '</div>';
