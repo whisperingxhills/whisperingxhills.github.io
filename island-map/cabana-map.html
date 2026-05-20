@@ -1463,14 +1463,13 @@ function renderClusters() {
    PIN VISIBILITY (clustering vs. individual)
    ================================================================ */
 function updatePinVisibility() {
-  var showClusters = scale < CLUSTER_THRESHOLD;
-
+  /* Always show individual pins, never show clusters */
   pinElements.forEach(function(p) {
-    p.el.classList.toggle('hidden', showClusters);
+    p.el.classList.remove('hidden');
   });
 
   clusterElements.forEach(function(c) {
-    c.el.classList.toggle('hidden', !showClusters);
+    c.el.classList.add('hidden');
   });
 }
 
