@@ -397,6 +397,7 @@ body {
   overflow: hidden;
   background: #87CEEB;
   cursor: grab;
+  touch-action: none;
 }
 
 .iw-map-area.grabbing { cursor: grabbing; }
@@ -1938,6 +1939,7 @@ window.addEventListener('mouseup', function() {
 /* Touch */
 var lastTouchDist = 0;
 mapArea.addEventListener('touchstart', function(e) {
+  e.preventDefault();
   if (e.touches.length === 1) {
     isDragging = true;
     dragStartX = e.touches[0].clientX;
@@ -1951,9 +1953,10 @@ mapArea.addEventListener('touchstart', function(e) {
       e.touches[0].clientY - e.touches[1].clientY
     );
   }
-}, { passive: true });
+}, { passive: false });
 
 mapArea.addEventListener('touchmove', function(e) {
+  e.preventDefault();
   if (e.touches.length === 1 && isDragging) {
     panX = startPanX + (e.touches[0].clientX - dragStartX);
     panY = startPanY + (e.touches[0].clientY - dragStartY);
@@ -1968,7 +1971,7 @@ mapArea.addEventListener('touchmove', function(e) {
     updateTransform();
     updatePinVisibility();
   }
-}, { passive: true });
+}, { passive: false });
 
 mapArea.addEventListener('touchend', function() { isDragging = false; });
 
