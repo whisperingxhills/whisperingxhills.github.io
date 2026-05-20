@@ -1939,7 +1939,6 @@ window.addEventListener('mouseup', function() {
 /* Touch */
 var lastTouchDist = 0;
 mapArea.addEventListener('touchstart', function(e) {
-  e.preventDefault();
   if (e.touches.length === 1) {
     isDragging = true;
     dragStartX = e.touches[0].clientX;
