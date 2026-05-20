@@ -1955,7 +1955,6 @@ mapArea.addEventListener('touchstart', function(e) {
 }, { passive: true });
 
 mapArea.addEventListener('touchmove', function(e) {
-  e.preventDefault();
   if (e.touches.length === 1 && isDragging) {
     panX = startPanX + (e.touches[0].clientX - dragStartX);
     panY = startPanY + (e.touches[0].clientY - dragStartY);
@@ -1970,7 +1969,7 @@ mapArea.addEventListener('touchmove', function(e) {
     updateTransform();
     updatePinVisibility();
   }
-}, { passive: false });
+}, { passive: true });
 
 mapArea.addEventListener('touchend', function() { isDragging = false; });
 
