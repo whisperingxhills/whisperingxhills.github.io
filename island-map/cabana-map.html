@@ -1667,6 +1667,21 @@ function openBooking(root, eid, unitName, rate) {
   container.appendChild(iframe);
 
   modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
+  /* Prevent iframe focus from scrolling the parent page */
+  iframe.addEventListener('load', function() {
+    try {
+      iframe.contentWindow.addEventListener('focus', function(e) {
+        window.scrollTo(0, 0);
+      }, true);
+    } catch(e) { /* cross-origin, use fallback */ }
+  });
+  window.__bookingScrollLock = function(e) {
+    if (modal.classList.contains('active')) {
+      window.scrollTo(0, 0);
+    }
+  };
+  window.addEventListener('scroll', window.__bookingScrollLock);
   document.addEventListener('keydown', bookingModalEsc);
 }
 
@@ -1674,7 +1689,12 @@ function closeBookingModal() {
   var modal = document.getElementById('bookingModal');
   var container = document.getElementById('bookingEngineContainer');
   modal.classList.remove('active');
+  document.body.style.overflow = '';
   container.innerHTML = '';
+  if (window.__bookingScrollLock) {
+    window.removeEventListener('scroll', window.__bookingScrollLock);
+    window.__bookingScrollLock = null;
+  }
   document.removeEventListener('keydown', bookingModalEsc);
 }
 
