@@ -1603,8 +1603,11 @@ function openPanel(cabana) {
     html += '<div style="font-size:22px;font-weight:800;color:#15803D;margin:8px 0;text-align:center;">' + escapeHtml(dayPrice) + '</div>';
   }
 
-  /* Availability status */
-  if (cabana.available) {
+  /* Availability status — block past dates */
+  var isPast = isDatePast(selectedDate);
+  if (isPast) {
+    html += '<div class="iw-sold-out">This date has passed</div>';
+  } else if (cabana.available) {
     html += '<button class="iw-book-btn" data-root="' + escapeAttr(cabana.root || '') + '" data-eid="' + escapeAttr(cabana.eid) + '" data-unit="' + escapeAttr(cabana.unit) + '" data-rate="' + escapeAttr(cabana.rate || '') + '" onclick="openBooking(this.dataset.root, this.dataset.eid, this.dataset.unit, this.dataset.rate)">Book Now</button>';
   } else {
     html += '<div class="iw-sold-out">Sold Out Today</div>';
@@ -1707,7 +1710,12 @@ var selectedSlotIndex = 0;
 (function initDatePicker() {
   var picker = document.getElementById('datePicker');
   if (!picker) return;
-  var today = new Date().toISOString().split('T')[0];
+  /* Use Fresno/PST time to determine "today" */
+  var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+  var yyyy = now.getFullYear();
+  var mm = String(now.getMonth() + 1).padStart(2, '0');
+  var dd = String(now.getDate()).padStart(2, '0');
+  var today = yyyy + '-' + mm + '-' + dd;
   picker.value = today;
   picker.min = today;
 })();
@@ -1718,8 +1726,29 @@ function startAvailRefresh() {
   availRefreshTimer = setInterval(fetchAvailability, 10000);
 }
 
+/* Check if a date string (YYYY-MM-DD) is in the past based on Fresno time */
+function isDatePast(dateStr) {
+  if (!dateStr) return false;
+  var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+  var todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  return dateStr < todayStr;
+}
+
 function onDateChange() {
   var statusEl = document.getElementById('dateStatus');
+  var picker = document.getElementById('datePicker');
+  var pickedDate = picker ? picker.value : '';
+
+  /* Block past dates — mark everything booked, no fetching */
+  if (isDatePast(pickedDate)) {
+    selectedSlotIndex = 0;
+    hideTimeSlots();
+    markAllUnavailable();
+    if (statusEl) statusEl.textContent = 'This date has passed';
+    if (availRefreshTimer) { clearInterval(availRefreshTimer); availRefreshTimer = null; }
+    return;
+  }
+
   if (statusEl) statusEl.textContent = 'Loading availability...';
   selectedSlotIndex = 0;
   hideTimeSlots();
