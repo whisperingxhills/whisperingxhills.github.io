@@ -496,9 +496,9 @@ function renderClusters() {
 }
 
 function updatePinVis() {
-  var showCl = scale < CLUSTER_THRESHOLD;
-  pinElements.forEach(function(p) { p.el.classList.toggle('hidden', showCl); });
-  clusterElements.forEach(function(c) { c.el.classList.toggle('hidden', !showCl); });
+  /* Always show individual pins, never show clusters */
+  pinElements.forEach(function(p) { p.el.classList.remove('hidden'); });
+  clusterElements.forEach(function(c) { c.el.classList.add('hidden'); });
 }
 
 /* ================================================================
