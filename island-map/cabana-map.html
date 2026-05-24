@@ -399,6 +399,25 @@ body {
   cursor: grab;
 
 }
+.iw-hours-bar {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  background: rgba(15,23,42,0.85);
+  backdrop-filter: blur(8px);
+  color: #fff;
+  padding: 8px 20px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.iw-hours-bar.hidden { opacity: 0; }
 
 .iw-map-area.grabbing { cursor: grabbing; }
 
@@ -793,6 +812,8 @@ body {
 
 <!-- Map Area -->
 <div class="iw-map-area" id="mapArea">
+  <!-- Park Hours Floating Bar -->
+  <div class="iw-hours-bar hidden" id="hoursBar"></div>
   <!-- Zoom Controls -->
   <div class="iw-zoom">
     <button onclick="zoomMap(1)">+</button>
@@ -1718,12 +1739,54 @@ var selectedSlotIndex = 0;
   var today = yyyy + '-' + mm + '-' + dd;
   picker.value = today;
   picker.min = today;
+  updateHoursBar(today);
 })();
 
 var availRefreshTimer = null;
 function startAvailRefresh() {
   if (availRefreshTimer) clearInterval(availRefreshTimer);
   availRefreshTimer = setInterval(fetchAvailability, 10000);
+}
+
+/* Park hours lookup (month-day -> hours string) — synced with IWP calendar */
+var PARK_HOURS = {
+  '4-23':'11AM–6PM','4-24':'11AM–6PM','4-25':'11AM–6PM','4-31':'11AM–6PM',
+  '5-7':'11AM–7PM','5-8':'11AM–6PM','5-9':'11AM–6PM','5-10':'11AM–6PM','5-11':'11AM–6PM',
+  '5-12':'11AM–6PM','5-13':'11AM–8PM','5-14':'11AM–7PM',
+  '5-16':'11AM–6PM','5-18':'11AM–6PM','5-19':'11AM–10PM','5-20':'11AM–8PM','5-21':'11AM–7PM',
+  '5-22':'11AM–6PM','5-23':'11AM–6PM','5-24':'11AM–6PM','5-25':'11AM–6PM',
+  '5-26':'11AM–10PM','5-27':'11AM–8PM','5-28':'11AM–7PM','5-29':'11AM–6PM','5-30':'11AM–6PM',
+  '6-1':'11AM–6PM','6-2':'11AM–6PM','6-3':'11AM–10PM','6-4':'10:30AM–9PM',
+  '6-5':'11AM–7PM','6-6':'11AM–7PM','6-7':'11AM–7PM','6-8':'11AM–7PM','6-9':'11AM–7PM',
+  '6-10':'11AM–10PM','6-11':'10:30AM–8PM','6-12':'11AM–7PM','6-13':'11AM–7PM',
+  '6-14':'11AM–7PM','6-15':'11AM–7PM','6-16':'11AM–7PM','6-17':'11AM–10PM',
+  '6-18':'10:30AM–8PM','6-19':'11AM–7PM','6-20':'11AM–7PM','6-21':'11AM–7PM',
+  '6-22':'11AM–7PM','6-23':'11AM–7PM','6-24':'11AM–10PM','6-25':'10:30AM–8PM',
+  '6-26':'11AM–7PM','6-27':'11AM–7PM','6-28':'11AM–7PM','6-29':'11AM–7PM','6-30':'11AM–7PM',
+  '6-31':'11AM–10PM',
+  '7-1':'10:30AM–8PM','7-2':'11AM–7PM','7-3':'11AM–6PM','7-4':'11AM–6PM','7-5':'11AM–6PM',
+  '7-6':'11AM–6PM','7-7':'11AM–11PM','7-8':'10:30AM–8PM','7-9':'11AM–7PM','7-10':'11AM–6PM',
+  '7-11':'11AM–6PM','7-15':'11AM–7PM','7-16':'11AM–7PM','7-22':'11AM–6PM','7-23':'11AM–6PM',
+  '7-29':'11AM–6PM','7-30':'11AM–6PM',
+  '8-5':'11AM–6PM','8-6':'11AM–6PM','8-7':'11AM–6PM'
+};
+
+function updateHoursBar(dateStr) {
+  var bar = document.getElementById('hoursBar');
+  if (!bar) return;
+  if (!dateStr) { bar.classList.add('hidden'); return; }
+  var parts = dateStr.split('-');
+  var month = parseInt(parts[1], 10) - 1; /* 0-indexed */
+  var day = parseInt(parts[2], 10);
+  var key = month + '-' + day;
+  var hours = PARK_HOURS[key];
+  if (hours) {
+    bar.textContent = '🕐 Park Hours: ' + hours;
+    bar.classList.remove('hidden');
+  } else {
+    bar.textContent = '🚫 Park Closed';
+    bar.classList.remove('hidden');
+  }
 }
 
 /* Check if a date string (YYYY-MM-DD) is in the past based on Fresno time */
@@ -1738,6 +1801,9 @@ function onDateChange() {
   var statusEl = document.getElementById('dateStatus');
   var picker = document.getElementById('datePicker');
   var pickedDate = picker ? picker.value : '';
+
+  /* Update park hours bar */
+  updateHoursBar(pickedDate);
 
   /* Block past dates — mark everything booked, no fetching */
   if (isDatePast(pickedDate)) {
