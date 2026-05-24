@@ -397,7 +397,6 @@ body {
   overflow: hidden;
   background: #87CEEB;
   cursor: grab;
-
 }
 
 .iw-map-area.grabbing { cursor: grabbing; }
@@ -859,7 +858,7 @@ var ZONE_DETAILS = {
   "Beach Villa":     { video:"J15NSLmCqJc", size:"20' x 12'", capacity:"16 Seated, 20 Max", seating:"8 Sling Chairs, 4 Chaise Loungers, Adirondack Chairs", features:"The largest cabanas available. Directly on the wave pool deck at the water's edge. Spacious wood-grained dining table, cocktail tables, end tables. Back shade curtains for privacy and sun protection. Cabana service included." },
   "Bamboo Bay":      { video:"iPChyL_jpXw", size:"15' x 10'", capacity:"12", seating:"Director & Adirondack Chairs", features:"Built from high-grade bamboo with red corrugated metal roof. Bamboo dining table, colorful director chairs, Adirondack chairs for lounging, and cocktail tables. Nestled on the beach beside the Ohana Kids Play Structure." },
   "Pete's Retreat":  { video:"29x-LHVZUS8", size:"Approx 900 sq ft", capacity:"60 Guests", seating:"Bar Stools", features:"NEW large BBQ grill added. Secluded area nestled among trees, adjacent to lazy river. Beautiful grass area with picnic tables. Large tiled countertop, Jarritos refrigerator, multiple electrical outlets, sink with running water. 8 cocktail tables with bar stools included. Pizzas can be ordered and scheduled via Group Sales. Perfect for parties, company events, sports teams, church groups." },
-  "Sharky's":        { video:"9sZyerEXMYY", size:"15' x 40'", capacity:"12 Seated, 20 Capacity", seating:"Chaise Loungers, Dining Chairs, Love Seats", features:"The ONLY cabana with synthetic grass underfoot. Nautical netting for privacy. Includes small refrigerator, unlimited all-day beverage wristbands for up to 20 guests, Giant Jenga, and Corn Hole. Positioned by Waikiki Willies Bar, Sharky's snack area, Wave Pool Entry, and Waimea Lazy River Entry." }
+  "Sharky's":        { video:"9sZyerEXMYY", size:"15' x 40'", capacity:"12 Seated, 20 Capacity", seating:"Chaise Loungers, Dining Chairs, Love Seats", features:"The ONLY cabana with synthetic grass underfoot. Nautical netting for privacy. Includes small refrigerator, unlimited all-day beverage wristbands for up to 20 guests, ESPN Air Hockey Table, Foosball Table, Giant Jenga, and Corn Hole. Positioned by Waikiki Willies Bar, Sharky's snack area, Wave Pool Entry, and Waimea Lazy River Entry." }
 };
 
 var ZONE_DESCRIPTIONS = {
@@ -877,7 +876,7 @@ var ZONE_DESCRIPTIONS = {
   "Beach Villa":     "The largest cabanas available — 20' x 12' exquisite villas positioned directly on the wave pool deck at the water's edge. Spacious wood-grained dining table with 8 sling chairs, 4 chaise loungers, and Adirondack chairs and end tables. Back shade curtains for privacy. Seats 16 with max capacity of 20. Cabana service included.",
   "Bamboo Bay":      "one of a kind! Relax in island style at Bamboo Bay. This exclusive 15' x 10' cabana is built from high-grade bamboo and topped with eye-catching red corrugated metal roofs. Features a bamboo dining table, colorful director chairs, comfortable Adirondack chairs, and cocktail tables. Nestled right on the beach beside the Ohana Kids Play Structure — the perfect place to unwind in style.",
   "Pete's Retreat":  "The ultimate gathering spot — approx 900 sq ft secluded among trees and adjacent to the lazy river. Accommodates up to 60 guests. Equipped with a NEW large BBQ grill, tiled countertop, Jarritos refrigerator, electrical outlets, sink with running water, 8 cocktail tables with bar stools, and picnic tables. Perfect for parties, company events, sports teams, and large group outings. Pizzas can be ordered via Group Sales in advance.",
-  "Sharky's":        "Our best cabana yet! The ONLY cabana in the park with synthetic grass under your feet. 15' x 40' covered area surrounded by nautical netting for privacy. Seating for 12 with capacity of 20. Includes a refrigerator, unlimited all-day beverages for up to 20 guests, Giant Jenga, and Corn Hole. Perfectly positioned by Waikiki Willies Bar, Sharky's snack area, Wave Pool Entry, and Waimea Lazy River Entry."
+  "Sharky's":        "Our best cabana yet! The ONLY cabana in the park with synthetic grass under your feet. 15' x 40' covered area surrounded by nautical netting for privacy. Seating for 12 with capacity of 20. Includes a refrigerator, unlimited all-day beverages for up to 20 guests, ESPN Air Hockey, Foosball, Giant Jenga, and Corn Hole. Perfectly positioned by Waikiki Willies Bar, Sharky's snack area, Wave Pool Entry, and Waimea Lazy River Entry."
 };
 
 var ZONE_PRICING = {
@@ -1463,13 +1462,14 @@ function renderClusters() {
    PIN VISIBILITY (clustering vs. individual)
    ================================================================ */
 function updatePinVisibility() {
-  /* Always show individual pins, never show clusters */
+  var showClusters = scale < CLUSTER_THRESHOLD;
+
   pinElements.forEach(function(p) {
-    p.el.classList.remove('hidden');
+    p.el.classList.toggle('hidden', showClusters);
   });
 
   clusterElements.forEach(function(c) {
-    c.el.classList.add('hidden');
+    c.el.classList.toggle('hidden', !showClusters);
   });
 }
 
@@ -1603,11 +1603,8 @@ function openPanel(cabana) {
     html += '<div style="font-size:22px;font-weight:800;color:#15803D;margin:8px 0;text-align:center;">' + escapeHtml(dayPrice) + '</div>';
   }
 
-  /* Availability status — block past dates */
-  var isPast = isDatePast(selectedDate);
-  if (isPast) {
-    html += '<div class="iw-sold-out">This date has passed</div>';
-  } else if (cabana.available) {
+  /* Availability status */
+  if (cabana.available) {
     html += '<button class="iw-book-btn" data-root="' + escapeAttr(cabana.root || '') + '" data-eid="' + escapeAttr(cabana.eid) + '" data-unit="' + escapeAttr(cabana.unit) + '" data-rate="' + escapeAttr(cabana.rate || '') + '" onclick="openBooking(this.dataset.root, this.dataset.eid, this.dataset.unit, this.dataset.rate)">Book Now</button>';
   } else {
     html += '<div class="iw-sold-out">Sold Out Today</div>';
@@ -1670,19 +1667,6 @@ function openBooking(root, eid, unitName, rate) {
   container.appendChild(iframe);
 
   modal.classList.add('active');
-  /* Prevent iframe focus/hover from scrolling parent page */
-  iframe.setAttribute('tabindex', '-1');
-  iframe.style.position = 'relative';
-  container.style.position = 'relative';
-  container.style.overflow = 'hidden';
-  /* Intercept any scroll attempts while modal is open */
-  var scrollX = window.scrollX, scrollY = window.scrollY;
-  window.__bookingScrollLock = function() {
-    window.scrollTo(scrollX, scrollY);
-  };
-  window.addEventListener('scroll', window.__bookingScrollLock, { passive: false });
-  /* Also prevent on the modal overlay and container */
-  modal.addEventListener('scroll', window.__bookingScrollLock, { passive: false });
   document.addEventListener('keydown', bookingModalEsc);
 }
 
@@ -1691,11 +1675,6 @@ function closeBookingModal() {
   var container = document.getElementById('bookingEngineContainer');
   modal.classList.remove('active');
   container.innerHTML = '';
-  if (window.__bookingScrollLock) {
-    window.removeEventListener('scroll', window.__bookingScrollLock);
-    modal.removeEventListener('scroll', window.__bookingScrollLock);
-    window.__bookingScrollLock = null;
-  }
   document.removeEventListener('keydown', bookingModalEsc);
 }
 
@@ -1710,12 +1689,7 @@ var selectedSlotIndex = 0;
 (function initDatePicker() {
   var picker = document.getElementById('datePicker');
   if (!picker) return;
-  /* Use Fresno/PST time to determine "today" */
-  var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-  var yyyy = now.getFullYear();
-  var mm = String(now.getMonth() + 1).padStart(2, '0');
-  var dd = String(now.getDate()).padStart(2, '0');
-  var today = yyyy + '-' + mm + '-' + dd;
+  var today = new Date().toISOString().split('T')[0];
   picker.value = today;
   picker.min = today;
 })();
@@ -1726,29 +1700,8 @@ function startAvailRefresh() {
   availRefreshTimer = setInterval(fetchAvailability, 10000);
 }
 
-/* Check if a date string (YYYY-MM-DD) is in the past based on Fresno time */
-function isDatePast(dateStr) {
-  if (!dateStr) return false;
-  var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-  var todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
-  return dateStr < todayStr;
-}
-
 function onDateChange() {
   var statusEl = document.getElementById('dateStatus');
-  var picker = document.getElementById('datePicker');
-  var pickedDate = picker ? picker.value : '';
-
-  /* Block past dates — mark everything booked, no fetching */
-  if (isDatePast(pickedDate)) {
-    selectedSlotIndex = 0;
-    hideTimeSlots();
-    markAllUnavailable();
-    if (statusEl) statusEl.textContent = 'This date has passed';
-    if (availRefreshTimer) { clearInterval(availRefreshTimer); availRefreshTimer = null; }
-    return;
-  }
-
   if (statusEl) statusEl.textContent = 'Loading availability...';
   selectedSlotIndex = 0;
   hideTimeSlots();
@@ -2088,7 +2041,7 @@ function hexToRgba(hex, alpha) {
       <span style="font-size:16px;">💡</span>
       <span style="font-size:12px;color:#1E40AF;font-weight:600;line-height:1.4;">Want multiple cabanas? Hit Confirm to add this cabana to your cart, then close this window or click outside to select another cabana from the map.</span>
     </div>
-    <div id="bookingEngineContainer" style="width:100%;height:calc(100% - 88px);overflow:hidden;padding:0;"></div>
+    <div id="bookingEngineContainer" style="width:100%;height:calc(100% - 88px);overflow-y:auto;padding:16px;"></div>
   </div>
 </div>
 
