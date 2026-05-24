@@ -1728,6 +1728,26 @@ function bookingModalEsc(e) { if (e.key === 'Escape') closeBookingModal(); }
 var lastAvailData = null;
 var selectedSlotIndex = 0;
 
+(function initDatePicker() {
+  var picker = document.getElementById('datePicker');
+  if (!picker) return;
+  /* Use Fresno/PST time to determine "today" */
+  var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+  var yyyy = now.getFullYear();
+  var mm = String(now.getMonth() + 1).padStart(2, '0');
+  var dd = String(now.getDate()).padStart(2, '0');
+  var today = yyyy + '-' + mm + '-' + dd;
+  picker.value = today;
+  picker.min = today;
+  updateHoursBar(today);
+})();
+
+var availRefreshTimer = null;
+function startAvailRefresh() {
+  if (availRefreshTimer) clearInterval(availRefreshTimer);
+  availRefreshTimer = setInterval(fetchAvailability, 10000);
+}
+
 /* Park hours lookup (month-day -> hours string) — synced with IWP calendar */
 var PARK_HOURS = {
   '4-23':'11AM–6PM','4-24':'11AM–6PM','4-25':'11AM–6PM','4-31':'11AM–6PM',
@@ -1756,37 +1776,17 @@ function updateHoursBar(dateStr) {
   if (!bar) return;
   if (!dateStr) { bar.classList.add('hidden'); return; }
   var parts = dateStr.split('-');
-  var month = parseInt(parts[1], 10) - 1;
+  var month = parseInt(parts[1], 10) - 1; /* 0-indexed */
   var day = parseInt(parts[2], 10);
   var key = month + '-' + day;
   var hours = PARK_HOURS[key];
   if (hours) {
-    bar.textContent = '\u{1F550} Park Hours: ' + hours;
+    bar.textContent = '🕐 Park Hours: ' + hours;
     bar.classList.remove('hidden');
   } else {
-    bar.textContent = '\u{1F6AB} Park Closed';
+    bar.textContent = '🚫 Park Closed';
     bar.classList.remove('hidden');
   }
-}
-
-(function initDatePicker() {
-  var picker = document.getElementById('datePicker');
-  if (!picker) return;
-  /* Use Fresno/PST time to determine "today" */
-  var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
-  var yyyy = now.getFullYear();
-  var mm = String(now.getMonth() + 1).padStart(2, '0');
-  var dd = String(now.getDate()).padStart(2, '0');
-  var today = yyyy + '-' + mm + '-' + dd;
-  picker.value = today;
-  picker.min = today;
-  updateHoursBar(today);
-})();
-
-var availRefreshTimer = null;
-function startAvailRefresh() {
-  if (availRefreshTimer) clearInterval(availRefreshTimer);
-  availRefreshTimer = setInterval(fetchAvailability, 10000);
 }
 
 /* Check if a date string (YYYY-MM-DD) is in the past based on Fresno time */
