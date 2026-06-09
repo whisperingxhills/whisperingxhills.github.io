@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Haunt Calendars 2026</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #000; color: #fff; font-family: 'Arial Black', 'Impact', Arial, sans-serif; padding: 40px 20px; }
+
+.calendar-block { max-width: 500px; margin: 0 auto 80px; }
+.cal-title { text-align: center; font-size: 28px; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+.rhr-title { color: #cc0000; text-shadow: 0 0 15px rgba(204,0,0,0.5); }
+.ffn-title { color: #ff6600; text-shadow: 0 0 15px rgba(255,102,0,0.5); }
+
+.month-label { text-align: center; font-size: 16px; font-weight: 700; color: #888; text-transform: uppercase; letter-spacing: 4px; margin-bottom: 12px; }
+
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; margin-bottom: 20px; }
+.cal-grid .dow { text-align: center; font-size: 12px; font-weight: 700; color: #666; padding: 8px 0; text-transform: uppercase; letter-spacing: 1px; }
+.cal-grid .cell { text-align: center; padding: 12px 4px; border-radius: 6px; font-size: 20px; font-weight: 900; min-height: 48px; }
+.cal-grid .cell.empty { background: transparent; }
+.cal-grid .cell.inactive { background: #111; color: #333; }
+.cal-grid .cell.open { background: #1a8c1a; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+.cal-grid .cell.open-ffn { background: #cc4400; color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,0.5); }
+
+@media print { body { padding: 10px; } }
+</style>
+</head>
+<body>
+
+<!-- RAISIN HELL RANCH -->
+<div class="calendar-block">
+  <div class="cal-title rhr-title">Raisin Hell Ranch</div>
+  <div class="month-label">October 2026</div>
+  <div class="cal-grid" id="rhr-oct"></div>
+  <div class="month-label">November 2026</div>
+  <div class="cal-grid" id="rhr-nov"></div>
+</div>
+
+<!-- FRESNO FRIGHT NIGHTS -->
+<div class="calendar-block">
+  <div class="cal-title ffn-title">Fresno Fright Nights</div>
+  <div class="month-label">October 2026</div>
+  <div class="cal-grid" id="ffn-oct"></div>
+</div>
+
+<script>
+var DOWS = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+// Oct 2026: starts Thursday (index 4), 31 days
+// Nov 2026: starts Sunday (index 0), 30 days
+
+var RHR_OCT = [9,10,11,15,16,17,18,21,22,23,24,25,28,29,30,31];
+var RHR_NOV = [1];
+var FFN_OCT = [2,3,9,10,16,17,23,24,30,31];
+
+function buildCal(containerId, startDow, totalDays, openDays, cellClass) {
+  var el = document.getElementById(containerId);
+  DOWS.forEach(function(d) {
+    var h = document.createElement('div');
+    h.className = 'dow';
+    h.textContent = d;
+    el.appendChild(h);
+  });
+  for (var i = 0; i < startDow; i++) {
+    var e = document.createElement('div');
+    e.className = 'cell empty';
+    el.appendChild(e);
+  }
+  for (var d = 1; d <= totalDays; d++) {
+    var c = document.createElement('div');
+    var isOpen = openDays.indexOf(d) !== -1;
+    c.className = 'cell ' + (isOpen ? cellClass : 'inactive');
+    c.textContent = d;
+    el.appendChild(c);
+  }
+}
+
+// Oct starts on Thursday = index 4
+buildCal('rhr-oct', 4, 31, RHR_OCT, 'open');
+// Nov starts on Sunday = index 0
+buildCal('rhr-nov', 0, 30, RHR_NOV, 'open');
+// FFN Oct
+buildCal('ffn-oct', 4, 31, FFN_OCT, 'open-ffn');
+</script>
+</body>
+</html>
