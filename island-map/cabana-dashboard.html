@@ -37,6 +37,11 @@ body { display: flex; flex-direction: column; }
 .dash-refresh { font-size: 11px; color: var(--iw-gray-light); white-space: nowrap; }
 .dash-print-btn { padding: 6px 16px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.08); color: #fff; font-size: 12px; font-weight: 600; font-family: inherit; cursor: pointer; transition: background 0.2s; white-space: nowrap; }
 .dash-print-btn:hover { background: rgba(255,255,255,0.15); }
+.dash-slots { display: none; align-items: center; gap: 4px; }
+.dash-slots.visible { display: flex; }
+.dash-slot-btn { padding: 6px 14px; border: 1px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.7); font-size: 12px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.dash-slot-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+.dash-slot-btn.active { background: #0EA5E9; color: #fff; border-color: #0EA5E9; }
 
 /* ── Main Content ── */
 .dash-main { flex: 1; display: flex; overflow: hidden; }
@@ -190,6 +195,7 @@ body { display: flex; flex-direction: column; }
     <label>Date:</label>
     <input type="date" class="dash-date-input" id="dashDate">
   </div>
+  <div class="dash-slots" id="dashSlots"></div>
   <div class="dash-counts">
     <div class="dash-count green" id="dashAvailCount">— Available</div>
     <div class="dash-count red" id="dashBookedCount">— Booked</div>
@@ -434,7 +440,44 @@ var imgW = 0, imgH = 0;
 var CLUSTER_THRESHOLD = 0.7;
 var pinElements = [], clusterElements = [];
 var selectedSlotIndex = 0;
-var bookingData = {}; /* cabana unit name -> { firstName, lastName, email, phone, price } */
+var bookingData = {};
+var lastAvailData = null;
+
+function renderSlotButtons(data) {
+  var container = document.getElementById('dashSlots');
+  container.innerHTML = '';
+  if (!data.timeSlots || data.timeSlots.length <= 1) {
+    container.classList.remove('visible');
+    return;
+  }
+  container.classList.add('visible');
+  data.timeSlots.forEach(function(slot, idx) {
+    var btn = document.createElement('button');
+    btn.className = 'dash-slot-btn' + (idx === selectedSlotIndex ? ' active' : '');
+    var label = slot.label || ('Slot ' + (idx + 1));
+    var hour = parseInt(slot.startTime);
+    if (hour < 17) label = '☀️ Day — ' + label;
+    else label = '🌙 Night — ' + label;
+    btn.textContent = label;
+    btn.addEventListener('click', function() {
+      selectedSlotIndex = idx;
+      container.querySelectorAll('.dash-slot-btn').forEach(function(b, i) {
+        b.className = 'dash-slot-btn' + (i === idx ? ' active' : '');
+      });
+      if (lastAvailData && lastAvailData.timeSlots[idx]) {
+        applySlot(lastAvailData.timeSlots[idx]);
+        updatePanel(); updateCounts();
+      }
+    });
+    container.appendChild(btn);
+  });
+}
+
+function hideSlotButtons() {
+  var container = document.getElementById('dashSlots');
+  container.innerHTML = '';
+  container.classList.remove('visible');
+} /* cabana unit name -> { firstName, lastName, email, phone, price } */
 
 /* ================================================================
    INIT
@@ -509,7 +552,9 @@ function fetchAvailability() {
   document.getElementById('dashRefresh').textContent = 'Refreshing...';
 
   fetch(url).then(function(r) { return r.json(); }).then(function(data) {
-    if (!data.hasSchedules) { markAll(false); updatePanel(); updateCounts(); return; }
+    if (!data.hasSchedules) { markAll(false); hideSlotButtons(); updatePanel(); updateCounts(); return; }
+    lastAvailData = data;
+    renderSlotButtons(data);
     /* Apply availability from the selected time slot */
     if (data.timeSlots && data.timeSlots[selectedSlotIndex]) {
       applySlot(data.timeSlots[selectedSlotIndex]);
