@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>World's Largest Swim Lesson 2026 — Island Waterpark</title>
+  <meta name="description" content="Register for the World's Largest Swim Lesson at Island Waterpark on June 25, 2026. Free admission for participants ages 4-14.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f0f8ff;
+      color: #1a1a2e;
+      min-height: 100vh;
+    }
+
+    .hero {
+      position: relative;
+      width: 100%;
+      max-height: 500px;
+      overflow: hidden;
+      background: #003366;
+    }
+
+    .hero img {
+      width: 100%;
+      height: auto;
+      display: block;
+      object-fit: cover;
+      max-height: 500px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .event-details {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      margin: -40px auto 24px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+
+    .event-details h1 {
+      font-size: 28px;
+      color: #003366;
+      margin-bottom: 8px;
+      line-height: 1.2;
+    }
+
+    .event-details .subtitle {
+      font-size: 18px;
+      color: #0077b6;
+      font-weight: 600;
+      margin-bottom: 20px;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .detail-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .detail-icon {
+      font-size: 24px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .detail-item strong {
+      display: block;
+      font-size: 14px;
+      color: #003366;
+      margin-bottom: 2px;
+    }
+
+    .detail-item span {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .highlights {
+      background: #e8f4f8;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 0;
+    }
+
+    .highlights h3 {
+      font-size: 16px;
+      color: #003366;
+      margin-bottom: 12px;
+    }
+
+    .highlights ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .highlights li {
+      padding: 6px 0;
+      font-size: 14px;
+      color: #333;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .highlights li::before {
+      content: '✓';
+      color: #00b4d8;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .section-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+    }
+
+    .section-card h2 {
+      font-size: 22px;
+      color: #003366;
+      margin-bottom: 8px;
+    }
+
+    .section-card .section-sub {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 20px;
+    }
+
+    .form-container {
+      width: 100%;
+      border-radius: 12px;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .form-container iframe {
+      width: 100%;
+      min-height: 600px;
+      border: none;
+    }
+
+    .ticket-section {
+      text-align: center;
+    }
+
+    .ticket-section p {
+      font-size: 15px;
+      color: #555;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+
+    .ticket-btn {
+      display: inline-block;
+      background: #0077b6;
+      color: #fff;
+      text-decoration: none;
+      padding: 16px 40px;
+      border-radius: 50px;
+      font-size: 18px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 16px rgba(0,119,182,0.3);
+    }
+
+    .ticket-btn:hover {
+      background: #005f8d;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0,119,182,0.4);
+    }
+
+    .ticket-price {
+      display: block;
+      font-size: 14px;
+      font-weight: 400;
+      margin-top: 4px;
+      opacity: 0.9;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 32px 20px;
+      color: #888;
+      font-size: 13px;
+    }
+
+    .footer a {
+      color: #0077b6;
+      text-decoration: none;
+    }
+
+    .tagline-bar {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      padding: 16px 20px;
+      background: #003366;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .tagline-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    @media (max-width: 600px) {
+      .detail-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .event-details {
+        margin: -20px 12px 20px;
+        padding: 24px;
+      }
+
+      .event-details h1 {
+        font-size: 22px;
+      }
+
+      .section-card {
+        padding: 24px;
+        margin-left: 0;
+        margin-right: 0;
+      }
+
+      .container {
+        padding: 0 12px;
+      }
+
+      .tagline-bar {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .ticket-btn {
+        padding: 14px 32px;
+        font-size: 16px;
+      }
+
+      .form-container iframe {
+        min-height: 700px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Hero Image -->
+  <div class="hero">
+    <img src="wlsl-hero.jpg" alt="World's Largest Swim Lesson 2026 at Island Waterpark — Proud Participant">
+  </div>
+
+  <!-- Tagline Bar -->
+  <div class="tagline-bar">
+    <span class="tagline-item">🏊 Building Confidence</span>
+    <span class="tagline-item">❤️ Saving Lives</span>
+    <span class="tagline-item">🌊 Making Waves Together</span>
+  </div>
+
+  <div class="container">
+
+    <!-- Event Details Card -->
+    <div class="event-details">
+      <h1>World's Largest Swim Lesson 2026</h1>
+      <div class="subtitle">Island Waterpark — Fresno, CA</div>
+
+      <div class="detail-grid">
+        <div class="detail-item">
+          <span class="detail-icon">📅</span>
+          <div>
+            <strong>Date</strong>
+            <span>Thursday, June 25, 2026</span>
+          </div>
+        </div>
+        <div class="detail-item">
+          <span class="detail-icon">⏰</span>
+          <div>
+            <strong>Swim Lesson Begins</strong>
+            <span>Promptly at 8:30 AM</span>
+          </div>
+        </div>
+        <div class="detail-item">
+          <span class="detail-icon">👶</span>
+          <div>
+            <strong>Ages</strong>
+            <span>4 to 14 years old</span>
+          </div>
+        </div>
+        <div class="detail-item">
+          <span class="detail-icon">👨‍👩‍👧‍👦</span>
+          <div>
+            <strong>Max Participants</strong>
+            <span>6 per household</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="highlights">
+        <h3>What's Included</h3>
+        <ul>
+          <li>FREE swim lesson with certified instructors</li>
+          <li>FREE admission to Island Waterpark after the event for all participants</li>
+          <li>Additional guests may purchase admission for $30 per person</li>
+          <li>Participation does NOT require purchasing additional guest tickets</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Registration Form -->
+    <div class="section-card">
+      <h2>📝 Register Now</h2>
+      <p class="section-sub">Complete the form below to register your participants for the World's Largest Swim Lesson.</p>
+      <div class="form-container">
+        <iframe 
+          src="https://docs.google.com/forms/d/e/1FAIpQLSdjnQ18DAYws8PIo7uLSZkhmCPc4u82hfYrdX_405XJv2eI8A/viewform?embedded=true" 
+          frameborder="0" 
+          marginheight="0" 
+          marginwidth="0"
+          loading="lazy">
+          Loading…
+        </iframe>
+      </div>
+    </div>
+
+    <!-- Additional Tickets -->
+    <div class="section-card ticket-section">
+      <h2>🎟️ Additional Guest Tickets</h2>
+      <p>
+        Want to bring family and friends to enjoy the waterpark after the lesson?<br>
+        Additional guests can purchase admission for <strong>$30 per person</strong>.<br>
+        You can purchase tickets now or at the ticket booth on event day.
+      </p>
+      <a href="https://secure.rocket-rez.com/RocketWeb2/4b985f707d73c028/item/2/786" 
+         target="_blank" 
+         rel="noopener noreferrer" 
+         class="ticket-btn">
+        Purchase Guest Tickets
+        <span class="ticket-price">$30 per person</span>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <p>
+      <a href="https://www.islandwaterpark.com" target="_blank">Island Waterpark</a> — Fresno, California<br>
+      Part of the <a href="https://www.wlsl.org" target="_blank">World's Largest Swimming Lesson™</a> global event
+    </p>
+  </div>
+
+</body>
+</html>
