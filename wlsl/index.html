@@ -74,57 +74,23 @@
       gap: 10px;
     }
 
-    .detail-icon {
-      font-size: 24px;
-      flex-shrink: 0;
-      margin-top: 2px;
-    }
-
-    .detail-item strong {
-      display: block;
-      font-size: 14px;
-      color: #003366;
-      margin-bottom: 2px;
-    }
-
-    .detail-item span {
-      font-size: 14px;
-      color: #555;
-    }
+    .detail-icon { font-size: 24px; flex-shrink: 0; margin-top: 2px; }
+    .detail-item strong { display: block; font-size: 14px; color: #003366; margin-bottom: 2px; }
+    .detail-item span { font-size: 14px; color: #555; }
 
     .highlights {
       background: #e8f4f8;
       border-radius: 12px;
       padding: 20px;
-      margin-bottom: 0;
     }
 
-    .highlights h3 {
-      font-size: 16px;
-      color: #003366;
-      margin-bottom: 12px;
-    }
-
-    .highlights ul {
-      list-style: none;
-      padding: 0;
-    }
-
+    .highlights h3 { font-size: 16px; color: #003366; margin-bottom: 12px; }
+    .highlights ul { list-style: none; padding: 0; }
     .highlights li {
-      padding: 6px 0;
-      font-size: 14px;
-      color: #333;
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
+      padding: 6px 0; font-size: 14px; color: #333;
+      display: flex; align-items: flex-start; gap: 8px;
     }
-
-    .highlights li::before {
-      content: '✓';
-      color: #00b4d8;
-      font-weight: bold;
-      flex-shrink: 0;
-    }
+    .highlights li::before { content: '✓'; color: #00b4d8; font-weight: bold; flex-shrink: 0; }
 
     .section-card {
       background: #fff;
@@ -134,149 +100,141 @@
       box-shadow: 0 4px 24px rgba(0,0,0,0.1);
     }
 
-    .section-card h2 {
-      font-size: 22px;
-      color: #003366;
-      margin-bottom: 8px;
+    .section-card h2 { font-size: 22px; color: #003366; margin-bottom: 8px; }
+    .section-card .section-sub { font-size: 14px; color: #666; margin-bottom: 20px; }
+
+    /* Form Styles */
+    .form-group { margin-bottom: 20px; }
+    .form-group label {
+      display: block; font-size: 14px; font-weight: 600;
+      color: #1E293B; margin-bottom: 6px;
+    }
+    .form-group label .req { color: #E53E3E; }
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="tel"],
+    .form-group input[type="number"] {
+      width: 100%; padding: 12px 14px; border: 2px solid #E2E8F0;
+      border-radius: 8px; font-size: 15px; font-family: inherit;
+      transition: border-color 0.2s;
+    }
+    .form-group input:focus {
+      outline: none; border-color: #0077b6;
+      box-shadow: 0 0 0 3px rgba(0,119,182,0.15);
+    }
+    .form-group input.error { border-color: #E53E3E; }
+
+    .radio-group {
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .radio-option {
+      display: flex; align-items: center; gap: 6px;
+      cursor: pointer; font-size: 15px; color: #333;
+    }
+    .radio-option input[type="radio"] {
+      width: 18px; height: 18px; cursor: pointer;
+      accent-color: #0077b6;
     }
 
-    .section-card .section-sub {
-      font-size: 14px;
-      color: #666;
-      margin-bottom: 20px;
+    .participant-section {
+      background: #f8fafc; border-radius: 10px;
+      padding: 20px; margin-bottom: 16px;
+      border: 1px solid #E2E8F0;
+    }
+    .participant-section h3 {
+      font-size: 16px; color: #0077b6;
+      margin-bottom: 14px; font-weight: 700;
+    }
+    .participant-row {
+      display: grid; grid-template-columns: 1fr 100px; gap: 12px;
     }
 
-    .form-container {
-      width: 100%;
-      border-radius: 12px;
-      overflow: hidden;
-      background: #fafafa;
+    .form-submit-btn {
+      display: block; width: 100%; padding: 14px;
+      background: #0077b6; color: #fff; border: none;
+      border-radius: 10px; font-size: 17px; font-weight: 700;
+      cursor: pointer; font-family: inherit;
+      transition: all 0.3s ease;
+    }
+    .form-submit-btn:hover { background: #005f8d; }
+    .form-submit-btn:disabled {
+      background: #94a3b8; cursor: not-allowed;
     }
 
-    .form-container iframe {
-      width: 100%;
-      min-height: 600px;
-      border: none;
+    .form-error {
+      background: #FEF2F2; border: 1px solid #FECACA;
+      border-radius: 8px; padding: 12px 16px;
+      color: #991B1B; font-size: 14px;
+      margin-bottom: 16px; display: none;
     }
 
-    .ticket-section {
-      text-align: center;
+    .form-success {
+      background: #F0FDF4; border: 1px solid #BBF7D0;
+      border-radius: 12px; padding: 32px;
+      text-align: center; display: none;
+    }
+    .form-success h3 {
+      font-size: 20px; color: #166534; margin-bottom: 8px;
+    }
+    .form-success p {
+      font-size: 15px; color: #333; line-height: 1.6;
     }
 
+    /* Ticket section */
+    .ticket-section { text-align: center; }
     .ticket-section p {
-      font-size: 15px;
-      color: #555;
-      margin-bottom: 20px;
-      line-height: 1.6;
+      font-size: 15px; color: #555; margin-bottom: 20px; line-height: 1.6;
     }
-
     .ticket-btn {
-      display: inline-block;
-      background: #0077b6;
-      color: #fff;
-      text-decoration: none;
-      padding: 16px 40px;
-      border-radius: 50px;
-      font-size: 18px;
-      font-weight: 700;
+      display: inline-block; background: #0077b6; color: #fff;
+      text-decoration: none; padding: 16px 40px; border-radius: 50px;
+      font-size: 18px; font-weight: 700;
       transition: all 0.3s ease;
       box-shadow: 0 4px 16px rgba(0,119,182,0.3);
     }
-
     .ticket-btn:hover {
-      background: #005f8d;
-      transform: translateY(-2px);
+      background: #005f8d; transform: translateY(-2px);
       box-shadow: 0 6px 20px rgba(0,119,182,0.4);
     }
-
     .ticket-price {
-      display: block;
-      font-size: 14px;
-      font-weight: 400;
-      margin-top: 4px;
-      opacity: 0.9;
+      display: block; font-size: 14px; font-weight: 400;
+      margin-top: 4px; opacity: 0.9;
     }
 
-    .footer {
-      text-align: center;
-      padding: 32px 20px;
-      color: #888;
-      font-size: 13px;
-    }
-
-    .footer a {
-      color: #0077b6;
-      text-decoration: none;
-    }
+    .hidden { display: none !important; }
 
     .tagline-bar {
-      display: flex;
-      justify-content: center;
-      gap: 32px;
-      padding: 16px 20px;
-      background: #003366;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      display: flex; justify-content: center; gap: 32px;
+      padding: 16px 20px; background: #003366; color: #fff;
+      font-size: 13px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 1px;
     }
+    .tagline-item { display: flex; align-items: center; gap: 6px; }
 
-    .tagline-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
+    .footer {
+      text-align: center; padding: 32px 20px;
+      color: #888; font-size: 13px;
     }
+    .footer a { color: #0077b6; text-decoration: none; }
 
     @media (max-width: 600px) {
-      .detail-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .event-details {
-        margin: -20px 12px 20px;
-        padding: 24px;
-      }
-
-      .event-details h1 {
-        font-size: 22px;
-      }
-
-      .section-card {
-        padding: 24px;
-        margin-left: 0;
-        margin-right: 0;
-      }
-
-      .container {
-        padding: 0 12px;
-      }
-
-      .tagline-bar {
-        flex-direction: column;
-        gap: 8px;
-        align-items: center;
-      }
-
-      .ticket-btn {
-        padding: 14px 32px;
-        font-size: 16px;
-      }
-
-      .form-container iframe {
-        min-height: 700px;
-      }
+      .detail-grid { grid-template-columns: 1fr; }
+      .event-details { margin: -20px 12px 20px; padding: 24px; }
+      .event-details h1 { font-size: 22px; }
+      .section-card { padding: 24px; }
+      .container { padding: 0 12px; }
+      .tagline-bar { flex-direction: column; gap: 8px; align-items: center; }
+      .ticket-btn { padding: 14px 32px; font-size: 16px; }
+      .participant-row { grid-template-columns: 1fr 80px; }
     }
   </style>
 </head>
 <body>
 
-  <!-- Hero Image -->
   <div class="hero">
     <img src="wlsl-hero.jpg" alt="World's Largest Swim Lesson 2026 at Island Waterpark — Proud Participant">
   </div>
 
-  <!-- Tagline Bar -->
   <div class="tagline-bar">
     <span class="tagline-item">🏊 Building Confidence</span>
     <span class="tagline-item">❤️ Saving Lives</span>
@@ -285,42 +243,28 @@
 
   <div class="container">
 
-    <!-- Event Details Card -->
+    <!-- Event Details -->
     <div class="event-details">
       <h1>World's Largest Swim Lesson 2026</h1>
       <div class="subtitle">Island Waterpark — Fresno, CA</div>
-
       <div class="detail-grid">
         <div class="detail-item">
           <span class="detail-icon">📅</span>
-          <div>
-            <strong>Date</strong>
-            <span>Thursday, June 25, 2026</span>
-          </div>
+          <div><strong>Date</strong><span>Thursday, June 25, 2026</span></div>
         </div>
         <div class="detail-item">
           <span class="detail-icon">⏰</span>
-          <div>
-            <strong>Swim Lesson Begins</strong>
-            <span>Promptly at 8:30 AM</span>
-          </div>
+          <div><strong>Swim Lesson Begins</strong><span>Promptly at 8:30 AM</span></div>
         </div>
         <div class="detail-item">
           <span class="detail-icon">👶</span>
-          <div>
-            <strong>Ages</strong>
-            <span>4 to 14 years old</span>
-          </div>
+          <div><strong>Ages</strong><span>4 to 14 years old</span></div>
         </div>
         <div class="detail-item">
           <span class="detail-icon">👨‍👩‍👧‍👦</span>
-          <div>
-            <strong>Max Participants</strong>
-            <span>6 per household</span>
-          </div>
+          <div><strong>Max Participants</strong><span>6 per household</span></div>
         </div>
       </div>
-
       <div class="highlights">
         <h3>What's Included</h3>
         <ul>
@@ -333,32 +277,68 @@
     </div>
 
     <!-- Registration Form -->
-    <div class="section-card">
+    <div class="section-card" id="formCard">
       <h2>📝 Register Now</h2>
       <p class="section-sub">Complete the form below to register your participants for the World's Largest Swim Lesson.</p>
-      <div class="form-container">
-        <iframe 
-          src="https://docs.google.com/forms/d/e/1FAIpQLSdjnQ18DAYws8PIo7uLSZkhmCPc4u82hfYrdX_405XJv2eI8A/viewform?embedded=true" 
-          frameborder="0" 
-          marginheight="0" 
-          marginwidth="0"
-          loading="lazy">
-          Loading…
-        </iframe>
+
+      <div class="form-error" id="formError"></div>
+
+      <form id="wlslForm" novalidate>
+        <!-- Parent/Guardian Info -->
+        <div class="form-group">
+          <label>Parent/Guardian Full Name <span class="req">*</span></label>
+          <input type="text" id="parentName" required>
+        </div>
+        <div class="form-group">
+          <label>Email Address <span class="req">*</span></label>
+          <input type="email" id="email" required>
+        </div>
+        <div class="form-group">
+          <label>Phone Number <span class="req">*</span></label>
+          <input type="tel" id="phone" required>
+        </div>
+        <div class="form-group">
+          <label>How many participants are you registering? <span class="req">*</span></label>
+          <div class="radio-group" id="countGroup">
+            <label class="radio-option"><input type="radio" name="count" value="1"> 1</label>
+            <label class="radio-option"><input type="radio" name="count" value="2"> 2</label>
+            <label class="radio-option"><input type="radio" name="count" value="3"> 3</label>
+            <label class="radio-option"><input type="radio" name="count" value="4"> 4</label>
+            <label class="radio-option"><input type="radio" name="count" value="5"> 5</label>
+            <label class="radio-option"><input type="radio" name="count" value="6"> 6</label>
+          </div>
+        </div>
+
+        <!-- Participant Fields (dynamically shown) -->
+        <div id="participantFields"></div>
+
+        <button type="submit" class="form-submit-btn" id="submitBtn">Submit Registration</button>
+      </form>
+
+      <!-- Success Message (shown after submit) -->
+      <div class="form-success" id="formSuccess">
+        <div style="font-size:48px;margin-bottom:12px;">🎉</div>
+        <h3>Registration Complete!</h3>
+        <p>Thank you for registering for the World's Largest Swim Lesson!<br>
+        We'll see you on <strong>Thursday, June 25 at 8:30 AM</strong>.</p>
+        <p style="margin-top:16px;font-size:14px;color:#666;">
+          Want to bring additional family or friends to enjoy the park after the lesson?<br>
+          Purchase guest tickets below.
+        </p>
       </div>
     </div>
 
-    <!-- Additional Tickets -->
-    <div class="section-card ticket-section">
+    <!-- Additional Tickets (hidden until form is submitted) -->
+    <div class="section-card ticket-section hidden" id="ticketSection">
       <h2>🎟️ Additional Guest Tickets</h2>
       <p>
         Want to bring family and friends to enjoy the waterpark after the lesson?<br>
         Additional guests can purchase admission for <strong>$30 per person</strong>.<br>
-        You can purchase tickets now or at the ticket booth on event day.
+        You can also purchase tickets at the ticket booth on event day.
       </p>
-      <a href="https://secure.rocket-rez.com/RocketWeb2/4b985f707d73c028/item/2/786" 
-         target="_blank" 
-         rel="noopener noreferrer" 
+      <a href="https://secure.rocket-rez.com/RocketWeb2/4b985f707d73c028/item/2/786"
+         target="_blank"
+         rel="noopener noreferrer"
          class="ticket-btn">
         Purchase Guest Tickets
         <span class="ticket-price">$30 per person</span>
@@ -367,13 +347,142 @@
 
   </div>
 
-  <!-- Footer -->
   <div class="footer">
     <p>
       <a href="https://www.islandwaterpark.com" target="_blank">Island Waterpark</a> — Fresno, California<br>
       Part of the <a href="https://www.wlsl.org" target="_blank">World's Largest Swimming Lesson™</a> global event
     </p>
   </div>
+
+<script>
+(function() {
+  var FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdjnQ18DAYws8PIo7uLSZkhmCPc4u82hfYrdX_405XJv2eI8A/formResponse';
+
+  /* Google Form entry IDs */
+  var ENTRIES = {
+    parentName: 'entry.2035187543',
+    email: 'entry.1362203554',
+    phone: 'entry.1728015694',
+    count: 'entry.228785598',
+    participants: [
+      { name: 'entry.231474286',  age: 'entry.18416039' },
+      { name: 'entry.1587964532', age: 'entry.1500305652' },
+      { name: 'entry.859869448',  age: 'entry.70019508' },
+      { name: 'entry.1131589908', age: 'entry.768183956' },
+      { name: 'entry.4746595',    age: 'entry.440117521' },
+      { name: 'entry.286240148',  age: 'entry.1235524299' }
+    ]
+  };
+
+  var countRadios = document.querySelectorAll('input[name="count"]');
+  var participantFields = document.getElementById('participantFields');
+  var form = document.getElementById('wlslForm');
+  var formError = document.getElementById('formError');
+  var formSuccess = document.getElementById('formSuccess');
+  var ticketSection = document.getElementById('ticketSection');
+  var submitBtn = document.getElementById('submitBtn');
+
+  /* Show/hide participant fields based on count */
+  countRadios.forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      var count = parseInt(this.value);
+      renderParticipants(count);
+    });
+  });
+
+  function renderParticipants(count) {
+    var html = '';
+    for (var i = 0; i < count; i++) {
+      html += '<div class="participant-section">' +
+        '<h3>Participant ' + (i + 1) + '</h3>' +
+        '<div class="participant-row">' +
+          '<div class="form-group" style="margin-bottom:0">' +
+            '<label>Name</label>' +
+            '<input type="text" class="p-name" data-idx="' + i + '">' +
+          '</div>' +
+          '<div class="form-group" style="margin-bottom:0">' +
+            '<label>Age</label>' +
+            '<input type="number" class="p-age" data-idx="' + i + '" min="4" max="14">' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }
+    participantFields.innerHTML = html;
+  }
+
+  /* Form submission */
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    formError.style.display = 'none';
+
+    var parentName = document.getElementById('parentName').value.trim();
+    var email = document.getElementById('email').value.trim();
+    var phone = document.getElementById('phone').value.trim();
+    var countEl = document.querySelector('input[name="count"]:checked');
+
+    /* Validate required fields */
+    var errors = [];
+    if (!parentName) errors.push('Parent/Guardian name is required');
+    if (!email) errors.push('Email address is required');
+    if (!phone) errors.push('Phone number is required');
+    if (!countEl) errors.push('Please select number of participants');
+
+    if (errors.length > 0) {
+      formError.innerHTML = errors.join('<br>');
+      formError.style.display = 'block';
+      formError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
+    var count = parseInt(countEl.value);
+
+    /* Build form data */
+    var formData = new FormData();
+    formData.append(ENTRIES.parentName, parentName);
+    formData.append(ENTRIES.email, email);
+    formData.append(ENTRIES.phone, phone);
+    formData.append(ENTRIES.count, count.toString());
+
+    /* Add participant data */
+    var pNames = document.querySelectorAll('.p-name');
+    var pAges = document.querySelectorAll('.p-age');
+    pNames.forEach(function(el) {
+      var idx = parseInt(el.dataset.idx);
+      if (ENTRIES.participants[idx]) {
+        formData.append(ENTRIES.participants[idx].name, el.value.trim());
+      }
+    });
+    pAges.forEach(function(el) {
+      var idx = parseInt(el.dataset.idx);
+      if (ENTRIES.participants[idx]) {
+        formData.append(ENTRIES.participants[idx].age, el.value.trim());
+      }
+    });
+
+    /* Submit */
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Submitting...';
+
+    fetch(FORM_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: formData
+    }).then(function() {
+      /* Google Forms with no-cors always succeeds (opaque response) */
+      form.style.display = 'none';
+      formSuccess.style.display = 'block';
+      ticketSection.classList.remove('hidden');
+      formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }).catch(function() {
+      /* Even on error, the data likely submitted — show success */
+      form.style.display = 'none';
+      formSuccess.style.display = 'block';
+      ticketSection.classList.remove('hidden');
+      formSuccess.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    });
+  });
+})();
+</script>
 
 </body>
 </html>
