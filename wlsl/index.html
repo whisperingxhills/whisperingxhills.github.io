@@ -358,20 +358,26 @@
 (function() {
   var FORM_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdjnQ18DAYws8PIo7uLSZkhmCPc4u82hfYrdX_405XJv2eI8A/formResponse';
 
-  /* Google Form entry IDs */
+  /* Google Form entry IDs — The form uses conditional page routing so
+     "Participant 1" has 3 different entry ID sets depending on which
+     count was selected. We send P1 data to ALL three sets so it always
+     lands in the right column regardless of routing path. */
   var ENTRIES = {
     parentName: 'entry.2035187543',
     email: 'entry.1362203554',
     phone: 'entry.1728015694',
     count: 'entry.228785598',
-    participants: [
+    /* P1 has 3 possible column sets due to form routing */
+    p1_paths: [
       { name: 'entry.231474286',  age: 'entry.18416039' },
       { name: 'entry.1587964532', age: 'entry.1500305652' },
-      { name: 'entry.1030965617', age: 'entry.737897899' },
-      { name: 'entry.859869448',  age: 'entry.70019508' },
-      { name: 'entry.1131589908', age: 'entry.768183956' },
-      { name: 'entry.286240148',  age: 'entry.1235524299' }
-    ]
+      { name: 'entry.1030965617', age: 'entry.737897899' }
+    ],
+    /* P2-P6 each have a single entry ID set */
+    p2: { name: 'entry.859869448',  age: 'entry.70019508' },
+    p3: { name: 'entry.1131589908', age: 'entry.768183956' },
+    p4: { name: 'entry.286240148',  age: 'entry.1235524299' },
+    p5: { name: 'entry.4746595',    age: 'entry.440117521' }
   };
 
   var countRadios = document.querySelectorAll('input[name="count"]');
@@ -446,18 +452,37 @@
     /* Add participant data */
     var pNames = document.querySelectorAll('.p-name');
     var pAges = document.querySelectorAll('.p-age');
+    var participants = [];
     pNames.forEach(function(el) {
       var idx = parseInt(el.dataset.idx);
-      if (ENTRIES.participants[idx]) {
-        formData.append(ENTRIES.participants[idx].name, el.value.trim());
-      }
+      if (!participants[idx]) participants[idx] = {};
+      participants[idx].name = el.value.trim();
     });
     pAges.forEach(function(el) {
       var idx = parseInt(el.dataset.idx);
-      if (ENTRIES.participants[idx]) {
-        formData.append(ENTRIES.participants[idx].age, el.value.trim());
-      }
+      if (!participants[idx]) participants[idx] = {};
+      participants[idx].age = el.value.trim();
     });
+
+    /* Participant 1: send to ALL 3 possible column paths */
+    if (participants[0]) {
+      ENTRIES.p1_paths.forEach(function(path) {
+        formData.append(path.name, participants[0].name || '');
+        formData.append(path.age, participants[0].age || '');
+      });
+    }
+
+    /* Participants 2-6: each has a single entry ID set */
+    var extraEntries = [ENTRIES.p2, ENTRIES.p3, ENTRIES.p4, ENTRIES.p5];
+    for (var i = 1; i < participants.length && i <= 5; i++) {
+      if (participants[i] && extraEntries[i - 1]) {
+        formData.append(extraEntries[i - 1].name, participants[i].name || '');
+        formData.append(extraEntries[i - 1].age, participants[i].age || '');
+      }
+    }
+
+    /* Include pageHistory for multi-page form acceptance */
+    formData.append('pageHistory', '0,1,2,3,4,5,6');
 
     /* Submit */
     submitBtn.disabled = true;
