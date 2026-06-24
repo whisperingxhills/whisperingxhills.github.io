@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IWP Operations Dashboard</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; }
+
+.dash-header {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  padding: 20px 24px;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.dash-header h1 { font-size: 20px; font-weight: 800; color: #fff; }
+.dash-header .year-toggle {
+  display: flex;
+  gap: 4px;
+}
+.dash-header .year-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.15s;
+}
+.dash-header .year-btn.active {
+  background: #0ea5e9;
+  color: #fff;
+  border-color: #0ea5e9;
+}
+.dash-header .year-btn:hover:not(.active) {
+  background: #1e293b;
+  color: #fff;
+}
+
+.dash-body { padding: 20px 24px; max-width: 1400px; margin: 0 auto; }
+
+/* KPI Cards Row */
+.kpi-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+.kpi-card {
+  background: #1e293b;
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid #334155;
+}
+.kpi-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+.kpi-value {
+  font-size: 28px;
+  font-weight: 800;
+  color: #fff;
+}
+.kpi-compare {
+  font-size: 11px;
+  font-weight: 600;
+  margin-top: 4px;
+}
+.kpi-compare.up { color: #22c55e; }
+.kpi-compare.down { color: #ef4444; }
+.kpi-compare.neutral { color: #64748b; }
+
+/* Chart Area */
+.chart-section {
+  background: #1e293b;
+  border-radius: 12px;
+  border: 1px solid #334155;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+.chart-section h2 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+.chart-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.chart-bar-label {
+  width: 60px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-align: right;
+  flex-shrink: 0;
+}
+.chart-bar-track {
+  flex: 1;
+  height: 24px;
+  background: #0f172a;
+  border-radius: 6px;
+  overflow: hidden;
+  position: relative;
+}
+.chart-bar-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.4s ease;
+  position: relative;
+}
+.chart-bar-fill.current { background: linear-gradient(90deg, #0ea5e9, #38bdf8); }
+.chart-bar-fill.prior { background: linear-gradient(90deg, #475569, #64748b); }
+.chart-bar-val {
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* Data Table */
+.data-table-wrap {
+  background: #1e293b;
+  border-radius: 12px;
+  border: 1px solid #334155;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+.data-table-wrap h2 {
+  font-size: 14px;
+  font-weight: 700;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 16px 20px 12px;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+.data-table th {
+  background: #0f172a;
+  color: #64748b;
+  font-weight: 700;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 10px 12px;
+  text-align: right;
+  border-bottom: 1px solid #334155;
+}
+.data-table th:first-child { text-align: left; }
+.data-table td {
+  padding: 10px 12px;
+  text-align: right;
+  border-bottom: 1px solid rgba(51,65,85,0.5);
+  color: #cbd5e1;
+}
+.data-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+  color: #f1f5f9;
+}
+.data-table tr:hover td { background: rgba(14,165,233,0.05); }
+.data-table .event-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 9px;
+  font-weight: 700;
+  margin-left: 6px;
+}
+.data-table .event-tag.family { background: #422006; color: #fbbf24; }
+.data-table .event-tag.twofor { background: #172554; color: #60a5fa; }
+.data-table .event-tag.wavy { background: #052e16; color: #4ade80; }
+.data-table .event-tag.adult { background: #2e1065; color: #a78bfa; }
+.data-table .event-tag.holiday { background: #431407; color: #fb923c; }
+
+/* Input Modal */
+.input-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+.input-overlay.active { display: flex; }
+.input-modal {
+  background: #1e293b;
+  border-radius: 16px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 24px 48px rgba(0,0,0,0.5);
+  border: 1px solid #334155;
+}
+.input-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #334155;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.input-modal-header h3 { font-size: 16px; font-weight: 700; color: #fff; }
+.input-modal-close {
+  background: none;
+  border: none;
+  color: #64748b;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+}
+.input-modal-close:hover { color: #fff; }
+.input-modal-body { padding: 20px 24px; }
+.input-group {
+  margin-bottom: 14px;
+}
+.input-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.input-group input, .input-group select {
+  width: 100%;
+  padding: 10px 12px;
+  background: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 14px;
+  font-family: inherit;
+}
+.input-group input:focus, .input-group select:focus {
+  outline: none;
+  border-color: #0ea5e9;
+}
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.input-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #334155;
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+}
+.btn {
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  transition: all 0.15s;
+}
+.btn-primary { background: #0ea5e9; color: #fff; }
+.btn-primary:hover { background: #0284c7; }
+.btn-secondary { background: #334155; color: #94a3b8; }
+.btn-secondary:hover { background: #475569; color: #fff; }
+
+.add-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #0ea5e9;
+  color: #fff;
+  font-size: 28px;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(14,165,233,0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.15s;
+  z-index: 100;
+}
+.add-btn:hover { transform: scale(1.1); }
+
+.view-toggle {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 16px;
+}
+.view-toggle .view-btn {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #334155;
+  background: transparent;
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+}
+.view-toggle .view-btn.active {
+  background: #334155;
+  color: #fff;
+}
+
+@media (max-width: 640px) {
+  .kpi-row { grid-template-columns: repeat(2, 1fr); }
+  .kpi-value { font-size: 22px; }
+  .input-row { grid-template-columns: 1fr; }
+  .data-table { font-size: 11px; }
+  .data-table th, .data-table td { padding: 8px 6px; }
+}
+</style>
+</head>
+<body>
+
+<div class="dash-header">
+  <h1>Island Waterpark Operations</h1>
+  <div class="year-toggle" id="yearToggle"></div>
+</div>
+
+<div class="dash-body">
+  <div class="view-toggle">
+    <button class="view-btn active" data-view="daily">Daily</button>
+    <button class="view-btn" data-view="weekly">Weekly</button>
+    <button class="view-btn" data-view="monthly">Monthly</button>
+    <button class="view-btn" data-view="season">Season</button>
+  </div>
+
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="chart-section" id="chartSection">
+    <h2>Revenue Comparison</h2>
+    <div id="chartBars"></div>
+  </div>
+
+  <div class="chart-section" id="attendanceChart">
+    <h2>Attendance Comparison</h2>
+    <div id="attendanceBars"></div>
+  </div>
+
+  <div class="data-table-wrap">
+    <h2>Daily Breakdown</h2>
+    <div style="overflow-x:auto;">
+      <table class="data-table" id="dataTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Attendance</th>
+            <th>Tickets</th>
+            <th>Cabanas</th>
+            <th>F&B</th>
+            <th>Merch</th>
+            <th>Lockers</th>
+            <th>Parking</th>
+            <th>Total</th>
+            <th>Rev/Head</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<button class="add-btn" id="addBtn" title="Add daily data">+</button>
+
+<div class="input-overlay" id="inputOverlay">
+  <div class="input-modal">
+    <div class="input-modal-header">
+      <h3 id="inputTitle">Add Daily Data</h3>
+      <button class="input-modal-close" id="inputClose">&times;</button>
+    </div>
+    <div class="input-modal-body">
+      <div class="input-row">
+        <div class="input-group">
+          <label>Date</label>
+          <input type="date" id="inDate">
+        </div>
+        <div class="input-group">
+          <label>Year/Source</label>
+          <select id="inSource">
+            <option value="2026">2026 (RocketRez)</option>
+            <option value="2025">2025 (CenterEdge)</option>
+            <option value="2024">2024 (CenterEdge)</option>
+            <option value="2023">2023 (CenterEdge)</option>
+          </select>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Attendance (gate count)</label>
+        <input type="number" id="inAttendance" placeholder="0">
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Ticket Revenue</label>
+          <input type="number" id="inTickets" step="0.01" placeholder="0.00">
+        </div>
+        <div class="input-group">
+          <label>Cabana Revenue</label>
+          <input type="number" id="inCabanas" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>F&B Revenue</label>
+          <input type="number" id="inFnb" step="0.01" placeholder="0.00">
+        </div>
+        <div class="input-group">
+          <label>Merch / Retail</label>
+          <input type="number" id="inMerch" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Locker Revenue</label>
+          <input type="number" id="inLockers" step="0.01" placeholder="0.00">
+        </div>
+        <div class="input-group">
+          <label>Parking Revenue</label>
+          <input type="number" id="inParking" step="0.01" placeholder="0.00">
+        </div>
+      </div>
+      <div class="input-row">
+        <div class="input-group">
+          <label>Weather (High Temp)</label>
+          <input type="number" id="inTemp" placeholder="105">
+        </div>
+        <div class="input-group">
+          <label>Conditions</label>
+          <select id="inWeather">
+            <option value="sunny">Sunny</option>
+            <option value="partly">Partly Cloudy</option>
+            <option value="cloudy">Cloudy</option>
+            <option value="rain">Rain</option>
+            <option value="wind">Windy</option>
+          </select>
+        </div>
+      </div>
+      <div class="input-group">
+        <label>Special Event</label>
+        <select id="inEvent">
+          <option value="">None</option>
+          <option value="family">Family Night</option>
+          <option value="twofor">2 for Tuesday</option>
+          <option value="wavy">Wavy Wednesday</option>
+          <option value="adult">Adult Swim</option>
+          <option value="holiday">Holiday</option>
+          <option value="private">Private Event</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label>Notes</label>
+        <input type="text" id="inNotes" placeholder="Optional notes">
+      </div>
+    </div>
+    <div class="input-modal-footer">
+      <button class="btn btn-secondary" id="inputCancel">Cancel</button>
+      <button class="btn btn-primary" id="inputSave">Save Entry</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  var STORAGE_KEY = 'iwp_dashboard_data';
+  var data = loadData();
+  var currentView = 'daily';
+  var activeYears = ['2026','2025'];
+
+  function loadData() {
+    try {
+      var d = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      return d && d.entries ? d : { entries: [] };
+    } catch(e) { return { entries: [] }; }
+  }
+
+  function saveData() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  }
+
+  function fmt(n) {
+    if (n === null || n === undefined || isNaN(n)) return '$0';
+    return '$' + Number(n).toLocaleString('en-US', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+  }
+
+  function num(n) {
+    if (n === null || n === undefined || isNaN(n)) return '0';
+    return Number(n).toLocaleString('en-US');
+  }
+
+  function getTotal(e) {
+    return (Number(e.tickets)||0) + (Number(e.cabanas)||0) + (Number(e.fnb)||0) + (Number(e.merch)||0) + (Number(e.lockers)||0) + (Number(e.parking)||0);
+  }
+
+  function getRevPerHead(e) {
+    var t = getTotal(e);
+    var a = Number(e.attendance) || 0;
+    return a > 0 ? t / a : 0;
+  }
+
+  function getEntriesByYear(year) {
+    return data.entries.filter(function(e) {
+      return e.date && e.date.substring(0,4) === String(year);
+    }).sort(function(a,b) { return a.date.localeCompare(b.date); });
+  }
+
+  function aggregateEntries(entries) {
+    var agg = { attendance: 0, tickets: 0, cabanas: 0, fnb: 0, merch: 0, lockers: 0, parking: 0, days: entries.length };
+    entries.forEach(function(e) {
+      agg.attendance += Number(e.attendance) || 0;
+      agg.tickets += Number(e.tickets) || 0;
+      agg.cabanas += Number(e.cabanas) || 0;
+      agg.fnb += Number(e.fnb) || 0;
+      agg.merch += Number(e.merch) || 0;
+      agg.lockers += Number(e.lockers) || 0;
+      agg.parking += Number(e.parking) || 0;
+    });
+    agg.total = agg.tickets + agg.cabanas + agg.fnb + agg.merch + agg.lockers + agg.parking;
+    agg.revPerHead = agg.attendance > 0 ? agg.total / agg.attendance : 0;
+    return agg;
+  }
+
+  function pctChange(current, prior) {
+    if (!prior || prior === 0) return null;
+    return ((current - prior) / prior) * 100;
+  }
+
+  function renderKPIs() {
+    var row = document.getElementById('kpiRow');
+    var current = aggregateEntries(getEntriesByYear(activeYears[0]));
+    var prior = activeYears[1] ? aggregateEntries(getEntriesByYear(activeYears[1])) : null;
+
+    var kpis = [
+      { label: 'Total Revenue', value: fmt(current.total), change: prior ? pctChange(current.total, prior.total) : null },
+      { label: 'Attendance', value: num(current.attendance), change: prior ? pctChange(current.attendance, prior.attendance) : null },
+      { label: 'Rev / Head', value: fmt(Math.round(current.revPerHead)), change: prior ? pctChange(current.revPerHead, prior.revPerHead) : null },
+      { label: 'Operating Days', value: current.days, change: prior ? pctChange(current.days, prior.days) : null },
+      { label: 'Ticket Revenue', value: fmt(current.tickets), change: prior ? pctChange(current.tickets, prior.tickets) : null },
+      { label: 'Cabana Revenue', value: fmt(current.cabanas), change: prior ? pctChange(current.cabanas, prior.cabanas) : null },
+    ];
+
+    row.innerHTML = kpis.map(function(k) {
+      var cmp = '';
+      if (k.change !== null) {
+        var cls = k.change > 0 ? 'up' : k.change < 0 ? 'down' : 'neutral';
+        var arrow = k.change > 0 ? '\u2191' : k.change < 0 ? '\u2193' : '';
+        cmp = '<div class="kpi-compare ' + cls + '">' + arrow + ' ' + Math.abs(Math.round(k.change)) + '% vs ' + activeYears[1] + '</div>';
+      }
+      return '<div class="kpi-card"><div class="kpi-label">' + k.label + '</div><div class="kpi-value">' + k.value + '</div>' + cmp + '</div>';
+    }).join('');
+  }
+
+  function renderCharts() {
+    var categories = [
+      { key: 'tickets', label: 'Tickets' },
+      { key: 'cabanas', label: 'Cabanas' },
+      { key: 'fnb', label: 'F&B' },
+      { key: 'merch', label: 'Merch' },
+      { key: 'lockers', label: 'Lockers' },
+      { key: 'parking', label: 'Parking' }
+    ];
+
+    var current = aggregateEntries(getEntriesByYear(activeYears[0]));
+    var prior = activeYears[1] ? aggregateEntries(getEntriesByYear(activeYears[1])) : null;
+
+    var maxVal = 1;
+    categories.forEach(function(c) {
+      if (current[c.key] > maxVal) maxVal = current[c.key];
+      if (prior && prior[c.key] > maxVal) maxVal = prior[c.key];
+    });
+
+    var html = '';
+    categories.forEach(function(c) {
+      var cw = Math.max(1, (current[c.key] / maxVal) * 100);
+      html += '<div class="chart-bar-row"><div class="chart-bar-label">' + c.label + '</div><div class="chart-bar-track"><div class="chart-bar-fill current" style="width:' + cw + '%"><span class="chart-bar-val">' + fmt(current[c.key]) + '</span></div></div></div>';
+      if (prior) {
+        var pw = Math.max(1, (prior[c.key] / maxVal) * 100);
+        html += '<div class="chart-bar-row"><div class="chart-bar-label" style="font-size:9px;color:#475569">' + activeYears[1] + '</div><div class="chart-bar-track"><div class="chart-bar-fill prior" style="width:' + pw + '%"><span class="chart-bar-val">' + fmt(prior[c.key]) + '</span></div></div></div>';
+      }
+    });
+    document.getElementById('chartBars').innerHTML = html;
+
+    // Attendance chart by month
+    var months = ['May','Jun','Jul','Aug','Sep'];
+    var monthNums = [4,5,6,7,8];
+    var attHtml = '';
+    var maxAtt = 1;
+    monthNums.forEach(function(m) {
+      var ce = getEntriesByYear(activeYears[0]).filter(function(e) { return new Date(e.date).getMonth() === m; });
+      var ca = aggregateEntries(ce).attendance;
+      if (ca > maxAtt) maxAtt = ca;
+      if (prior) {
+        var pe = getEntriesByYear(activeYears[1]).filter(function(e) { return new Date(e.date).getMonth() === m; });
+        var pa = aggregateEntries(pe).attendance;
+        if (pa > maxAtt) maxAtt = pa;
+      }
+    });
+    monthNums.forEach(function(m, i) {
+      var ce = getEntriesByYear(activeYears[0]).filter(function(e) { return new Date(e.date).getMonth() === m; });
+      var ca = aggregateEntries(ce).attendance;
+      var cw = Math.max(1, (ca / maxAtt) * 100);
+      attHtml += '<div class="chart-bar-row"><div class="chart-bar-label">' + months[i] + '</div><div class="chart-bar-track"><div class="chart-bar-fill current" style="width:' + cw + '%"><span class="chart-bar-val">' + num(ca) + '</span></div></div></div>';
+      if (prior) {
+        var pe = getEntriesByYear(activeYears[1]).filter(function(e) { return new Date(e.date).getMonth() === m; });
+        var pa = aggregateEntries(pe).attendance;
+        var pw = Math.max(1, (pa / maxAtt) * 100);
+        attHtml += '<div class="chart-bar-row"><div class="chart-bar-label" style="font-size:9px;color:#475569">' + activeYears[1] + '</div><div class="chart-bar-track"><div class="chart-bar-fill prior" style="width:' + pw + '%"><span class="chart-bar-val">' + num(pa) + '</span></div></div></div>';
+      }
+    });
+    document.getElementById('attendanceBars').innerHTML = attHtml;
+  }
+
+  function renderTable() {
+    var entries = getEntriesByYear(activeYears[0]);
+    var tbody = document.getElementById('tableBody');
+
+    if (entries.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;color:#64748b;padding:40px;">No data yet. Click + to add daily entries.</td></tr>';
+      return;
+    }
+
+    var eventLabels = { family: 'Family', twofor: '2-for', wavy: 'Wavy', adult: 'Adult', holiday: 'Holiday', private: 'Private' };
+
+    tbody.innerHTML = entries.map(function(e) {
+      var total = getTotal(e);
+      var rph = getRevPerHead(e);
+      var d = new Date(e.date + 'T12:00:00');
+      var dow = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][d.getDay()];
+      var dateStr = dow + ' ' + (d.getMonth()+1) + '/' + d.getDate();
+      var tag = e.event && eventLabels[e.event] ? '<span class="event-tag ' + e.event + '">' + eventLabels[e.event] + '</span>' : '';
+
+      return '<tr>' +
+        '<td>' + dateStr + tag + '</td>' +
+        '<td>' + num(e.attendance) + '</td>' +
+        '<td>' + fmt(e.tickets) + '</td>' +
+        '<td>' + fmt(e.cabanas) + '</td>' +
+        '<td>' + fmt(e.fnb) + '</td>' +
+        '<td>' + fmt(e.merch) + '</td>' +
+        '<td>' + fmt(e.lockers) + '</td>' +
+        '<td>' + fmt(e.parking) + '</td>' +
+        '<td style="font-weight:700;color:#fff">' + fmt(total) + '</td>' +
+        '<td>' + fmt(Math.round(rph)) + '</td>' +
+      '</tr>';
+    }).join('');
+  }
+
+  function renderYearToggle() {
+    var years = ['2026','2025','2024','2023'];
+    var el = document.getElementById('yearToggle');
+    el.innerHTML = years.map(function(y) {
+      var active = activeYears.indexOf(y) !== -1;
+      return '<button class="year-btn' + (active ? ' active' : '') + '" data-year="' + y + '">' + y + '</button>';
+    }).join('');
+
+    el.querySelectorAll('.year-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var y = this.dataset.year;
+        if (activeYears[0] === y) return;
+        if (activeYears.indexOf(y) !== -1) {
+          activeYears = activeYears.filter(function(x) { return x !== y; });
+        } else {
+          if (activeYears.length >= 2) activeYears[1] = y;
+          else activeYears.push(y);
+        }
+        if (activeYears.length === 0) activeYears = [y];
+        renderAll();
+      });
+    });
+  }
+
+  function renderAll() {
+    renderYearToggle();
+    renderKPIs();
+    renderCharts();
+    renderTable();
+  }
+
+  // Input modal
+  var overlay = document.getElementById('inputOverlay');
+  document.getElementById('addBtn').addEventListener('click', function() {
+    document.getElementById('inDate').value = new Date().toISOString().split('T')[0];
+    overlay.classList.add('active');
+  });
+  document.getElementById('inputClose').addEventListener('click', function() { overlay.classList.remove('active'); });
+  document.getElementById('inputCancel').addEventListener('click', function() { overlay.classList.remove('active'); });
+  overlay.addEventListener('click', function(e) { if (e.target === overlay) overlay.classList.remove('active'); });
+
+  document.getElementById('inputSave').addEventListener('click', function() {
+    var entry = {
+      date: document.getElementById('inDate').value,
+      source: document.getElementById('inSource').value,
+      attendance: Number(document.getElementById('inAttendance').value) || 0,
+      tickets: Number(document.getElementById('inTickets').value) || 0,
+      cabanas: Number(document.getElementById('inCabanas').value) || 0,
+      fnb: Number(document.getElementById('inFnb').value) || 0,
+      merch: Number(document.getElementById('inMerch').value) || 0,
+      lockers: Number(document.getElementById('inLockers').value) || 0,
+      parking: Number(document.getElementById('inParking').value) || 0,
+      temp: Number(document.getElementById('inTemp').value) || null,
+      weather: document.getElementById('inWeather').value,
+      event: document.getElementById('inEvent').value || null,
+      notes: document.getElementById('inNotes').value || null
+    };
+
+    if (!entry.date) { alert('Date is required'); return; }
+
+    // Replace existing entry for same date+source
+    data.entries = data.entries.filter(function(e) {
+      return !(e.date === entry.date && e.source === entry.source);
+    });
+    data.entries.push(entry);
+    saveData();
+    overlay.classList.remove('active');
+
+    // Clear form
+    ['inAttendance','inTickets','inCabanas','inFnb','inMerch','inLockers','inParking','inTemp','inNotes'].forEach(function(id) {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('inEvent').value = '';
+
+    renderAll();
+  });
+
+  // View toggle
+  document.querySelectorAll('.view-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.view-btn').forEach(function(b) { b.classList.remove('active'); });
+      this.classList.add('active');
+      currentView = this.dataset.view;
+      renderAll();
+    });
+  });
+
+  renderAll();
+})();
+</script>
+
+</body>
+</html>
