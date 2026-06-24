@@ -69,6 +69,7 @@
 #iwp-calendar .iwc-tag--univision { background: #FFE4E6; color: #9F1239; }
 #iwp-calendar .iwc-tag--holiday { background: #FED7AA; color: #C2410C; }
 #iwp-calendar .iwc-tag--wlsl { background: #BFDBFE; color: #1E40AF; }
+#iwp-calendar .iwc-tag--tidalrave { background: #C4B5FD; color: #4C1D95; }
 #iwp-calendar .iwc-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 999999; display: none; align-items: center; justify-content: center; padding: 24px; }
 #iwp-calendar .iwc-popup-overlay.active { display: flex; }
 #iwp-calendar .iwc-popup { background: white; border-radius: 16px; max-width: 400px; width: 100%; overflow: hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.4); animation: iwcPopIn 0.2s ease; }
@@ -141,6 +142,7 @@
  <div class="iwc-legend-item"><div class="iwc-legend-dot" style="background:#E9D5FF;border:1px solid #C4B5FD"></div>Adult Swim</div>
  <div class="iwc-legend-item"><div class="iwc-legend-dot" style="background:#FECDD3;border:1px solid #FDA4AF"></div>Fireworks</div>
  <div class="iwc-legend-item"><div class="iwc-legend-dot" style="background:#FED7AA;border:1px solid #FDBA74"></div>Holidays</div>
+ <div class="iwc-legend-item"><div class="iwc-legend-dot" style="background:#C4B5FD;border:1px solid #A78BFA"></div>Tidal Rave</div>
  </div>
  <div class="iwc-month-info" id="iwcMonthInfo"></div>
  <div class="iwc-dow-row">
@@ -196,7 +198,8 @@
  'fathers': { label: "Father's Day", cls: 'iwc-tag--holiday', emoji: '\u{1F454}', desc: "Father's Day" },
  'july4': { label: 'July 4th', cls: 'iwc-tag--holiday', emoji: '\u{1F1FA}\u{1F1F8}', desc: 'Independence Day' },
  'laborday': { label: 'Labor Day', cls: 'iwc-tag--holiday', emoji: '\u{1F1FA}\u{1F1F8}', desc: 'Labor Day' },
- 'wlsl': { label: "World's Largest Swim Lesson", cls: 'iwc-tag--wlsl', emoji: '\u{1F3CA}', desc: "World's Largest Swim Lesson" }
+ 'wlsl': { label: "World's Largest Swim Lesson", cls: 'iwc-tag--wlsl', emoji: '\u{1F3CA}', desc: "World's Largest Swim Lesson" },
+ 'tidalrave': { label: 'Tidal Rave', cls: 'iwc-tag--tidalrave', emoji: '\u{1F3B6}', desc: 'Tidal Rave \u2014 The Ultimate Water Rave Experience. Tickets available soon!' }
  };
 
  var AFTER_HOURS_RATES = {
@@ -280,6 +283,7 @@
  [7,16,'11:00\u20137:00',[],{}],
  [7,22,'11:00\u20136:00',[],{}],
  [7,23,'11:00\u20136:00',[],{}],
+ [7,28,'TBA',['tidalrave'],{note:'Tidal Rave \u2014 Tickets Available Soon!'}],
  [7,29,'11:00\u20136:00',[],{}],
  [7,30,'11:00\u20136:00',[],{}],
  [8,5,'11:00\u20136:00',[],{}],
