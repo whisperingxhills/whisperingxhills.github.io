@@ -21,6 +21,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .cal .day .crew .name { font-weight: 700; }
 .cal .day .crew .f { color: #2563eb; }
 .cal .day .crew .h { color: #7c3aed; }
+.cal .day .crew .h2 { color: #d97706; }
 .cal .day .crew .r { color: #dc2626; }
 .cal .day .crew .off-label { color: #94a3b8; font-weight: 400; }
 .cal .day.closed { background: #f1f5f9; }
@@ -97,6 +98,23 @@ var R = {
   "9-5":"11:30-8:00","9-6":"11:30-8:00","9-7":"11:30-8:00"
 };
 
+var H2 = {
+  // Starts June 29. Off Wed + Sun. 9:00-3:30.
+  "6-29":"9:00-3:30","6-30":"9:00-3:30",
+  "7-1":"9:00-3:30","7-2":"OFF","7-3":"9:00-3:30","7-4":"9:00-3:30","7-5":"9:00-3:30",
+  "7-6":"OFF","7-7":"9:00-3:30","7-8":"9:00-3:30","7-9":"OFF","7-10":"9:00-3:30","7-11":"9:00-3:30","7-12":"9:00-3:30",
+  "7-13":"OFF","7-14":"9:00-3:30","7-15":"9:00-3:30","7-16":"OFF","7-17":"9:00-3:30","7-18":"9:00-3:30","7-19":"9:00-3:30",
+  "7-20":"OFF","7-21":"9:00-3:30","7-22":"9:00-3:30","7-23":"OFF","7-24":"9:00-3:30","7-25":"9:00-3:30","7-26":"9:00-3:30",
+  "7-27":"OFF","7-28":"9:00-3:30","7-29":"9:00-3:30","7-30":"OFF","7-31":"9:00-3:30",
+  "8-1":"9:00-3:30","8-2":"9:00-3:30",
+  "8-3":"OFF","8-4":"9:00-3:30","8-5":"9:00-3:30","8-6":"OFF","8-7":"9:00-3:30","8-8":"9:00-3:30","8-9":"9:00-3:30",
+  "8-10":"OFF","8-11":"9:00-3:30",
+  "8-15":"9:00-3:30","8-16":"9:00-3:30",
+  "8-22":"9:00-3:30","8-23":"9:00-3:30",
+  "8-29":"9:00-3:30","8-30":"9:00-3:30",
+  "9-5":"9:00-3:30","9-6":"9:00-3:30","9-7":"OFF"
+};
+
 var CLOSED_DAYS = ["8-12","8-13","8-14","8-17","8-18","8-19","8-20","8-21","8-24","8-25","8-26","8-27","8-28","8-31","9-1","9-2","9-3","9-4"];
 
 var MONTHS = [
@@ -135,7 +153,7 @@ MONTHS.forEach(function(m){
     } else if (parkHrs) {
       var p = document.createElement('div'); p.className='park'; p.textContent=parkHrs; cell.appendChild(p);
       var crew = document.createElement('div'); crew.className='crew';
-      crew.innerHTML = personLine('F',  'f',  F[key]) + personLine('H', 'h', H[key]) + personLine('R', 'r', R[key]);
+      crew.innerHTML = personLine('F',  'f',  F[key]) + personLine('H', 'h', H[key]) + personLine('H2', 'h2', H2[key]) + personLine('R', 'r', R[key]);
       cell.appendChild(crew);
     }
     grid.appendChild(cell);
