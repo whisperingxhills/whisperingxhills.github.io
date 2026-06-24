@@ -283,7 +283,7 @@
  [7,16,'11:00\u20137:00',[],{}],
  [7,22,'11:00\u20136:00',[],{}],
  [7,23,'11:00\u20136:00',[],{}],
- [7,28,'TBA',['tidalrave'],{note:'Tidal Rave \u2014 Tickets Available Soon!'}],
+ [7,28,'TBA',['tidalrave'],{note:'Tidal Rave \u2014 Tickets Available Soon!',noTickets:true}],
  [7,29,'11:00\u20136:00',[],{}],
  [7,30,'11:00\u20136:00',[],{}],
  [8,5,'11:00\u20136:00',[],{}],
@@ -435,7 +435,7 @@
  day: day
  };
 
- document.getElementById('iwcBuyBtn').style.display = 'block';
+ document.getElementById('iwcBuyBtn').style.display = (entry[4] && entry[4].noTickets) ? 'none' : 'block';
 
  /* Show/hide 2-for-Tuesday button */
  var is2for = entry[3].indexOf('2for') !== -1;
