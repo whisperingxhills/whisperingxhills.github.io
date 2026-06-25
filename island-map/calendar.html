@@ -15,7 +15,7 @@
  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
  color: var(--iw-dark); max-width: 100%; margin: 0 auto; border-radius: 0;
  overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.15);
- display: flex; flex-direction: column; min-height: 650px; height: auto; position: relative;
+ display: flex; flex-direction: column; height: 950px; position: relative;
 }
 #iwp-calendar .iwc-header { background: linear-gradient(135deg, var(--iw-blue-dark) 0%, var(--iw-blue-deep) 100%); padding: 20px 24px 16px; text-align: center; position: relative; overflow: hidden; flex-shrink: 0; }
 #iwp-calendar .iwc-header::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.08) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(255,255,255,0.05) 0%, transparent 50%); pointer-events: none; }
@@ -100,7 +100,7 @@
 #iwp-calendar .iwc-ticket-modal-close:hover { color: #1E293B; }
 #iwp-calendar .iwc-ticket-engine { flex: 1; overflow: auto; padding: 0; }
 @media (max-width: 640px) {
- #iwp-calendar { height: auto; min-height: 500px; }
+ #iwp-calendar { height: 750px; }
  #iwp-calendar .iwc-header { padding: 14px 16px 12px; }
  #iwp-calendar .iwc-nav-month { font-size: 18px; }
  #iwp-calendar .iwc-day { padding: 3px 4px; }
@@ -580,11 +580,12 @@
 
  // Auto-resize: tell parent iframe our height
  function postHeight() {
-   var h = document.getElementById('iwp-calendar').scrollHeight + 40;
+   var cal = document.getElementById('iwp-calendar');
+   var h = Math.max(cal.scrollHeight, cal.offsetHeight, cal.clientHeight) + 20;
    window.parent.postMessage({ iwpCalendarHeight: h }, '*');
  }
- postHeight();
- setInterval(postHeight, 500);
+ setTimeout(postHeight, 300);
+ setInterval(postHeight, 1000);
  window.addEventListener('resize', postHeight);
 })();
 </script>
