@@ -21,7 +21,7 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; b
 .cal .day .crew .name { font-weight: 700; }
 .cal .day .crew .f { color: #2563eb; }
 .cal .day .crew .h { color: #7c3aed; }
-.cal .day .crew .h2 { color: #d97706; }
+.cal .day .crew .h1 { color: #d97706; }
 .cal .day .crew .r { color: #dc2626; }
 .cal .day .crew .tbd { color: #0d9488; }
 .cal .day .crew .off-label { color: #94a3b8; font-weight: 400; }
@@ -154,7 +154,7 @@ MONTHS.forEach(function(m){
     } else if (parkHrs) {
       var p = document.createElement('div'); p.className='park'; p.textContent=parkHrs; cell.appendChild(p);
       var crew = document.createElement('div'); crew.className='crew';
-      crew.innerHTML = personLine('F',  'f',  F[key]) + personLine('H2', 'h2', H2[key]) + personLine('R', 'r', R[key]) + personLine('TBD', 'tbd', TBD[key]);
+      crew.innerHTML = personLine('F',  'f',  F[key]) + personLine('H1', 'h1', H2[key]) + personLine('R', 'r', R[key]) + personLine('TBD', 'tbd', TBD[key]);
       cell.appendChild(crew);
     }
     grid.appendChild(cell);
