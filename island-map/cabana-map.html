@@ -1614,6 +1614,7 @@ function openPanel(cabana) {
     html += '<button class="iw-book-btn" data-root="' + escapeAttr(cabana.root || '') + '" data-eid="' + escapeAttr(cabana.eid) + '" data-unit="' + escapeAttr(cabana.unit) + '" data-rate="' + escapeAttr(cabana.rate || '') + '" onclick="openBooking(this.dataset.root, this.dataset.eid, this.dataset.unit, this.dataset.rate)">Book Now</button>';
   } else {
     html += '<div class="iw-sold-out">Sold Out Today</div>';
+    html += '<div style="text-align:center;padding:12px 16px;background:#FEF3C7;border:2px solid #F59E0B;border-radius:10px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;color:#92400E;">Cabanas Sold Out?</div><div style="font-size:12px;color:#78350F;margin-top:4px;line-height:1.5;">We MAY have extras — Call us at <a href="tel:5592776800" style="color:#1D4ED8;font-weight:700;text-decoration:none;">(559) 277-6800</a> to find out if we have more options available</div></div>';
   }
 
   /* Meta info */
