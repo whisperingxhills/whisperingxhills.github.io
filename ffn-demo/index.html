@@ -1,0 +1,1983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fresno Fright Nights 2026 | Fresno's Premier Haunted Attraction</title>
+  <meta name="description" content="Fresno Fright Nights returns October 3 - November 1, 2026. Six acres of immersive haunted terror in Fresno, CA. Get tickets now." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Creepster&family=Oswald:wght@400;600;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       RESET & BASE
+    ============================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --black: #0a0a0a;
+      --dark: #111111;
+      --dark-mid: #1a1a1a;
+      --dark-surface: #202020;
+      --dark-border: #2a2a2a;
+      --gray: #888888;
+      --gray-light: #bbbbbb;
+      --red: #c0392b;
+      --red-bright: #e74c3c;
+      --red-deep: #8b0000;
+      --green: #2ecc71;
+      --green-eerie: #1a4a2a;
+      --green-accent: #39d353;
+      --purple: #7b2d8b;
+      --purple-light: #9b59b6;
+      --white: #f5f0e8;
+      --off-white: #d4cfc7;
+      --font-horror: 'Creepster', cursive;
+      --font-display: 'Oswald', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --nav-height: 70px;
+      --section-pad: 90px;
+      --transition: 0.3s ease;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--black);
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      color: var(--red-bright);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    a:hover {
+      color: var(--green-accent);
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* =============================================
+       TYPOGRAPHY
+    ============================================= */
+    .section-label {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--red-bright);
+      margin-bottom: 0.75rem;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      line-height: 1.1;
+      color: var(--white);
+    }
+
+    .section-title span {
+      color: var(--red-bright);
+    }
+
+    .section-subtitle {
+      font-size: 1.05rem;
+      color: var(--gray-light);
+      max-width: 600px;
+      margin-top: 1rem;
+      font-weight: 300;
+    }
+
+    /* =============================================
+       LAYOUT UTILITIES
+    ============================================= */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-pad {
+      padding: var(--section-pad) 0;
+    }
+
+    .section-header {
+      margin-bottom: 3rem;
+    }
+
+    /* =============================================
+       PLACEHOLDER BOXES
+    ============================================= */
+    .placeholder {
+      background: var(--dark-surface);
+      border: 2px dashed var(--dark-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 0.5rem;
+      color: var(--gray);
+      font-family: var(--font-display);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-align: center;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 20px,
+        rgba(255,255,255,0.015) 20px,
+        rgba(255,255,255,0.015) 40px
+      );
+    }
+
+    .placeholder-icon {
+      font-size: 2rem;
+      opacity: 0.4;
+    }
+
+    /* =============================================
+       BUTTONS
+    ============================================= */
+    .btn {
+      display: inline-block;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 14px 36px;
+      border: none;
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--red);
+      color: var(--white);
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+    }
+
+    .btn-primary:hover {
+      background: var(--red-bright);
+      color: var(--white);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(231, 76, 60, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--white);
+      border: 2px solid var(--white);
+    }
+
+    .btn-outline:hover {
+      background: var(--white);
+      color: var(--black);
+    }
+
+    /* =============================================
+       NAV
+    ============================================= */
+    #nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      height: var(--nav-height);
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--dark-border);
+      display: flex;
+      align-items: center;
+      transition: background var(--transition);
+    }
+
+    #nav.scrolled {
+      background: rgba(10, 10, 10, 0.98);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.6);
+    }
+
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo-placeholder {
+      width: 40px;
+      height: 40px;
+      background: var(--dark-surface);
+      border: 1px dashed var(--dark-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.5rem;
+      color: var(--gray);
+      font-family: var(--font-display);
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .nav-logo-text {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 1rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+      line-height: 1.1;
+    }
+
+    .nav-logo-text span {
+      color: var(--red-bright);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--off-white);
+      text-decoration: none;
+      transition: color var(--transition);
+    }
+
+    .nav-links a:hover {
+      color: var(--red-bright);
+    }
+
+    .nav-cta {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 9px 22px;
+      background: var(--red);
+      color: var(--white) !important;
+      transition: background var(--transition), transform var(--transition) !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--red-bright) !important;
+      color: var(--white) !important;
+      transform: none;
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      padding: 4px;
+      background: none;
+      border: none;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--white);
+      transition: all var(--transition);
+    }
+
+    .nav-hamburger.open span:nth-child(1) {
+      transform: translateY(7px) rotate(45deg);
+    }
+
+    .nav-hamburger.open span:nth-child(2) {
+      opacity: 0;
+    }
+
+    .nav-hamburger.open span:nth-child(3) {
+      transform: translateY(-7px) rotate(-45deg);
+    }
+
+    /* =============================================
+       HERO
+    ============================================= */
+    #hero {
+      min-height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .hero-video-placeholder {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(160deg, #0a0a0a 0%, #1a0a0a 40%, #0d0d0a 100%);
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(0,0,0,0.3) 0%,
+        rgba(0,0,0,0.5) 50%,
+        rgba(0,0,0,0.85) 100%
+      );
+      z-index: 1;
+    }
+
+    .hero-placeholder-label {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.12);
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      text-align: center;
+      padding: 120px 24px 80px;
+      max-width: 900px;
+    }
+
+    .hero-logo-placeholder {
+      width: 120px;
+      height: 120px;
+      margin: 0 auto 2rem;
+      background: rgba(255,255,255,0.04);
+      border: 2px dashed rgba(255,255,255,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.6rem;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.25);
+      text-transform: uppercase;
+    }
+
+    .hero-event-name {
+      font-family: var(--font-horror);
+      font-size: clamp(3rem, 10vw, 7.5rem);
+      line-height: 1;
+      color: var(--white);
+      text-shadow:
+        0 0 40px rgba(192, 57, 43, 0.5),
+        0 0 80px rgba(192, 57, 43, 0.25),
+        2px 2px 0 rgba(0,0,0,0.8);
+      margin-bottom: 0.5rem;
+      letter-spacing: 0.03em;
+    }
+
+    .hero-tagline {
+      font-family: var(--font-display);
+      font-size: clamp(1rem, 3vw, 1.4rem);
+      font-weight: 400;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--off-white);
+      margin-bottom: 2.5rem;
+      opacity: 0.85;
+    }
+
+    .hero-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--off-white);
+    }
+
+    .hero-meta-item .icon {
+      color: var(--red-bright);
+      font-size: 1rem;
+    }
+
+    .hero-divider {
+      color: var(--dark-border);
+    }
+
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .hero-scroll-hint {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: rgba(255,255,255,0.3);
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      animation: bounce 2s ease-in-out infinite;
+    }
+
+    .scroll-arrow {
+      width: 20px;
+      height: 20px;
+      border-right: 2px solid rgba(255,255,255,0.3);
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+      transform: rotate(45deg);
+      margin-top: -8px;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(6px); }
+    }
+
+    /* =============================================
+       TICKER / ANNOUNCEMENT BAR
+    ============================================= */
+    .ticker-bar {
+      background: var(--red-deep);
+      border-top: 1px solid var(--red);
+      border-bottom: 1px solid var(--red);
+      overflow: hidden;
+      padding: 10px 0;
+    }
+
+    .ticker-inner {
+      display: flex;
+      gap: 4rem;
+      animation: ticker 25s linear infinite;
+      white-space: nowrap;
+    }
+
+    .ticker-item {
+      font-family: var(--font-display);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--white);
+      flex-shrink: 0;
+    }
+
+    .ticker-item::before {
+      content: '★';
+      margin-right: 1rem;
+      color: rgba(255,255,255,0.5);
+    }
+
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* =============================================
+       ABOUT
+    ============================================= */
+    #about {
+      background: var(--dark);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #about::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(192,57,43,0.05) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      margin-top: 2.5rem;
+      background: var(--dark-border);
+    }
+
+    .stat-block {
+      background: var(--dark-mid);
+      padding: 1.5rem;
+    }
+
+    .stat-number {
+      font-family: var(--font-display);
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: var(--red-bright);
+      line-height: 1;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--gray);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-family: var(--font-display);
+    }
+
+    .about-image-block {
+      position: relative;
+    }
+
+    .about-placeholder {
+      width: 100%;
+      height: 420px;
+    }
+
+    .about-tag {
+      position: absolute;
+      bottom: -20px;
+      right: -20px;
+      background: var(--red);
+      padding: 1.25rem 1.5rem;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.75rem;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .body-copy {
+      color: var(--off-white);
+      font-size: 1rem;
+      line-height: 1.75;
+      font-weight: 300;
+    }
+
+    .body-copy p + p {
+      margin-top: 1rem;
+    }
+
+    /* =============================================
+       HAUNTS
+    ============================================= */
+    #haunts {
+      background: var(--black);
+    }
+
+    .haunts-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 2px;
+    }
+
+    .haunt-card {
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--dark-mid);
+    }
+
+    .haunt-image {
+      width: 100%;
+      height: 300px;
+    }
+
+    .haunt-body {
+      padding: 1.75rem;
+      background: var(--dark-mid);
+      border-top: 3px solid var(--red);
+      transition: background var(--transition);
+    }
+
+    .haunt-card:hover .haunt-body {
+      background: var(--dark-surface);
+    }
+
+    .haunt-tag {
+      display: inline-block;
+      font-family: var(--font-display);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      background: var(--red-deep);
+      color: var(--red-bright);
+      margin-bottom: 0.75rem;
+    }
+
+    .haunt-name {
+      font-family: var(--font-display);
+      font-size: 1.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+      line-height: 1.1;
+    }
+
+    .haunt-desc {
+      font-size: 0.9rem;
+      color: var(--gray-light);
+      line-height: 1.65;
+      font-weight: 300;
+    }
+
+    .haunt-card:hover .haunt-image-overlay {
+      opacity: 1;
+    }
+
+    .haunt-image-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 300px;
+      background: rgba(192,57,43,0.12);
+      opacity: 0;
+      transition: opacity var(--transition);
+      pointer-events: none;
+    }
+
+    /* =============================================
+       MIDWAY
+    ============================================= */
+    #midway {
+      background: var(--dark);
+      position: relative;
+    }
+
+    .midway-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .midway-features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+    }
+
+    .feature-icon {
+      font-size: 1.25rem;
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .feature-text {
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--off-white);
+      line-height: 1.4;
+    }
+
+    .midway-photo-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 4px;
+    }
+
+    .midway-photo-grid .placeholder:nth-child(1) {
+      grid-row: span 2;
+      height: 380px;
+    }
+
+    .midway-photo-grid .placeholder:nth-child(2),
+    .midway-photo-grid .placeholder:nth-child(3) {
+      height: 186px;
+    }
+
+    /* =============================================
+       FAQ
+    ============================================= */
+    #faq {
+      background: var(--black);
+    }
+
+    .faq-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .faq-sidebar {
+      position: sticky;
+      top: calc(var(--nav-height) + 2rem);
+    }
+
+    .faq-sidebar .section-subtitle {
+      margin-top: 1.5rem;
+    }
+
+    .faq-sidebar .btn {
+      margin-top: 2rem;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .faq-item {
+      background: var(--dark-mid);
+      border-left: 3px solid transparent;
+      transition: border-color var(--transition);
+    }
+
+    .faq-item.open {
+      border-left-color: var(--red-bright);
+    }
+
+    .faq-question {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 1.25rem 1.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--font-display);
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--off-white);
+      transition: color var(--transition);
+    }
+
+    .faq-question:hover {
+      color: var(--white);
+    }
+
+    .faq-item.open .faq-question {
+      color: var(--red-bright);
+    }
+
+    .faq-icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      position: relative;
+      border: 1px solid var(--dark-border);
+    }
+
+    .faq-icon::before,
+    .faq-icon::after {
+      content: '';
+      position: absolute;
+      background: var(--gray);
+      transition: all var(--transition);
+    }
+
+    .faq-icon::before {
+      width: 10px;
+      height: 2px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .faq-icon::after {
+      width: 2px;
+      height: 10px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .faq-item.open .faq-icon::after {
+      transform: translate(-50%, -50%) rotate(90deg);
+      opacity: 0;
+    }
+
+    .faq-item.open .faq-icon::before {
+      background: var(--red-bright);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.4s ease, padding 0.3s ease;
+      padding: 0 1.5rem;
+    }
+
+    .faq-item.open .faq-answer {
+      max-height: 600px;
+      padding: 0 1.5rem 1.5rem;
+    }
+
+    .faq-answer-inner {
+      font-size: 0.9rem;
+      color: var(--gray-light);
+      line-height: 1.75;
+      font-weight: 300;
+      border-top: 1px solid var(--dark-border);
+      padding-top: 1rem;
+    }
+
+    .faq-answer-inner ul {
+      padding-left: 1.25rem;
+      margin-top: 0.5rem;
+    }
+
+    .faq-answer-inner ul li {
+      margin-bottom: 0.4rem;
+    }
+
+    .faq-answer-inner a {
+      color: var(--red-bright);
+    }
+
+    .faq-answer-inner a:hover {
+      color: var(--green-accent);
+    }
+
+    /* =============================================
+       EMPLOYMENT
+    ============================================= */
+    #employment {
+      background: linear-gradient(135deg, var(--dark-mid) 0%, var(--dark) 100%);
+      position: relative;
+      overflow: hidden;
+    }
+
+    #employment::before {
+      content: '';
+      position: absolute;
+      bottom: -150px;
+      left: -150px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(192,57,43,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .employment-inner {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+    }
+
+    .employment-perks {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .perk-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.9rem;
+      color: var(--off-white);
+      font-weight: 300;
+    }
+
+    .perk-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--red-bright);
+      flex-shrink: 0;
+    }
+
+    .employment-cta-block {
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      border-top: 4px solid var(--red);
+      padding: 2.5rem;
+    }
+
+    .employment-cta-block h3 {
+      font-family: var(--font-display);
+      font-size: 1.3rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1rem;
+    }
+
+    .employment-cta-block p {
+      font-size: 0.9rem;
+      color: var(--gray-light);
+      line-height: 1.65;
+      margin-bottom: 1.5rem;
+      font-weight: 300;
+    }
+
+    .email-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--red-bright);
+      margin-bottom: 1.5rem;
+    }
+
+    .email-link:hover {
+      color: var(--green-accent);
+    }
+
+    /* =============================================
+       FOOTER
+    ============================================= */
+    #footer {
+      background: var(--black);
+      border-top: 1px solid var(--dark-border);
+      padding: 60px 0 30px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 3rem;
+    }
+
+    .footer-brand .logo-placeholder {
+      width: 100px;
+      height: 80px;
+      background: var(--dark-surface);
+      border: 1px dashed var(--dark-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 0.55rem;
+      letter-spacing: 0.08em;
+      color: var(--gray);
+      text-transform: uppercase;
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-brand p {
+      font-size: 0.85rem;
+      color: var(--gray);
+      line-height: 1.65;
+      max-width: 280px;
+      font-weight: 300;
+    }
+
+    .footer-social {
+      display: flex;
+      gap: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .social-icon {
+      width: 36px;
+      height: 36px;
+      background: var(--dark-surface);
+      border: 1px solid var(--dark-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: var(--gray);
+      font-family: var(--font-display);
+      letter-spacing: 0;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all var(--transition);
+      text-decoration: none;
+    }
+
+    .social-icon:hover {
+      background: var(--red);
+      border-color: var(--red);
+      color: var(--white);
+    }
+
+    .footer-col h4 {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red-bright);
+      margin-bottom: 1.25rem;
+    }
+
+    .footer-col ul {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+    }
+
+    .footer-col ul li a {
+      font-size: 0.85rem;
+      color: var(--gray);
+      text-decoration: none;
+      transition: color var(--transition);
+      font-weight: 300;
+    }
+
+    .footer-col ul li a:hover {
+      color: var(--off-white);
+    }
+
+    .footer-col address {
+      font-style: normal;
+      font-size: 0.85rem;
+      color: var(--gray);
+      line-height: 1.7;
+      font-weight: 300;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid var(--dark-border);
+      padding-top: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .footer-bottom p {
+      font-size: 0.78rem;
+      color: var(--gray);
+      font-weight: 300;
+    }
+
+    .footer-bottom a {
+      color: var(--gray);
+      text-decoration: none;
+    }
+
+    .footer-bottom a:hover {
+      color: var(--off-white);
+    }
+
+    /* =============================================
+       SCROLL ANIMATIONS
+    ============================================= */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fade-up.delay-1 { transition-delay: 0.1s; }
+    .fade-up.delay-2 { transition-delay: 0.2s; }
+    .fade-up.delay-3 { transition-delay: 0.3s; }
+    .fade-up.delay-4 { transition-delay: 0.4s; }
+
+    /* =============================================
+       SECTION DIVIDERS
+    ============================================= */
+    .section-line {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .section-line-bar {
+      width: 40px;
+      height: 3px;
+      background: var(--red);
+    }
+
+    /* =============================================
+       MOBILE MENU
+    ============================================= */
+    .mobile-menu {
+      position: fixed;
+      top: var(--nav-height);
+      left: 0;
+      right: 0;
+      background: rgba(10,10,10,0.98);
+      backdrop-filter: blur(16px);
+      z-index: 999;
+      padding: 1.5rem 24px 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      border-bottom: 1px solid var(--dark-border);
+      transform: translateY(-110%);
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mobile-menu.open {
+      transform: translateY(0);
+    }
+
+    .mobile-menu a {
+      display: block;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 1rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--off-white);
+      padding: 1rem 0;
+      border-bottom: 1px solid var(--dark-border);
+      text-decoration: none;
+    }
+
+    .mobile-menu a:hover {
+      color: var(--red-bright);
+    }
+
+    .mobile-menu .btn {
+      margin-top: 1.5rem;
+      width: 100%;
+      text-align: center;
+    }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 900px) {
+      :root {
+        --section-pad: 64px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .nav-hamburger {
+        display: flex;
+      }
+
+      .about-grid,
+      .midway-grid,
+      .employment-inner,
+      .faq-layout {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+      }
+
+      .haunts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .about-tag {
+        bottom: -12px;
+        right: 12px;
+      }
+
+      .faq-sidebar {
+        position: static;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5rem;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .hero-meta {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .hero-divider {
+        display: none;
+      }
+
+      .midway-photo-grid {
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto;
+      }
+
+      .midway-photo-grid .placeholder:nth-child(1) {
+        grid-row: span 1;
+        grid-column: span 2;
+        height: 220px;
+      }
+
+      .midway-photo-grid .placeholder:nth-child(2),
+      .midway-photo-grid .placeholder:nth-child(3) {
+        height: 150px;
+      }
+
+      .about-stats {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .midway-features {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-cta-group {
+        flex-direction: column;
+      }
+
+      .hero-cta-group .btn {
+        width: 100%;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ============================================
+       NAV
+  ============================================= -->
+  <nav id="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav-inner">
+      <a href="#hero" class="nav-logo" aria-label="Fresno Fright Nights home">
+        <div class="nav-logo-placeholder" aria-hidden="true">LOGO</div>
+        <div class="nav-logo-text">Fresno<br><span>Fright Nights</span></div>
+      </a>
+
+      <ul class="nav-links" role="list">
+        <li><a href="#about">About</a></li>
+        <li><a href="#haunts">The Haunts</a></li>
+        <li><a href="#midway">Midway</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="#employment">Join the Crew</a></li>
+        <li><a href="#haunts" class="nav-cta btn btn-primary">Get Tickets</a></li>
+      </ul>
+
+      <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" aria-expanded="false">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
+    <a href="#about" class="mobile-nav-link">About</a>
+    <a href="#haunts" class="mobile-nav-link">The Haunts</a>
+    <a href="#midway" class="mobile-nav-link">Midway</a>
+    <a href="#faq" class="mobile-nav-link">FAQ</a>
+    <a href="#employment" class="mobile-nav-link">Join the Crew</a>
+    <a href="#haunts" class="btn btn-primary">Get Tickets</a>
+  </div>
+
+  <!-- ============================================
+       HERO
+  ============================================= -->
+  <section id="hero" aria-label="Hero">
+    <div class="hero-bg">
+      <div class="hero-video-placeholder" aria-hidden="true">
+        <div class="hero-placeholder-label">[HERO VIDEO / FULL-WIDTH BACKGROUND IMAGE]</div>
+      </div>
+    </div>
+    <div class="hero-overlay" aria-hidden="true"></div>
+
+    <div class="hero-content">
+      <div class="hero-logo-placeholder" aria-label="[FFN LOGO PLACEHOLDER]">[FFN LOGO]</div>
+
+      <h1 class="hero-event-name">Fresno Fright Nights</h1>
+      <p class="hero-tagline">Six Acres of Pure Terror</p>
+
+      <div class="hero-meta">
+        <div class="hero-meta-item">
+          <span class="icon" aria-hidden="true">🗓</span>
+          Oct 3 - Nov 1, 2026
+        </div>
+        <span class="hero-divider" aria-hidden="true">/</span>
+        <div class="hero-meta-item">
+          <span class="icon" aria-hidden="true">📍</span>
+          Fresno, CA
+        </div>
+        <span class="hero-divider" aria-hidden="true">/</span>
+        <div class="hero-meta-item">
+          <span class="icon" aria-hidden="true">💀</span>
+          4 Haunted Zones
+        </div>
+      </div>
+
+      <div class="hero-cta-group">
+        <a href="#haunts" class="btn btn-primary">Get Tickets</a>
+        <a href="#haunts" class="btn btn-outline">Explore the Haunts</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll-hint" aria-hidden="true">
+      Scroll
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       TICKER
+  ============================================= -->
+  <div class="ticker-bar" aria-hidden="true">
+    <div class="ticker-inner">
+      <span class="ticker-item">Tickets on sale mid-August</span>
+      <span class="ticker-item">October 3 - November 1, 2026</span>
+      <span class="ticker-item">Four haunted zones</span>
+      <span class="ticker-item">6 acres of terror</span>
+      <span class="ticker-item">Fresno's Premier Haunted Attraction</span>
+      <span class="ticker-item">Blood River Bayou Raft Ride</span>
+      <span class="ticker-item">Night Crawlers Pizza</span>
+      <span class="ticker-item">ChemiKill</span>
+      <span class="ticker-item">Ghoul Town Trails</span>
+      <!-- duplicate for seamless loop -->
+      <span class="ticker-item">Tickets on sale mid-August</span>
+      <span class="ticker-item">October 3 - November 1, 2026</span>
+      <span class="ticker-item">Four haunted zones</span>
+      <span class="ticker-item">6 acres of terror</span>
+      <span class="ticker-item">Fresno's Premier Haunted Attraction</span>
+      <span class="ticker-item">Blood River Bayou Raft Ride</span>
+      <span class="ticker-item">Night Crawlers Pizza</span>
+      <span class="ticker-item">ChemiKill</span>
+      <span class="ticker-item">Ghoul Town Trails</span>
+    </div>
+  </div>
+
+  <!-- ============================================
+       ABOUT
+  ============================================= -->
+  <section id="about" class="section-pad">
+    <div class="container">
+      <div class="about-grid">
+        <div>
+          <div class="section-line fade-up">
+            <div class="section-line-bar"></div>
+            <span class="section-label">About</span>
+          </div>
+          <h2 class="section-title fade-up delay-1">Fresno's Premier<br><span>Haunted Attraction</span></h2>
+          <div class="body-copy fade-up delay-2" style="margin-top: 1.5rem;">
+            <p>Fresno Fright Nights is a new immersive haunted attraction in the heart of the San Joaquin Valley. Built to push fears to the limit and tell stories that hit different, FFN brings Hollywood-level scares to Central California.</p>
+            <p>Six acres. Multiple haunted zones. Eerie passageways, spine-chilling encounters, and a midway packed with food, drinks, and chaos. This is not a walk-through haunted house. This is a destination.</p>
+          </div>
+          <div class="about-stats fade-up delay-3">
+            <div class="stat-block">
+              <div class="stat-number">6</div>
+              <div class="stat-label">Acres of Terror</div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-number">4</div>
+              <div class="stat-label">Haunted Zones</div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-number">30+</div>
+              <div class="stat-label">Nights of Scares</div>
+            </div>
+            <div class="stat-block">
+              <div class="stat-number">1/4</div>
+              <div class="stat-label">Mile Walk in ChemiKill</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-image-block fade-up delay-2">
+          <div class="placeholder about-placeholder" aria-label="[ABOUT / AERIAL OR CROWD PHOTO]">
+            <div class="placeholder-icon" aria-hidden="true">🏚</div>
+            [ABOUT PHOTO: ATTRACTION OVERVIEW OR CROWD]
+          </div>
+          <div class="about-tag">Est. 2026 &bull; Fresno, CA</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       THE HAUNTS
+  ============================================= -->
+  <section id="haunts" class="section-pad">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-line fade-up">
+          <div class="section-line-bar"></div>
+          <span class="section-label">What Awaits</span>
+        </div>
+        <h2 class="section-title fade-up delay-1">The <span>Haunts</span></h2>
+        <p class="section-subtitle fade-up delay-2">Four distinct worlds of dread. Each one built to break you in a different way.</p>
+      </div>
+
+      <div class="haunts-grid">
+
+        <!-- ChemiKill -->
+        <div class="haunt-card fade-up">
+          <div class="placeholder haunt-image" aria-label="[HAUNT PHOTO: CHEMIKILL]">
+            <div class="placeholder-icon" aria-hidden="true">☢</div>
+            [HAUNT PHOTO: CHEMIKILL]
+          </div>
+          <div class="haunt-image-overlay" aria-hidden="true"></div>
+          <div class="haunt-body">
+            <span class="haunt-tag">Walking Haunt - 1/4 Mile</span>
+            <h3 class="haunt-name">ChemiKill</h3>
+            <p class="haunt-desc">A toxic spill at Chemi-Kill Industries left the workforce... changed. Mutated workers now roam the ruins, dripping with radioactive sludge. Officials have sent civilians in unarmed to gauge the horrors' response. That's you. The quarter-mile walk out is the longest of your life.</p>
+          </div>
+        </div>
+
+        <!-- Night Crawlers Pizza -->
+        <div class="haunt-card fade-up delay-1">
+          <div class="placeholder haunt-image" aria-label="[HAUNT PHOTO: NIGHT CRAWLERS PIZZA]">
+            <div class="placeholder-icon" aria-hidden="true">🍕</div>
+            [HAUNT PHOTO: NIGHT CRAWLERS PIZZA]
+          </div>
+          <div class="haunt-image-overlay" aria-hidden="true"></div>
+          <div class="haunt-body">
+            <span class="haunt-tag">Indoor Haunt - Animatronic</span>
+            <h3 class="haunt-name">Night Crawlers Pizza</h3>
+            <p class="haunt-desc">Once a cryptid-themed family spot, black magic gave its animatronics life. Now haunted and abandoned, guests have gone missing. Rumors swirl of a cult of obsessed kids and creatures that still move in the dark - hungry to finish what Lars Durney started.</p>
+          </div>
+        </div>
+
+        <!-- Blood River Bayou -->
+        <div class="haunt-card fade-up delay-2">
+          <div class="placeholder haunt-image" aria-label="[HAUNT PHOTO: BLOOD RIVER BAYOU]">
+            <div class="placeholder-icon" aria-hidden="true">🚣</div>
+            [HAUNT PHOTO: BLOOD RIVER BAYOU]
+          </div>
+          <div class="haunt-image-overlay" aria-hidden="true"></div>
+          <div class="haunt-body">
+            <span class="haunt-tag">Raft Ride - Lazy River</span>
+            <h3 class="haunt-name">Blood River Bayou</h3>
+            <p class="haunt-desc">The Hoodoo Hag rules this swamp. A vengeful sorceress commanding undead horrors, her ghostly Mardi Gras lures victims every season. Ride the river barge. Face her monsters. The Lantern Keeper has returned to challenge her - but will it be enough to end the curse before it ends you?</p>
+          </div>
+        </div>
+
+        <!-- Ghoul Town Trails -->
+        <div class="haunt-card fade-up delay-3">
+          <div class="placeholder haunt-image" aria-label="[HAUNT PHOTO: GHOUL TOWN TRAILS]">
+            <div class="placeholder-icon" aria-hidden="true">⚰</div>
+            [HAUNT PHOTO: GHOUL TOWN TRAILS]
+          </div>
+          <div class="haunt-image-overlay" aria-hidden="true"></div>
+          <div class="haunt-body">
+            <span class="haunt-tag">Outdoor Walking Haunt</span>
+            <h3 class="haunt-name">Ghoul Town Trails</h3>
+            <p class="haunt-desc">Beneath the city lies a forgotten graveyard where the dead walk in silence. A cursed bell awakened ghouls and cultists who now guard the only path through. You once knew this land as the miniature golf course. The dead repossessed it. Every step echoes with the bell's call.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       THE MIDWAY
+  ============================================= -->
+  <section id="midway" class="section-pad">
+    <div class="container">
+      <div class="midway-grid">
+        <div>
+          <div class="section-line fade-up">
+            <div class="section-line-bar"></div>
+            <span class="section-label">Between the Scares</span>
+          </div>
+          <h2 class="section-title fade-up delay-1">The <span>Midway</span></h2>
+          <p class="section-subtitle fade-up delay-2">Escape the chaos - if only for a moment. Our twisted carnival midway is where you regroup, refuel, and let your guard down. Bad idea, probably.</p>
+
+          <div class="midway-features fade-up delay-2">
+            <div class="feature-item">
+              <span class="feature-icon">🍔</span>
+              <span class="feature-text">Food Trucks</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🍺</span>
+              <span class="feature-text">Full Bar</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">📸</span>
+              <span class="feature-text">Photo Ops</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🛍</span>
+              <span class="feature-text">Merch &amp; Novelties</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🎭</span>
+              <span class="feature-text">Scare Zones</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🎃</span>
+              <span class="feature-text">Pumpkins &amp; Hay Bales</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">🪑</span>
+              <span class="feature-text">Seating Areas</span>
+            </div>
+            <div class="feature-item">
+              <span class="feature-icon">👑</span>
+              <span class="feature-text">VIP Lounge</span>
+            </div>
+          </div>
+
+          <div style="margin-top: 2rem;" class="fade-up delay-3">
+            <p class="body-copy">Snap a sinister selfie, grab bites from killer food trucks, and sip creepy cocktails at the bar. Live entertainment. Chilling vibes. Shop Crypt Keeper Collectibles for novelties, apparel, and crafts.</p>
+          </div>
+        </div>
+
+        <div class="midway-photo-grid fade-up delay-2">
+          <div class="placeholder" aria-label="[MIDWAY PHOTO: MAIN MIDWAY AREA]">
+            <div class="placeholder-icon" aria-hidden="true">🎡</div>
+            [MIDWAY PHOTO: MAIN AREA]
+          </div>
+          <div class="placeholder" aria-label="[MIDWAY PHOTO: BAR]">
+            <div class="placeholder-icon" aria-hidden="true">🍸</div>
+            [MIDWAY: BAR]
+          </div>
+          <div class="placeholder" aria-label="[MIDWAY PHOTO: PHOTO OPS]">
+            <div class="placeholder-icon" aria-hidden="true">📷</div>
+            [MIDWAY: PHOTO OPS]
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FAQ
+  ============================================= -->
+  <section id="faq" class="section-pad">
+    <div class="container">
+      <div class="faq-layout">
+
+        <div class="faq-sidebar fade-up">
+          <div class="section-line">
+            <div class="section-line-bar"></div>
+            <span class="section-label">FAQ</span>
+          </div>
+          <h2 class="section-title">Got <span>Questions?</span></h2>
+          <p class="section-subtitle">Everything you need to know before you show up and scream.</p>
+          <a href="mailto:info@fresnofrightnights.com" class="btn btn-primary" style="margin-top: 2rem;">Contact Us</a>
+        </div>
+
+        <div class="faq-list fade-up delay-1">
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              When is Fresno Fright Nights open?
+              <div class="faq-icon" aria-hidden="true"></div>
+            </button>
+            <div class="faq-answer" aria-hidden="true">
+              <div class="faq-answer-inner">
+                Opening night is <strong>October 3, 2026</strong>. Closing night is <strong>November 1, 2026</strong>. Check back for the full schedule of operating nights and hours.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              When will tickets go on sale?
+              <div class="faq-icon" aria-hidden="true"></div>
+            </button>
+            <div class="faq-answer" aria-hidden="true">
+              <div class="faq-answer-inner">
+                Tickets will be available in <strong>mid-August 2026</strong>. Check back here or follow our socials for the announcement.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              What's included with my ticket?
+              <div class="faq-icon" aria-hidden="true"></div>
+            </button>
+            <div class="faq-answer" aria-hidden="true">
+              <div class="faq-answer-inner">
+                General admission includes access to all four haunted zones plus the full Midway experience:
+                <ul>
+                  <li><strong>ChemiKill</strong> - the quarter-mile walk through an abandoned chemical plant</li>
+                  <li><strong>Night Crawlers Pizza</strong> - indoor animatronic cryptid haunt</li>
+                  <li><strong>Blood River Bayou</strong> - raft ride on the lazy river</li>
+                  <li><strong>Ghoul Town Trails</strong> - outdoor cemetery walking haunt</li>
+                  <li><strong>Midway</strong> - food trucks, bar, photo ops, merch, scare zones, and more</li>
+                </ul>
+                <br />VIP passes include front-of-line access, a private lounge with food and beverages, a VIP lanyard, and creature meet-and-greets.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Who owns Fresno Fright Nights?
+              <div class="faq-icon" aria-hidden="true"></div>
+            </button>
+            <div class="faq-answer" aria-hidden="true">
+              <div class="faq-answer-inner">
+                Fresno Fright Nights is owned and operated by <strong>Immersive Attractions Group, LLC</strong>. It is <strong>not</strong> owned or operated by the Island Waterpark. Please contact FFN directly for any inquiries.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              How do I apply for a job or acting role?
+              <div class="faq-icon" aria-hidden="true"></div>
+            </button>
+            <div class="faq-answer" aria-hidden="true">
+              <div class="faq-answer-inner">
+                We're now accepting applications for actors and staff. Visit the <a href="#employment">Join the Crew</a> section below or email us directly at <a href="mailto:talent@fresnofrightnights.com">talent@fresnofrightnights.com</a>.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              How do I contact Fresno Fright Nights?
+              <div class="faq-icon" aria-hidden="true"></div>
+            </button>
+            <div class="faq-answer" aria-hidden="true">
+              <div class="faq-answer-inner">
+                General inquiries: <a href="mailto:info@fresnofrightnights.com">info@fresnofrightnights.com</a><br /><br />
+                Do not contact the Island Waterpark regarding FFN. They are a separate business.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Media inquiries?
+              <div class="faq-icon" aria-hidden="true"></div>
+            </button>
+            <div class="faq-answer" aria-hidden="true">
+              <div class="faq-answer-inner">
+                Send media inquiries to <a href="mailto:info@fresnofrightnights.com">info@fresnofrightnights.com</a>. A dedicated media contact page is coming soon.
+              </div>
+            </div>
+          </div>
+
+          <div class="faq-item">
+            <button class="faq-question" aria-expanded="false">
+              Sponsorship and advertising opportunities?
+              <div class="faq-icon" aria-hidden="true"></div>
+            </button>
+            <div class="faq-answer" aria-hidden="true">
+              <div class="faq-answer-inner">
+                Interested in sponsoring or advertising at Fresno Fright Nights? Send your inquiry to <a href="mailto:info@fresnofrightnights.com">info@fresnofrightnights.com</a> and a member of FFN management will be in touch.
+              </div>
+            </div>
+          </div>
+
+        </div><!-- end .faq-list -->
+      </div><!-- end .faq-layout -->
+    </div>
+  </section>
+
+  <!-- ============================================
+       EMPLOYMENT
+  ============================================= -->
+  <section id="employment" class="section-pad">
+    <div class="container">
+      <div class="employment-inner">
+        <div>
+          <div class="section-line fade-up">
+            <div class="section-line-bar"></div>
+            <span class="section-label">Careers</span>
+          </div>
+          <h2 class="section-title fade-up delay-1">Join <span>the Crew</span></h2>
+          <p class="section-subtitle fade-up delay-2">Think you have what it takes to terrify hundreds of people a night? Good. We're building something special and we need the right people to bring it to life.</p>
+
+          <div class="employment-perks fade-up delay-2">
+            <div class="perk-item">
+              <div class="perk-dot"></div>
+              Actors, performers, and scare talent
+            </div>
+            <div class="perk-item">
+              <div class="perk-dot"></div>
+              Operations, ticketing, and guest services
+            </div>
+            <div class="perk-item">
+              <div class="perk-dot"></div>
+              Makeup artists and costume technicians
+            </div>
+            <div class="perk-item">
+              <div class="perk-dot"></div>
+              Food, beverage, and midway staff
+            </div>
+            <div class="perk-item">
+              <div class="perk-dot"></div>
+              Security and event management
+            </div>
+            <div class="perk-item">
+              <div class="perk-dot"></div>
+              Seasonal and weekend availability
+            </div>
+          </div>
+        </div>
+
+        <div class="employment-cta-block fade-up delay-2">
+          <div class="placeholder" style="height:200px; margin-bottom:1.75rem;" aria-label="[EMPLOYMENT PHOTO: CAST OR CREW]">
+            <div class="placeholder-icon" aria-hidden="true">👻</div>
+            [EMPLOYMENT PHOTO: CAST OR CREW]
+          </div>
+          <h3>Ready to Scare?</h3>
+          <p>We're now accepting applications for the 2026 season. No experience required for many roles - just a love of Halloween and a willingness to commit to the bit.</p>
+          <div>
+            <a href="mailto:talent@fresnofrightnights.com" class="email-link">
+              <span>&#9993;</span>
+              talent@fresnofrightnights.com
+            </a>
+          </div>
+          <a href="mailto:talent@fresnofrightnights.com" class="btn btn-primary">Apply Now</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================
+       FOOTER
+  ============================================= -->
+  <footer id="footer" role="contentinfo">
+    <div class="container">
+      <div class="footer-grid">
+
+        <div class="footer-brand">
+          <div class="logo-placeholder" aria-label="[FFN LOGO]">[FFN LOGO]</div>
+          <p>Fresno Fright Nights is Fresno's premier Halloween attraction, bringing immersive scares and Hollywood-level production to the San Joaquin Valley every October.</p>
+          <div class="footer-social" aria-label="Social media links">
+            <a href="#" class="social-icon" aria-label="Facebook">FB</a>
+            <a href="#" class="social-icon" aria-label="Instagram">IG</a>
+            <a href="#" class="social-icon" aria-label="TikTok">TK</a>
+            <a href="#" class="social-icon" aria-label="X / Twitter">X</a>
+            <a href="#" class="social-icon" aria-label="YouTube">YT</a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4>Navigate</h4>
+          <ul>
+            <li><a href="#about">About</a></li>
+            <li><a href="#haunts">The Haunts</a></li>
+            <li><a href="#midway">The Midway</a></li>
+            <li><a href="#faq">FAQ</a></li>
+            <li><a href="#employment">Join the Crew</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <address>
+            6099 W Barstow Ave<br />
+            Fresno, CA 93723<br />
+            <br />
+            <a href="mailto:info@fresnofrightnights.com">info@fresnofrightnights.com</a><br />
+            <a href="mailto:talent@fresnofrightnights.com">talent@fresnofrightnights.com</a>
+          </address>
+          <div style="margin-top:1.25rem;">
+            <h4>Season Dates</h4>
+            <p style="font-size:0.85rem; color:var(--gray); font-weight:300; line-height:1.65;">
+              Oct 3 - Nov 1, 2026<br />
+              Tickets on sale mid-August
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2026 Fresno Fright Nights. Owned and operated by Immersive Attractions Group, LLC. All rights reserved.</p>
+        <p>Not affiliated with the Island Waterpark.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ============================================
+       JS
+  ============================================= -->
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 50);
+    });
+
+    // Hamburger menu
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    hamburger.addEventListener('click', () => {
+      const isOpen = hamburger.classList.toggle('open');
+      mobileMenu.classList.toggle('open', isOpen);
+      hamburger.setAttribute('aria-expanded', isOpen);
+      mobileMenu.setAttribute('aria-hidden', !isOpen);
+      document.body.style.overflow = isOpen ? 'hidden' : '';
+    });
+
+    // Close mobile menu on nav link click
+    document.querySelectorAll('.mobile-nav-link, .mobile-menu .btn').forEach(link => {
+      link.addEventListener('click', () => {
+        hamburger.classList.remove('open');
+        mobileMenu.classList.remove('open');
+        hamburger.setAttribute('aria-expanded', 'false');
+        mobileMenu.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      });
+    });
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('open');
+        const answer = item.querySelector('.faq-answer');
+
+        // Close all
+        document.querySelectorAll('.faq-item').forEach(el => {
+          el.classList.remove('open');
+          el.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+          el.querySelector('.faq-answer').setAttribute('aria-hidden', 'true');
+        });
+
+        // Open clicked if it was closed
+        if (!isOpen) {
+          item.classList.add('open');
+          btn.setAttribute('aria-expanded', 'true');
+          answer.setAttribute('aria-hidden', 'false');
+        }
+      });
+    });
+
+    // Scroll fade-in animations
+    const fadeEls = document.querySelectorAll('.fade-up');
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.1, rootMargin: '0px 0px -40px 0px' }
+    );
+
+    fadeEls.forEach(el => observer.observe(el));
+
+    // Smooth scroll polyfill for older browsers (native scroll-behavior handles modern ones)
+    document.querySelectorAll('a[href^="#"]').forEach(link => {
+      link.addEventListener('click', (e) => {
+        const href = link.getAttribute('href');
+        if (href === '#') return;
+        const target = document.querySelector(href);
+        if (!target) return;
+        e.preventDefault();
+        const offset = document.getElementById('nav').offsetHeight;
+        const top = target.getBoundingClientRect().top + window.scrollY - offset;
+        window.scrollTo({ top, behavior: 'smooth' });
+      });
+    });
+  </script>
+
+</body>
+</html>
