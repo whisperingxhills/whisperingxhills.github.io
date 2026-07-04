@@ -235,6 +235,86 @@ textarea { min-height: 100px; resize: vertical; }
       <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
     </div>
 
+    <!-- Cash Control -->
+    <hr class="divider">
+    <div class="rating-group">
+      <div class="question">Till assignment at shift start (set starting cash per drawer, assigned to each employee)</div>
+      <div class="context">System knows exactly how much cash should be in each drawer based on who opened it and what they started with.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="r_till_assign" value="1"><span>1</span></label>
+        <label><input type="radio" name="r_till_assign" value="2"><span>2</span></label>
+        <label><input type="radio" name="r_till_assign" value="3"><span>3</span></label>
+        <label><input type="radio" name="r_till_assign" value="4"><span>4</span></label>
+        <label><input type="radio" name="r_till_assign" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Real-time cash tracking (system calculates expected cash from every sale)</div>
+      <div class="context">At any point during a shift, you can see what should be in the drawer vs what's actually there.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="r_cash_tracking" value="1"><span>1</span></label>
+        <label><input type="radio" name="r_cash_tracking" value="2"><span>2</span></label>
+        <label><input type="radio" name="r_cash_tracking" value="3"><span>3</span></label>
+        <label><input type="radio" name="r_cash_tracking" value="4"><span>4</span></label>
+        <label><input type="radio" name="r_cash_tracking" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">End-of-shift cash count with auto reconciliation</div>
+      <div class="context">Employee counts the drawer, enters the amount. System automatically shows if it's over, short, or exact.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="r_cash_recon" value="1"><span>1</span></label>
+        <label><input type="radio" name="r_cash_recon" value="2"><span>2</span></label>
+        <label><input type="radio" name="r_cash_recon" value="3"><span>3</span></label>
+        <label><input type="radio" name="r_cash_recon" value="4"><span>4</span></label>
+        <label><input type="radio" name="r_cash_recon" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Manager alerts when a drawer is over or short by a certain amount</div>
+      <div class="context">Automatic notification if a drawer is off by more than a set threshold. No one has to manually check.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="r_cash_alerts" value="1"><span>1</span></label>
+        <label><input type="radio" name="r_cash_alerts" value="2"><span>2</span></label>
+        <label><input type="radio" name="r_cash_alerts" value="3"><span>3</span></label>
+        <label><input type="radio" name="r_cash_alerts" value="4"><span>4</span></label>
+        <label><input type="radio" name="r_cash_alerts" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Sales-to-cash reporting (daily totals, cash vs card breakdown, deposit calculations)</div>
+      <div class="context">One report that shows everything: how much came in, how it was paid, what the deposit should be.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="r_cash_reports" value="1"><span>1</span></label>
+        <label><input type="radio" name="r_cash_reports" value="2"><span>2</span></label>
+        <label><input type="radio" name="r_cash_reports" value="3"><span>3</span></label>
+        <label><input type="radio" name="r_cash_reports" value="4"><span>4</span></label>
+        <label><input type="radio" name="r_cash_reports" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Full audit trail (who opened which drawer, when, every count, every override)</div>
+      <div class="context">Complete history of every cash-related action. Nothing gets lost or forgotten.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="r_cash_audit" value="1"><span>1</span></label>
+        <label><input type="radio" name="r_cash_audit" value="2"><span>2</span></label>
+        <label><input type="radio" name="r_cash_audit" value="3"><span>3</span></label>
+        <label><input type="radio" name="r_cash_audit" value="4"><span>4</span></label>
+        <label><input type="radio" name="r_cash_audit" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
     <!-- Menu & Inventory -->
     <hr class="divider">
     <div class="rating-group">
