@@ -81,6 +81,7 @@ body { width: 100%; }
 #iwp-calendar .iwc-tag--holiday { background: #FED7AA; color: #C2410C; }
 #iwp-calendar .iwc-tag--wlsl { background: #BFDBFE; color: #1E40AF; }
 #iwp-calendar .iwc-tag--tidalrave { background: #C4B5FD; color: #4C1D95; }
+#iwp-calendar .iwc-tag--perreo { background: #FECACA; color: #991B1B; }
 #iwp-calendar .iwc-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 999999; display: none; align-items: center; justify-content: center; padding: 24px; }
 #iwp-calendar .iwc-popup-overlay.active { display: flex; }
 #iwp-calendar .iwc-popup { background: white; border-radius: 16px; max-width: 400px; width: 100%; overflow: hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.4); animation: iwcPopIn 0.2s ease; }
@@ -154,6 +155,7 @@ body { width: 100%; }
  <div class="iwc-legend-item"><div class="iwc-legend-dot" style="background:#FECDD3;border:1px solid #FDA4AF"></div>Fireworks</div>
  <div class="iwc-legend-item"><div class="iwc-legend-dot" style="background:#FED7AA;border:1px solid #FDBA74"></div>Holidays</div>
  <div class="iwc-legend-item"><div class="iwc-legend-dot" style="background:#C4B5FD;border:1px solid #A78BFA"></div>Tidal Rave</div>
+ <div class="iwc-legend-item"><div class="iwc-legend-dot" style="background:#FECACA;border:1px solid #FCA5A5"></div>Perreo En La Playa</div>
  </div>
  <div class="iwc-month-info" id="iwcMonthInfo"></div>
  <div class="iwc-dow-row">
@@ -210,7 +212,8 @@ body { width: 100%; }
  'july4': { label: 'July 4th', cls: 'iwc-tag--holiday', emoji: '\u{1F1FA}\u{1F1F8}', desc: 'Independence Day' },
  'laborday': { label: 'Labor Day', cls: 'iwc-tag--holiday', emoji: '\u{1F1FA}\u{1F1F8}', desc: 'Labor Day' },
  'wlsl': { label: "World's Largest Swim Lesson", cls: 'iwc-tag--wlsl', emoji: '\u{1F3CA}', desc: "World's Largest Swim Lesson" },
- 'tidalrave': { label: 'Tidal Rave', cls: 'iwc-tag--tidalrave', emoji: '\u{1F3B6}', desc: 'Tidal Rave \u2014 The Ultimate Water Rave Experience. Tickets available soon!' }
+ 'tidalrave': { label: 'Tidal Rave', cls: 'iwc-tag--tidalrave', emoji: '\u{1F3B6}', desc: 'Tidal Rave \u2014 The Ultimate Water Rave Experience. Tickets available soon!' },
+ 'perreo': { label: 'Perreo En La Playa', cls: 'iwc-tag--perreo', emoji: '\u{1F525}', desc: 'Perreo En La Playa ft Jowell & Randy. In collaboration with Jangue. Tickets available soon!' }
  };
 
  var AFTER_HOURS_RATES = {
@@ -295,6 +298,7 @@ body { width: 100%; }
  [7,22,'11:00\u20136:00',[],{}],
  [7,23,'11:00\u20136:00',[],{}],
  [7,28,'Special Event, Water Park Closed',['tidalrave'],{note:'Tidal Rave \u2014 Tickets Available Soon! This event is NOT part of the IWP season. It is a special event series in collaboration with K-LIN. No IWP perks will apply (season passes, etc.).',noTickets:true}],
+ [7,21,'Special Event, Water Park Closed',['perreo'],{note:'Perreo En La Playa ft Jowell & Randy \u2014 Tickets Available Soon! This event is NOT part of the IWP season. It is a special event in collaboration with Jangue. No IWP perks will apply (season passes, etc.).',noTickets:true}],
  [7,29,'11:00\u20136:00',[],{}],
  [7,30,'11:00\u20136:00',[],{}],
  [8,5,'11:00\u20136:00',[],{}],
