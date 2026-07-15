@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Island Cloud POS - Feedback Part 2</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d1117; color: #e2e8f0; min-height: 100vh; }
+.container { max-width: 720px; margin: 0 auto; padding: 24px 16px 80px; }
+.logo { text-align: center; margin-bottom: 32px; }
+.logo h1 { font-size: 28px; font-weight: 800; color: #14b8a6; }
+.logo p { font-size: 14px; color: #64748b; margin-top: 6px; }
+.intro { background: #1a2235; border-radius: 12px; padding: 20px; margin-bottom: 32px; border: 1px solid #2a3548; }
+.intro p { font-size: 14px; line-height: 1.6; color: #94a3b8; }
+.intro strong { color: #e2e8f0; }
+.section { margin-bottom: 36px; }
+.section-title { font-size: 18px; font-weight: 700; color: #14b8a6; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #2a3548; }
+.field { margin-bottom: 20px; }
+.field label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; color: #e2e8f0; }
+.field .hint { font-size: 12px; color: #64748b; margin-bottom: 6px; }
+input[type="text"], input[type="email"], textarea, select {
+  width: 100%; padding: 12px; background: #1a2235; border: 1px solid #2a3548;
+  border-radius: 8px; color: #e2e8f0; font-size: 14px; font-family: inherit;
+}
+input:focus, textarea:focus, select:focus { outline: none; border-color: #14b8a6; }
+textarea { min-height: 100px; resize: vertical; }
+.rating-group { margin-bottom: 24px; }
+.rating-group .question { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #e2e8f0; }
+.rating-group .context { font-size: 12px; color: #64748b; margin-bottom: 10px; }
+.rating-options { display: flex; gap: 8px; flex-wrap: wrap; }
+.rating-options label {
+  display: flex; align-items: center; justify-content: center;
+  width: 48px; height: 48px; background: #1a2235; border: 1px solid #2a3548;
+  border-radius: 8px; cursor: pointer; font-size: 16px; font-weight: 700;
+  transition: all 0.15s;
+}
+.rating-options input[type="radio"] { display: none; }
+.rating-options label:hover { border-color: #14b8a6; }
+.rating-options label span {
+  display: flex; align-items: center; justify-content: center;
+  width: 100%; height: 100%; border-radius: 7px;
+}
+.scale-legend { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; margin-top: 4px; padding: 0 4px; }
+.divider { border: none; border-top: 1px solid #2a3548; margin: 32px 0; }
+.submit-btn {
+  display: block; width: 100%; padding: 16px; background: #14b8a6; color: #fff;
+  border: none; border-radius: 8px; font-size: 16px; font-weight: 700;
+  cursor: pointer; transition: background 0.2s;
+}
+.submit-btn:hover { background: #0d9488; }
+.submit-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+@media print {
+  body { background: #fff; color: #1a1a1a; }
+  .container { max-width: 100%; }
+  input, textarea, select { border: 1px solid #ccc; background: #fff; color: #1a1a1a; }
+  .rating-options label { border: 1px solid #ccc; background: #fff; color: #1a1a1a; }
+  .submit-btn { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="logo">
+    <h1>Island Cloud POS</h1>
+    <p>Feedback — Part 2</p>
+  </div>
+
+  <div class="intro">
+    <p>Thanks for the initial feedback on Island Cloud. We're moving into the next phase and need a bit more detail to make sure we build this right.</p>
+    <p style="margin-top:12px;">This covers everything from daily pain points to which features matter most. <strong>Same rules as before: no wrong answers. Be honest, be specific.</strong></p>
+  </div>
+
+  <form action="https://formsubmit.co/hillserino@icloud.com" method="POST">
+  <!-- FormSubmit config -->
+  <input type="hidden" name="_subject" value="Island Cloud POS — New Feedback Submission">
+  <input type="hidden" name="_captcha" value="false">
+  <input type="hidden" name="_template" value="table">
+  <input type="hidden" name="_next" value="https://whisperingxhills.github.io/island-cloud-thanks.html">
+  <input type="text" name="_honey" style="display:none">
+
+  <!-- ABOUT YOU -->
+  <div class="section">
+    <div class="section-title">About You</div>
+    <div class="field">
+      <label>Your Name</label>
+      <input type="text" name="Name" required>
+    </div>
+    <div class="field">
+      <label>Your Role / Department</label>
+      <input type="text" name="Role" placeholder="e.g., F&B Manager, Front Gate Lead, Cabana Supervisor">
+    </div>
+    <div class="field">
+      <label>How long have you worked at the park?</label>
+      <select name="Tenure">
+        <option value="">Select...</option>
+        <option value="First season">This is my first season</option>
+        <option value="1-2 seasons">1-2 seasons</option>
+        <option value="3-5 seasons">3-5 seasons</option>
+        <option value="5+ seasons">5+ seasons</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- CURRENT PAIN POINTS -->
+  <div class="section">
+    <div class="section-title">Current Pain Points</div>
+    <div class="field">
+      <label>What's the most frustrating thing about the current system(s) you use?</label>
+      <div class="hint">POS, ordering, inventory, payments, anything. Be specific.</div>
+      <textarea name="Frustrations" rows="4"></textarea>
+    </div>
+    <div class="field">
+      <label>What tasks take way too long or require too many steps?</label>
+      <textarea name="Slow Tasks" rows="3"></textarea>
+    </div>
+    <div class="field">
+      <label>What breaks or goes wrong most often during a busy day?</label>
+      <textarea name="Breakdowns" rows="3"></textarea>
+    </div>
+    <div class="field">
+      <label>What do guests complain about most related to food, ordering, or payments?</label>
+      <textarea name="Guest Complaints" rows="3"></textarea>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FEATURE IMPORTANCE RATINGS -->
+  <div class="section">
+    <div class="section-title">Feature Importance</div>
+    <p style="font-size:13px; color:#64748b; margin-bottom:20px;">Rate how important each feature would be for your daily work. 1 = not important, 5 = critical.</p>
+
+    <!-- F&B Core -->
+    <div class="rating-group">
+      <div class="question">Quick menu item lookup and ordering on a touchscreen</div>
+      <div class="context">Tap an item, it adds to the order. No typing, no scrolling through long lists.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Quick Menu" value="1"><span>1</span></label>
+        <label><input type="radio" name="Quick Menu" value="2"><span>2</span></label>
+        <label><input type="radio" name="Quick Menu" value="3"><span>3</span></label>
+        <label><input type="radio" name="Quick Menu" value="4"><span>4</span></label>
+        <label><input type="radio" name="Quick Menu" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Modifier buttons (no onions, extra cheese, etc.)</div>
+      <div class="context">One-tap customizations instead of writing notes or yelling to the kitchen.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Modifiers" value="1"><span>1</span></label>
+        <label><input type="radio" name="Modifiers" value="2"><span>2</span></label>
+        <label><input type="radio" name="Modifiers" value="3"><span>3</span></label>
+        <label><input type="radio" name="Modifiers" value="4"><span>4</span></label>
+        <label><input type="radio" name="Modifiers" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Kitchen display screen (orders show up on a screen instead of printed tickets)</div>
+      <div class="context">Color-coded by wait time. Kitchen taps "done" when order is ready. No lost tickets.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Kitchen Display" value="1"><span>1</span></label>
+        <label><input type="radio" name="Kitchen Display" value="2"><span>2</span></label>
+        <label><input type="radio" name="Kitchen Display" value="3"><span>3</span></label>
+        <label><input type="radio" name="Kitchen Display" value="4"><span>4</span></label>
+        <label><input type="radio" name="Kitchen Display" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Printed receipts for customers</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Receipts" value="1"><span>1</span></label>
+        <label><input type="radio" name="Receipts" value="2"><span>2</span></label>
+        <label><input type="radio" name="Receipts" value="3"><span>3</span></label>
+        <label><input type="radio" name="Receipts" value="4"><span>4</span></label>
+        <label><input type="radio" name="Receipts" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Printed kitchen tickets (backup to kitchen display)</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Kitchen Tickets" value="1"><span>1</span></label>
+        <label><input type="radio" name="Kitchen Tickets" value="2"><span>2</span></label>
+        <label><input type="radio" name="Kitchen Tickets" value="3"><span>3</span></label>
+        <label><input type="radio" name="Kitchen Tickets" value="4"><span>4</span></label>
+        <label><input type="radio" name="Kitchen Tickets" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <!-- Payments -->
+    <hr class="divider">
+    <div class="rating-group">
+      <div class="question">Mobile ordering (guests order food from their phone, pick up when ready)</div>
+      <div class="context">QR code on tables/signs. Guest orders, gets a notification, walks up and grabs it.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Mobile Ordering" value="1"><span>1</span></label>
+        <label><input type="radio" name="Mobile Ordering" value="2"><span>2</span></label>
+        <label><input type="radio" name="Mobile Ordering" value="3"><span>3</span></label>
+        <label><input type="radio" name="Mobile Ordering" value="4"><span>4</span></label>
+        <label><input type="radio" name="Mobile Ordering" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Split payments (one order split between multiple cards/payment types)</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Split Payments" value="1"><span>1</span></label>
+        <label><input type="radio" name="Split Payments" value="2"><span>2</span></label>
+        <label><input type="radio" name="Split Payments" value="3"><span>3</span></label>
+        <label><input type="radio" name="Split Payments" value="4"><span>4</span></label>
+        <label><input type="radio" name="Split Payments" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Cash handling (cash drawer, change calculator, cash-out reports)</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Cash Handling" value="1"><span>1</span></label>
+        <label><input type="radio" name="Cash Handling" value="2"><span>2</span></label>
+        <label><input type="radio" name="Cash Handling" value="3"><span>3</span></label>
+        <label><input type="radio" name="Cash Handling" value="4"><span>4</span></label>
+        <label><input type="radio" name="Cash Handling" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <!-- Cash Control -->
+    <hr class="divider">
+    <div class="rating-group">
+      <div class="question">Till assignment at shift start (set starting cash per drawer, assigned to each employee)</div>
+      <div class="context">System knows exactly how much cash should be in each drawer based on who opened it and what they started with.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Till Assignment" value="1"><span>1</span></label>
+        <label><input type="radio" name="Till Assignment" value="2"><span>2</span></label>
+        <label><input type="radio" name="Till Assignment" value="3"><span>3</span></label>
+        <label><input type="radio" name="Till Assignment" value="4"><span>4</span></label>
+        <label><input type="radio" name="Till Assignment" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Real-time cash tracking (system calculates expected cash from every sale)</div>
+      <div class="context">At any point during a shift, you can see what should be in the drawer vs what's actually there.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Cash Tracking" value="1"><span>1</span></label>
+        <label><input type="radio" name="Cash Tracking" value="2"><span>2</span></label>
+        <label><input type="radio" name="Cash Tracking" value="3"><span>3</span></label>
+        <label><input type="radio" name="Cash Tracking" value="4"><span>4</span></label>
+        <label><input type="radio" name="Cash Tracking" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">End-of-shift cash count with auto reconciliation</div>
+      <div class="context">Employee counts the drawer, enters the amount. System automatically shows if it's over, short, or exact.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Cash Reconciliation" value="1"><span>1</span></label>
+        <label><input type="radio" name="Cash Reconciliation" value="2"><span>2</span></label>
+        <label><input type="radio" name="Cash Reconciliation" value="3"><span>3</span></label>
+        <label><input type="radio" name="Cash Reconciliation" value="4"><span>4</span></label>
+        <label><input type="radio" name="Cash Reconciliation" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Manager alerts when a drawer is over or short by a certain amount</div>
+      <div class="context">Automatic notification if a drawer is off by more than a set threshold. No one has to manually check.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Cash Alerts" value="1"><span>1</span></label>
+        <label><input type="radio" name="Cash Alerts" value="2"><span>2</span></label>
+        <label><input type="radio" name="Cash Alerts" value="3"><span>3</span></label>
+        <label><input type="radio" name="Cash Alerts" value="4"><span>4</span></label>
+        <label><input type="radio" name="Cash Alerts" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Sales-to-cash reporting (daily totals, cash vs card breakdown, deposit calculations)</div>
+      <div class="context">One report that shows everything: how much came in, how it was paid, what the deposit should be.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Cash Reports" value="1"><span>1</span></label>
+        <label><input type="radio" name="Cash Reports" value="2"><span>2</span></label>
+        <label><input type="radio" name="Cash Reports" value="3"><span>3</span></label>
+        <label><input type="radio" name="Cash Reports" value="4"><span>4</span></label>
+        <label><input type="radio" name="Cash Reports" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Full audit trail (who opened which drawer, when, every count, every override)</div>
+      <div class="context">Complete history of every cash-related action. Nothing gets lost or forgotten.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Audit Trail" value="1"><span>1</span></label>
+        <label><input type="radio" name="Audit Trail" value="2"><span>2</span></label>
+        <label><input type="radio" name="Audit Trail" value="3"><span>3</span></label>
+        <label><input type="radio" name="Audit Trail" value="4"><span>4</span></label>
+        <label><input type="radio" name="Audit Trail" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <!-- Menu & Inventory -->
+    <hr class="divider">
+    <div class="rating-group">
+      <div class="question">Easy menu editing (change prices, add/remove items, update descriptions)</div>
+      <div class="context">Make a change in one place and it updates on every screen, menu board, and app.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Menu Editing" value="1"><span>1</span></label>
+        <label><input type="radio" name="Menu Editing" value="2"><span>2</span></label>
+        <label><input type="radio" name="Menu Editing" value="3"><span>3</span></label>
+        <label><input type="radio" name="Menu Editing" value="4"><span>4</span></label>
+        <label><input type="radio" name="Menu Editing" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Video menu board editor (design what shows on the screens above the counter)</div>
+      <div class="context">Upload a background, drag items and prices on it, hit publish.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Menu Boards" value="1"><span>1</span></label>
+        <label><input type="radio" name="Menu Boards" value="2"><span>2</span></label>
+        <label><input type="radio" name="Menu Boards" value="3"><span>3</span></label>
+        <label><input type="radio" name="Menu Boards" value="4"><span>4</span></label>
+        <label><input type="radio" name="Menu Boards" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Inventory tracking (know what's in stock, get alerts when running low)</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Inventory" value="1"><span>1</span></label>
+        <label><input type="radio" name="Inventory" value="2"><span>2</span></label>
+        <label><input type="radio" name="Inventory" value="3"><span>3</span></label>
+        <label><input type="radio" name="Inventory" value="4"><span>4</span></label>
+        <label><input type="radio" name="Inventory" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Combo deals and meal bundles (e.g., burger + fries + drink for $12)</div>
+      <div class="context">One button rings up the combo, applies the discount automatically.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Combos" value="1"><span>1</span></label>
+        <label><input type="radio" name="Combos" value="2"><span>2</span></label>
+        <label><input type="radio" name="Combos" value="3"><span>3</span></label>
+        <label><input type="radio" name="Combos" value="4"><span>4</span></label>
+        <label><input type="radio" name="Combos" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <!-- Operations -->
+    <hr class="divider">
+    <div class="rating-group">
+      <div class="question">Employee clock-in / clock-out through the POS</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Time Clock" value="1"><span>1</span></label>
+        <label><input type="radio" name="Time Clock" value="2"><span>2</span></label>
+        <label><input type="radio" name="Time Clock" value="3"><span>3</span></label>
+        <label><input type="radio" name="Time Clock" value="4"><span>4</span></label>
+        <label><input type="radio" name="Time Clock" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Employee meal discounts / tracking</div>
+      <div class="context">Staff meals tracked in the system. No guessing, no honor system.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Staff Meals" value="1"><span>1</span></label>
+        <label><input type="radio" name="Staff Meals" value="2"><span>2</span></label>
+        <label><input type="radio" name="Staff Meals" value="3"><span>3</span></label>
+        <label><input type="radio" name="Staff Meals" value="4"><span>4</span></label>
+        <label><input type="radio" name="Staff Meals" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">End-of-day reports (sales totals, popular items, cash reconciliation)</div>
+      <div class="rating-options">
+        <label><input type="radio" name="EOD Reports" value="1"><span>1</span></label>
+        <label><input type="radio" name="EOD Reports" value="2"><span>2</span></label>
+        <label><input type="radio" name="EOD Reports" value="3"><span>3</span></label>
+        <label><input type="radio" name="EOD Reports" value="4"><span>4</span></label>
+        <label><input type="radio" name="EOD Reports" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Real-time sales dashboard (see what's selling right now from your phone)</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Realtime Dashboard" value="1"><span>1</span></label>
+        <label><input type="radio" name="Realtime Dashboard" value="2"><span>2</span></label>
+        <label><input type="radio" name="Realtime Dashboard" value="3"><span>3</span></label>
+        <label><input type="radio" name="Realtime Dashboard" value="4"><span>4</span></label>
+        <label><input type="radio" name="Realtime Dashboard" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <!-- Guest Experience -->
+    <hr class="divider">
+    <div class="rating-group">
+      <div class="question">Season pass holder discounts applied automatically</div>
+      <div class="context">Scan their pass, discount applies. No codes, no manager overrides.</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Pass Discounts" value="1"><span>1</span></label>
+        <label><input type="radio" name="Pass Discounts" value="2"><span>2</span></label>
+        <label><input type="radio" name="Pass Discounts" value="3"><span>3</span></label>
+        <label><input type="radio" name="Pass Discounts" value="4"><span>4</span></label>
+        <label><input type="radio" name="Pass Discounts" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Loyalty rewards (buy 10 get 1 free, points, etc.)</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Loyalty" value="1"><span>1</span></label>
+        <label><input type="radio" name="Loyalty" value="2"><span>2</span></label>
+        <label><input type="radio" name="Loyalty" value="3"><span>3</span></label>
+        <label><input type="radio" name="Loyalty" value="4"><span>4</span></label>
+        <label><input type="radio" name="Loyalty" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+
+    <div class="rating-group">
+      <div class="question">Allergen/dietary info on menu items (gluten-free, nut-free, etc.)</div>
+      <div class="rating-options">
+        <label><input type="radio" name="Allergens" value="1"><span>1</span></label>
+        <label><input type="radio" name="Allergens" value="2"><span>2</span></label>
+        <label><input type="radio" name="Allergens" value="3"><span>3</span></label>
+        <label><input type="radio" name="Allergens" value="4"><span>4</span></label>
+        <label><input type="radio" name="Allergens" value="5"><span>5</span></label>
+      </div>
+      <div class="scale-legend"><span>Not important</span><span>Critical</span></div>
+    </div>
+  </div>
+
+  <!-- OPEN-ENDED -->
+  <div class="section">
+    <div class="section-title">Blue Sky</div>
+    <div class="field">
+      <label>If you could wave a magic wand, what would the perfect park system do?</label>
+      <div class="hint">No limits. Think big. What would make your job easier or make guests happier?</div>
+      <textarea name="Blue Sky" rows="5"></textarea>
+    </div>
+    <div class="field">
+      <label>Is there anything you've seen at another park, restaurant, or venue that you wish we had?</label>
+      <textarea name="Seen Elsewhere" rows="4"></textarea>
+    </div>
+    <div class="field">
+      <label>What's one thing that would save you the most time every single day?</label>
+      <textarea name="Time Saver" rows="3"></textarea>
+    </div>
+    <div class="field">
+      <label>Anything else you want us to know?</label>
+      <textarea name="Anything Else" rows="4"></textarea>
+    </div>
+  </div>
+
+  <button type="submit" class="submit-btn">Submit Feedback</button>
+  </form>
+
+</div>
+
+<script>
+// Rating button visual toggle
+document.querySelectorAll('.rating-options label').forEach(function(label) {
+  label.addEventListener('click', function() {
+    var group = this.closest('.rating-options');
+    group.querySelectorAll('label span').forEach(function(s) {
+      s.style.background = ''; s.style.color = ''; s.style.borderColor = '';
+    });
+    var span = this.querySelector('span');
+    span.style.background = '#14b8a6';
+    span.style.color = '#fff';
+  });
+});
+</script>
+</body>
+</html>
