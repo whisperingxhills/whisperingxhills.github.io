@@ -3,46 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Island Waterpark — July–October 2026 Calendar</title>
+<title>Island Waterpark — Jul–Oct 2026 Operations Calendar</title>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
 body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: #fff; color: #1a1a1a; }
-.page { width: 100%; max-width: 1100px; margin: 0 auto; page-break-after: always; padding: 32px 24px; }
-.page:last-child { page-break-after: auto; }
-.month-header { text-align: center; margin-bottom: 12px; }
-.month-header h1 { font-size: 28px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; }
-.month-header .year { font-size: 14px; font-weight: 400; color: #888; letter-spacing: 1px; }
-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
-thead th {
-  background: #1a1a1a; color: #fff;
-  font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-  padding: 10px 4px; text-align: center;
-}
-tbody td {
-  border: 1px solid #ddd; vertical-align: top;
-  height: 110px; width: 14.28%; padding: 6px 8px;
-  font-size: 12px; position: relative;
-}
-tbody td.empty { background: #f8f8f8; }
-.day-num { font-size: 16px; font-weight: 700; color: #1a1a1a; margin-bottom: 4px; }
-.day-content { font-size: 11px; line-height: 1.4; color: #444; }
-td.weekend { background: #fafafa; }
-td.weekend .day-num { color: #c00; }
+.container { max-width: 900px; margin: 0 auto; padding: 24px; }
+h1 { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 2px; }
+.subtitle { text-align: center; font-size: 12px; color: #888; margin-bottom: 32px; letter-spacing: 1px; }
 
-@media print {
-  body { background: #fff; }
-  .page { padding: 16px; max-width: 100%; }
-  .no-print { display: none; }
-  tbody td { height: 100px; }
+.month-section { margin-bottom: 36px; page-break-inside: avoid; }
+.month-title {
+  font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
+  background: #1a1a1a; color: #fff; padding: 10px 16px; margin-bottom: 0;
 }
+
+.day-row {
+  display: flex; border-bottom: 1px solid #e0e0e0; min-height: 36px;
+}
+.day-date {
+  width: 160px; min-width: 160px; padding: 8px 12px;
+  font-weight: 700; font-size: 13px; background: #f8f8f8;
+  border-right: 1px solid #e0e0e0;
+}
+.day-date.weekend { color: #c00; }
+.day-date.closed { color: #999; }
+.day-content {
+  flex: 1; padding: 8px 12px; font-size: 13px; line-height: 1.5;
+}
+
+.tag {
+  display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.5px; padding: 2px 8px; border-radius: 3px; margin-right: 6px;
+  vertical-align: middle;
+}
+.tag-deadline { background: #dc2626; color: #fff; }
+.tag-closed { background: #6b7280; color: #fff; }
+.tag-event { background: #2563eb; color: #fff; }
+.tag-hiring { background: #7c3aed; color: #fff; }
+.tag-training { background: #0891b2; color: #fff; }
+
+.item { margin-bottom: 4px; }
+.item:last-child { margin-bottom: 0; }
 
 .print-btn {
   display: block; width: 200px; margin: 0 auto 24px;
   padding: 12px 24px; background: #1a1a1a; color: #fff;
   border: none; border-radius: 8px; font-size: 14px; font-weight: 700;
-  cursor: pointer; text-align: center;
+  cursor: pointer;
 }
 .print-btn:hover { background: #333; }
+
+@media print {
+  .no-print { display: none; }
+  .container { padding: 12px; max-width: 100%; }
+  .month-section { page-break-inside: avoid; }
+  .day-row { min-height: auto; }
+}
 </style>
 </head>
 <body>
@@ -51,254 +67,245 @@ td.weekend .day-num { color: #c00; }
   <button class="print-btn" onclick="window.print()">🖨️ Print Calendar</button>
 </div>
 
-<!-- JULY 2026 -->
-<div class="page">
-  <div class="month-header">
-    <h1>July</h1>
-    <div class="year">2026</div>
-  </div>
-  <table>
-    <thead>
-      <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="empty weekend"></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td><div class="day-num">1</div><div class="day-content"></div></td>
-        <td><div class="day-num">2</div><div class="day-content"></div></td>
-        <td><div class="day-num">3</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">4</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">5</div><div class="day-content"></div></td>
-        <td><div class="day-num">6</div><div class="day-content"></div></td>
-        <td><div class="day-num">7</div><div class="day-content"></div></td>
-        <td><div class="day-num">8</div><div class="day-content"></div></td>
-        <td><div class="day-num">9</div><div class="day-content"></div></td>
-        <td><div class="day-num">10</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">11</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">12</div><div class="day-content"></div></td>
-        <td><div class="day-num">13</div><div class="day-content"></div></td>
-        <td><div class="day-num">14</div><div class="day-content"></div></td>
-        <td><div class="day-num">15</div><div class="day-content"></div></td>
-        <td><div class="day-num">16</div><div class="day-content"></div></td>
-        <td><div class="day-num">17</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">18</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">19</div><div class="day-content"></div></td>
-        <td><div class="day-num">20</div><div class="day-content"></div></td>
-        <td><div class="day-num">21</div><div class="day-content"></div></td>
-        <td><div class="day-num">22</div><div class="day-content"></div></td>
-        <td><div class="day-num">23</div><div class="day-content"></div></td>
-        <td><div class="day-num">24</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">25</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">26</div><div class="day-content"></div></td>
-        <td><div class="day-num">27</div><div class="day-content"></div></td>
-        <td><div class="day-num">28</div><div class="day-content"></div></td>
-        <td><div class="day-num">29</div><div class="day-content"></div></td>
-        <td><div class="day-num">30</div><div class="day-content"></div></td>
-        <td><div class="day-num">31</div><div class="day-content"></div></td>
-        <td class="empty weekend"></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+<div class="container">
+  <h1>Operations Calendar</h1>
+  <div class="subtitle">July — October 2026</div>
 
-<!-- AUGUST 2026 -->
-<div class="page">
-  <div class="month-header">
-    <h1>August</h1>
-    <div class="year">2026</div>
-  </div>
-  <table>
-    <thead>
-      <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="empty weekend"></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td class="weekend"><div class="day-num">1</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">2</div><div class="day-content"></div></td>
-        <td><div class="day-num">3</div><div class="day-content"></div></td>
-        <td><div class="day-num">4</div><div class="day-content"></div></td>
-        <td><div class="day-num">5</div><div class="day-content"></div></td>
-        <td><div class="day-num">6</div><div class="day-content"></div></td>
-        <td><div class="day-num">7</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">8</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">9</div><div class="day-content"></div></td>
-        <td><div class="day-num">10</div><div class="day-content"></div></td>
-        <td><div class="day-num">11</div><div class="day-content"></div></td>
-        <td><div class="day-num">12</div><div class="day-content"></div></td>
-        <td><div class="day-num">13</div><div class="day-content"></div></td>
-        <td><div class="day-num">14</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">15</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">16</div><div class="day-content"></div></td>
-        <td><div class="day-num">17</div><div class="day-content"></div></td>
-        <td><div class="day-num">18</div><div class="day-content"></div></td>
-        <td><div class="day-num">19</div><div class="day-content"></div></td>
-        <td><div class="day-num">20</div><div class="day-content"></div></td>
-        <td><div class="day-num">21</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">22</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">23</div><div class="day-content"></div></td>
-        <td><div class="day-num">24</div><div class="day-content"></div></td>
-        <td><div class="day-num">25</div><div class="day-content"></div></td>
-        <td><div class="day-num">26</div><div class="day-content"></div></td>
-        <td><div class="day-num">27</div><div class="day-content"></div></td>
-        <td><div class="day-num">28</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">29</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">30</div><div class="day-content"></div></td>
-        <td><div class="day-num">31</div><div class="day-content"></div></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td class="empty weekend"></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+  <!-- ========== JULY 2026 ========== -->
+  <div class="month-section">
+    <div class="month-title">July 2026</div>
 
-<!-- SEPTEMBER 2026 -->
-<div class="page">
-  <div class="month-header">
-    <h1>September</h1>
-    <div class="year">2026</div>
+    <div class="day-row"><div class="day-date">Wed, Jul 1</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Jul 2</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Jul 3</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Jul 4</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Jul 5</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Jul 6</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Jul 7</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Jul 8</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Jul 9</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Jul 10</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Jul 11</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Jul 12</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Jul 13</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Jul 14</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Jul 15</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Jul 16</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Jul 17</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Jul 18</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Jul 19</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Jul 20</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Jul 21</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Jul 22</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Jul 23</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Jul 24</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Jul 25</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Jul 26</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Jul 27</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Jul 28</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Jul 29</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Jul 30</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Jul 31</div><div class="day-content"></div></div>
   </div>
-  <table>
-    <thead>
-      <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="empty weekend"></td>
-        <td class="empty"></td>
-        <td><div class="day-num">1</div><div class="day-content"></div></td>
-        <td><div class="day-num">2</div><div class="day-content"></div></td>
-        <td><div class="day-num">3</div><div class="day-content"></div></td>
-        <td><div class="day-num">4</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">5</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">6</div><div class="day-content"></div></td>
-        <td><div class="day-num">7</div><div class="day-content"></div></td>
-        <td><div class="day-num">8</div><div class="day-content"></div></td>
-        <td><div class="day-num">9</div><div class="day-content"></div></td>
-        <td><div class="day-num">10</div><div class="day-content"></div></td>
-        <td><div class="day-num">11</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">12</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">13</div><div class="day-content"></div></td>
-        <td><div class="day-num">14</div><div class="day-content"></div></td>
-        <td><div class="day-num">15</div><div class="day-content"></div></td>
-        <td><div class="day-num">16</div><div class="day-content"></div></td>
-        <td><div class="day-num">17</div><div class="day-content"></div></td>
-        <td><div class="day-num">18</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">19</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">20</div><div class="day-content"></div></td>
-        <td><div class="day-num">21</div><div class="day-content"></div></td>
-        <td><div class="day-num">22</div><div class="day-content"></div></td>
-        <td><div class="day-num">23</div><div class="day-content"></div></td>
-        <td><div class="day-num">24</div><div class="day-content"></div></td>
-        <td><div class="day-num">25</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">26</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">27</div><div class="day-content"></div></td>
-        <td><div class="day-num">28</div><div class="day-content"></div></td>
-        <td><div class="day-num">29</div><div class="day-content"></div></td>
-        <td><div class="day-num">30</div><div class="day-content"></div></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td class="empty weekend"></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 
-<!-- OCTOBER 2026 -->
-<div class="page">
-  <div class="month-header">
-    <h1>October</h1>
-    <div class="year">2026</div>
+  <!-- ========== AUGUST 2026 ========== -->
+  <div class="month-section">
+    <div class="month-title">August 2026</div>
+
+    <div class="day-row"><div class="day-date weekend">Sat, Aug 1</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Aug 2</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Aug 3</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Aug 4</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Aug 5</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Aug 6</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Aug 7</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Aug 8</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Aug 9</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Aug 10</div><div class="day-content"></div></div>
+
+    <div class="day-row">
+      <div class="day-date">Tue, Aug 11</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-deadline">DEADLINE</span> NIGHTCRAWLERS BUMPER CAR ROOM — Dressed and effects installed / tested / haunt show ready</div>
+      </div>
+    </div>
+
+    <div class="day-row"><div class="day-date closed">Wed, Aug 12</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date closed">Thu, Aug 13</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date closed">Fri, Aug 14</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Aug 15</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Aug 16</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date closed">Mon, Aug 17</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date closed">Tue, Aug 18</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date closed">Wed, Aug 19</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date closed">Thu, Aug 20</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date closed">Fri, Aug 21</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Aug 22</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Aug 23</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date closed">Mon, Aug 24</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date closed">Tue, Aug 25</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date closed">Wed, Aug 26</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date closed">Thu, Aug 27</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date closed">Fri, Aug 28</div><div class="day-content"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Aug 29</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Aug 30</div><div class="day-content"></div></div>
+
+    <div class="day-row">
+      <div class="day-date closed">Mon, Aug 31</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-closed">CLOSED</span> Waterpark closed</div>
+        <div class="item"><span class="tag tag-deadline">DEADLINE</span> CHEMIKILL — New effects installed — Power ran to existing haunt (pending maze completion)</div>
+      </div>
+    </div>
   </div>
-  <table>
-    <thead>
-      <tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td class="empty weekend"></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td class="empty"></td>
-        <td><div class="day-num">1</div><div class="day-content"></div></td>
-        <td><div class="day-num">2</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">3</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">4</div><div class="day-content"></div></td>
-        <td><div class="day-num">5</div><div class="day-content"></div></td>
-        <td><div class="day-num">6</div><div class="day-content"></div></td>
-        <td><div class="day-num">7</div><div class="day-content"></div></td>
-        <td><div class="day-num">8</div><div class="day-content"></div></td>
-        <td><div class="day-num">9</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">10</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">11</div><div class="day-content"></div></td>
-        <td><div class="day-num">12</div><div class="day-content"></div></td>
-        <td><div class="day-num">13</div><div class="day-content"></div></td>
-        <td><div class="day-num">14</div><div class="day-content"></div></td>
-        <td><div class="day-num">15</div><div class="day-content"></div></td>
-        <td><div class="day-num">16</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">17</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">18</div><div class="day-content"></div></td>
-        <td><div class="day-num">19</div><div class="day-content"></div></td>
-        <td><div class="day-num">20</div><div class="day-content"></div></td>
-        <td><div class="day-num">21</div><div class="day-content"></div></td>
-        <td><div class="day-num">22</div><div class="day-content"></div></td>
-        <td><div class="day-num">23</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">24</div><div class="day-content"></div></td>
-      </tr>
-      <tr>
-        <td class="weekend"><div class="day-num">25</div><div class="day-content"></div></td>
-        <td><div class="day-num">26</div><div class="day-content"></div></td>
-        <td><div class="day-num">27</div><div class="day-content"></div></td>
-        <td><div class="day-num">28</div><div class="day-content"></div></td>
-        <td><div class="day-num">29</div><div class="day-content"></div></td>
-        <td><div class="day-num">30</div><div class="day-content"></div></td>
-        <td class="weekend"><div class="day-num">31</div><div class="day-content"></div></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 
+  <!-- ========== SEPTEMBER 2026 ========== -->
+  <div class="month-section">
+    <div class="month-title">September 2026</div>
+
+    <div class="day-row">
+      <div class="day-date">Tue, Sep 1</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-deadline">DEADLINE</span> Digital orientation recorded and ready to send to new hires</div>
+      </div>
+    </div>
+
+    <div class="day-row"><div class="day-date">Wed, Sep 2</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Sep 3</div><div class="day-content"></div></div>
+
+    <div class="day-row">
+      <div class="day-date">Fri, Sep 4</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-hiring">HIRING</span> Auditions / Hiring Event #1</div>
+      </div>
+    </div>
+
+    <div class="day-row"><div class="day-date weekend">Sat, Sep 5</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Sep 6</div><div class="day-content"></div></div>
+
+    <div class="day-row">
+      <div class="day-date">Mon, Sep 7</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-deadline">DEADLINE</span> AUDIO CHEMIKILL — Tested and ran to existing haunt (pending maze completion)</div>
+      </div>
+    </div>
+
+    <div class="day-row"><div class="day-date">Tue, Sep 8</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Sep 9</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Sep 10</div><div class="day-content"></div></div>
+
+    <div class="day-row">
+      <div class="day-date">Fri, Sep 11</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-hiring">HIRING</span> Auditions / Hiring Event #2</div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-date weekend">Sat, Sep 12</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-deadline">DEADLINE</span> SEANCE ROOM COMPLETION — Lighting and sound in graveyard installed</div>
+        <div class="item"><span class="tag tag-training">TRAINING</span> Optional actor training</div>
+      </div>
+    </div>
+
+    <div class="day-row"><div class="day-date weekend">Sun, Sep 13</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Sep 14</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Sep 15</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Sep 16</div><div class="day-content"></div></div>
+
+    <div class="day-row">
+      <div class="day-date">Thu, Sep 17</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-training">TRAINING</span> Optional makeup training</div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-date">Fri, Sep 18</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-training">TRAINING</span> Optional stunts auditions / training</div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-date weekend">Sat, Sep 19</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-training">TRAINING</span> Optional actor training</div>
+      </div>
+    </div>
+
+    <div class="day-row"><div class="day-date weekend">Sun, Sep 20</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Sep 21</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Sep 22</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Sep 23</div><div class="day-content"></div></div>
+
+    <div class="day-row">
+      <div class="day-date">Thu, Sep 24</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-training">TRAINING</span> Optional makeup training</div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-date">Fri, Sep 25</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-deadline">DEADLINE</span> BAYOU COMPLETION — MIDWAY COMPLETION</div>
+        <div class="item"><span class="tag tag-deadline">DEADLINE</span> ALL FINALES PROGRAMMED AND INSTALLED (Teddy and Jason)</div>
+        <div class="item"><span class="tag tag-training">TRAINING</span> Optional actor training</div>
+      </div>
+    </div>
+
+    <div class="day-row">
+      <div class="day-date weekend">Sat, Sep 26</div>
+      <div class="day-content">
+        <div class="item"><span class="tag tag-training">TRAINING</span> Optional stunts training</div>
+      </div>
+    </div>
+
+    <div class="day-row"><div class="day-date weekend">Sun, Sep 27</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Sep 28</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Sep 29</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Sep 30</div><div class="day-content"></div></div>
+  </div>
+
+  <!-- ========== OCTOBER 2026 ========== -->
+  <div class="month-section">
+    <div class="month-title">October 2026</div>
+
+    <div class="day-row"><div class="day-date">Thu, Oct 1</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Oct 2</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Oct 3</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Oct 4</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Oct 5</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Oct 6</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Oct 7</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Oct 8</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Oct 9</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Oct 10</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Oct 11</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Oct 12</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Oct 13</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Oct 14</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Oct 15</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Oct 16</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Oct 17</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Oct 18</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Oct 19</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Oct 20</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Oct 21</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Oct 22</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Oct 23</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Oct 24</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sun, Oct 25</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Mon, Oct 26</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Tue, Oct 27</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Wed, Oct 28</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Thu, Oct 29</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date">Fri, Oct 30</div><div class="day-content"></div></div>
+    <div class="day-row"><div class="day-date weekend">Sat, Oct 31</div><div class="day-content"></div></div>
+  </div>
+
+</div>
 </body>
 </html>
