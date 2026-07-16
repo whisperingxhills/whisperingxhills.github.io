@@ -11,7 +11,7 @@ body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; b
 h1 { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 2px; }
 .subtitle { text-align: center; font-size: 12px; color: #888; margin-bottom: 32px; letter-spacing: 1px; }
 
-.month-section { margin-bottom: 36px; page-break-inside: avoid; }
+.month-section { margin-bottom: 36px; }
 .month-title {
   font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px;
   background: #1a1a1a; color: #fff; padding: 10px 16px; margin-bottom: 0;
@@ -56,9 +56,10 @@ h1 { font-size: 24px; font-weight: 800; text-align: center; margin-bottom: 4px; 
 
 @media print {
   .no-print { display: none; }
-  .container { padding: 12px; max-width: 100%; }
-  .month-section { page-break-inside: avoid; }
+  .container { padding: 12px 12px 0; max-width: 100%; margin: 0; }
   .day-row { min-height: auto; }
+  .month-title { page-break-after: avoid; }
+  h1 { margin-top: 0; }
 }
 </style>
 </head>
