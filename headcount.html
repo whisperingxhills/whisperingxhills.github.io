@@ -77,10 +77,7 @@ body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; background: #
 <div class="header">
   <h1>🏝️ Island <span>Waterpark</span> — Headcount</h1>
   <div class="header-right">
-    <div class="env-toggle">
-      <button class="env-btn active" data-env="production" onclick="switchEnv('production')">Production</button>
-      <button class="env-btn" data-env="sales" onclick="switchEnv('sales')">Test</button>
-    </div>
+
     <span class="live-dot"></span>
     <span class="last-update" id="lastUpdate">Loading...</span>
     <button class="refresh-btn" onclick="loadDashboard()">↻ Refresh</button>
@@ -102,58 +99,11 @@ body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; background: #
 </div>
 
 <script>
-const ENVS = {
-  production: {
-    base: 'https://secure.rocket-rez.com/api/v1',
-    clientId: '76314636-fe3d-487e-999d-9666ece8c8e8',
-    clientSecret: '08dc42ae-41a1-4fcb-8114-52ad10a71416',
-    eventId: 1
-  },
-  sales: {
-    base: 'https://sales.rocket-rez.com/api/v1',
-    clientId: 'c3ebdae6-2077-45aa-a624-d28db172d3df',
-    clientSecret: '662d51b0-9029-4f00-b1b7-990ad121cc3b',
-    eventId: 16
-  }
-};
-
-let currentEnv = 'production';
-let token = null;
-
-function switchEnv(env) {
-  currentEnv = env;
-  token = null;
-  document.querySelectorAll('.env-btn').forEach(b => b.classList.toggle('active', b.dataset.env === env));
-  loadDashboard();
-}
-
-async function getToken() {
-  const env = ENVS[currentEnv];
-  const resp = await fetch(`${env.base}/oauth2/token`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      client_id: env.clientId,
-      client_secret: env.clientSecret,
-      grant_type: 'client_credentials',
-      scope: 'read_products'
-    })
-  });
-  const data = await resp.json();
-  token = data.data.access_token;
-  return token;
-}
+const API_BASE = 'https://api.whisperingxhills.com/api/headcount';
 
 async function getSchedule(startDate, endDate) {
-  if (!token) await getToken();
-  const env = ENVS[currentEnv];
-  const resp = await fetch(`${env.base}/headless/products/event/${env.eventId}/schedules?startDate=${startDate}&endDate=${endDate}`, {
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
-  if (resp.status === 401) {
-    await getToken();
-    return getSchedule(startDate, endDate);
-  }
+  const resp = await fetch(`${API_BASE}?startDate=${startDate}&endDate=${endDate}`);
+  if (!resp.ok) throw new Error(`API returned ${resp.status}`);
   const data = await resp.json();
   return data.data || [];
 }
