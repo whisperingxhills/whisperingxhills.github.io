@@ -109,7 +109,9 @@ async function getSchedule(startDate, endDate) {
 }
 
 function formatDate(d) {
-  return d.toISOString().split('T')[0];
+  // Force Pacific time so API date matches what the user sees
+  const parts = d.toLocaleDateString('en-CA', { timeZone: 'America/Los_Angeles' }).split('-');
+  return parts.join('-');
 }
 
 function getDayName(d) {
