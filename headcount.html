@@ -72,9 +72,10 @@ body { font-family: -apple-system, 'Segoe UI', Roboto, sans-serif; background: #
 .env-btn.active { background: #1e3a5f; color: #93c5fd; }
 
 /* Prepaid passes banner */
-.prepaid-banner { background: linear-gradient(135deg, #1a2342, #1e2d50); border: 1px solid #2a3a5c; border-radius: 12px; padding: 16px 24px; margin-bottom: 16px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 12px; }
-.prepaid-item { text-align: center; min-width: 120px; }
+.prepaid-banner { background: linear-gradient(135deg, #1a2342, #1e2d50); border: 1px solid #2a3a5c; border-radius: 12px; padding: 16px 24px; margin-bottom: 16px; display: flex; justify-content: space-around; align-items: center; flex-wrap: wrap; gap: 16px; }
+.prepaid-item { text-align: center; min-width: 140px; }
 .prepaid-item .pp-num { font-size: 28px; font-weight: 800; }
+.prepaid-item .pp-scanned { font-size: 13px; color: #94a3b8; margin-top: 2px; }
 .prepaid-item .pp-label { font-size: 11px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
 .pp-tft { color: #f59e0b; }
 .pp-ww { color: #22c55e; }
@@ -299,12 +300,26 @@ async function loadPrepaidPasses() {
     const data = await resp.json();
     const banner = document.getElementById('prepaidBanner');
     banner.style.display = 'flex';
+    const tft = data.twoForTuesday;
+    const ww = data.wavyWednesday;
+    const fn = data.familyNight;
     banner.innerHTML = `
-      <div class="prepaid-title">Active Prepaid Passes (Unredeemed)</div>
-      <div class="prepaid-item"><div class="pp-num pp-tft">${data.twoForTuesday}</div><div class="pp-label">Two for Tuesday</div></div>
-      <div class="prepaid-item"><div class="pp-num pp-ww">${data.wavyWednesday}</div><div class="pp-label">Wavy Wednesday</div></div>
-      <div class="prepaid-item"><div class="pp-num pp-fn">${data.familyNight}</div><div class="pp-label">Family Night</div></div>
-      <div class="prepaid-item"><div class="pp-num pp-total">${data.total}</div><div class="pp-label">Total Passes</div></div>
+      <div class="prepaid-title">Promo Tickets — Last 7 Days (${data.window})</div>
+      <div class="prepaid-item">
+        <div class="pp-num pp-tft">${tft.guests}</div>
+        <div class="pp-scanned">${tft.scanned} scanned</div>
+        <div class="pp-label">Two for Tuesday</div>
+      </div>
+      <div class="prepaid-item">
+        <div class="pp-num pp-ww">${ww.sold}</div>
+        <div class="pp-scanned">${ww.scanned} scanned</div>
+        <div class="pp-label">Wavy Wednesday</div>
+      </div>
+      <div class="prepaid-item">
+        <div class="pp-num pp-fn">${fn.sold}</div>
+        <div class="pp-scanned">${fn.scanned} scanned</div>
+        <div class="pp-label">Family Night</div>
+      </div>
     `;
   } catch(e) {
     console.error('Prepaid passes error:', e);
