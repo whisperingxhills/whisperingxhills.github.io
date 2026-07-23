@@ -1,4 +1,15 @@
-					<div style="width:100vw;position:relative;left:50%;right:50%;margin-left:-50vw;margin-right:-50vw;">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Island Waterpark Calendar</title>
+<style>
+html, body { margin: 0; padding: 0; overflow-x: hidden; background: #fff; }
+body { width: 100%; }
+</style>
+</head>
+<body>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,7 +24,7 @@
  --iw-dark: #1E293B; --iw-darker: #0F172A; --iw-light: #F8FAFC;
  --iw-gray: #64748B; --iw-gray-light: #94A3B8; --iw-border: #E2E8F0;
  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
- color: var(--iw-dark); max-width: 95%; margin: 0 auto; border-radius: 0;
+ color: var(--iw-dark); max-width: 100%; margin: 0 auto; border-radius: 0;
  overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.15);
  display: flex; flex-direction: column; height: 950px; position: relative;
 }
@@ -101,7 +112,7 @@
 #iwp-calendar .iwc-ticket-modal-close:hover { color: #1E293B; }
 #iwp-calendar .iwc-ticket-engine { flex: 1; overflow: auto; padding: 0; }
 @media (max-width: 640px) {
- #iwp-calendar { height: 650px; }
+ #iwp-calendar { height: 850px; }
  #iwp-calendar .iwc-header { padding: 14px 16px 12px; }
  #iwp-calendar .iwc-nav-month { font-size: 18px; }
  #iwp-calendar .iwc-day { padding: 3px 4px; }
@@ -287,11 +298,11 @@
  [7,22,'11:00\u20136:00',[],{}],
  [7,23,'11:00\u20136:00',[],{}],
  [7,28,'Special Event, Water Park Closed',['tidalrave'],{note:'Tidal Rave \u2014 Tickets Available Soon! This event is NOT part of the IWP season. It is a special event series in collaboration with K-LIN. No IWP perks will apply (season passes, etc.).',noTickets:true}],
+ [7,21,'Special Event, Water Park Closed',['perreo'],{note:'Perreo En La Playa ft Jowell & Randy \u2014 Tickets Available Soon! This event is NOT part of the IWP season. It is a special event in collaboration with Jangue. No IWP perks will apply (season passes, etc.).',noTickets:true}],
  [7,29,'11:00\u20136:00',[],{}],
  [7,30,'11:00\u20136:00',[],{}],
  [8,5,'11:00\u20136:00',[],{}],
  [8,6,'11:00\u20136:00',[],{}],
- [7,21,'Special Event, Water Park Closed',['perreo'],{note:'Perreo En La Playa ft Jowell & Randy \u2014 Tickets Available Soon! This event is NOT part of the IWP season. It is a special event in collaboration with Jangue. No IWP perks will apply (season passes, etc.).',noTickets:true}],
  [8,7,'11:00\u20136:00',['laborday'],{}]
  ];
 
@@ -586,4 +597,5 @@
 })();
 </script>
 
-</div>				</div>
+</body>
+</html>
