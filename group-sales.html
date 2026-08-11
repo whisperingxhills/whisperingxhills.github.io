@@ -1,0 +1,2338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Island Waterpark - Group Sales CRM</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f8fafc;--surface:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;--light:#94a3b8;
+  --primary:#2563eb;--ph:#1d4ed8;--pl:#eff6ff;
+  --success:#16a34a;--sl:#f0fdf4;--warn:#d97706;--wl:#fffbeb;
+  --danger:#dc2626;--dl:#fef2f2;
+  --admin:#7c3aed;--adminl:#f5f3ff;
+  --sh1:0 1px 3px rgba(0,0,0,.06);--sh:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.05);
+  --r:10px;--rs:8px;
+  --tap:48px
+}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);font-size:16px;line-height:1.5;min-height:100vh}
+
+/* ---- NOT CONNECTED BANNER ---- */
+#banner{display:none;background:#7f1d1d;color:#fef2f2;text-align:center;padding:14px 16px;font-weight:600;font-size:14px;position:sticky;top:0;z-index:1000;line-height:1.4}
+#banner.on{display:block}
+
+/* ---- TOP NAV ---- */
+#topbar{background:#fff;border-bottom:1px solid var(--border);padding:0 12px;display:flex;align-items:center;gap:8px;height:56px;position:sticky;top:0;z-index:100;box-shadow:var(--sh1)}
+.brand{font-weight:800;font-size:15px;white-space:nowrap;flex-shrink:0}
+.brand em{color:var(--primary);font-style:normal}
+.navs{display:flex;gap:2px;flex:1;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.navs::-webkit-scrollbar{display:none}
+.nb{background:none;border:none;padding:8px 10px;border-radius:var(--rs);font-size:14px;font-weight:500;color:var(--muted);cursor:pointer;white-space:nowrap;transition:background .15s,color .15s;font-family:inherit;min-height:var(--tap);display:flex;align-items:center}
+.nb:hover{background:var(--bg);color:var(--text)}
+.nb.on{background:var(--pl);color:var(--primary);font-weight:700}
+.chip{display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 10px 4px 6px;font-size:13px;font-weight:500;white-space:nowrap;flex-shrink:0;min-height:var(--tap)}
+.av{width:26px;height:26px;background:var(--primary);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.av.adm{background:var(--admin)}
+.av.mgr{background:var(--success)}
+.signout-btn{background:none;border:none;color:var(--light);cursor:pointer;font-size:13px;padding:4px 6px;font-family:inherit;min-height:var(--tap);display:flex;align-items:center}
+.signout-btn:hover{color:var(--danger)}
+
+/* ---- LAYOUT ---- */
+#app{display:none}
+.page{display:none;padding:20px 16px;max-width:1100px;margin:0 auto}
+.page.on{display:block}
+
+/* ---- LOGIN / SIGNUP / RESET SCREENS ---- */
+#login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.lcard{background:#fff;border-radius:14px;box-shadow:var(--sh);padding:32px 28px;width:100%;max-width:400px}
+.logo{text-align:center;margin-bottom:24px}
+.logo h1{font-size:22px;font-weight:800}
+.logo h1 em{color:var(--primary);font-style:normal}
+.logo p{color:var(--muted);font-size:14px;margin-top:4px}
+.ffn{display:inline-block;background:#7c1d1d;color:#fca5a5;font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:6px}
+.auth-toggle{display:flex;background:var(--bg);border-radius:var(--r);padding:4px;margin-bottom:20px;gap:4px}
+.auth-toggle button{flex:1;padding:8px;border:none;border-radius:var(--rs);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;transition:background .15s,color .15s;background:transparent;color:var(--muted);min-height:var(--tap)}
+.auth-toggle button.on{background:#fff;color:var(--primary);box-shadow:var(--sh1)}
+#auth-error{display:none;background:var(--dl);border:1px solid #fecaca;border-radius:var(--rs);padding:12px 14px;font-size:14px;color:#991b1b;margin-bottom:14px;line-height:1.4}
+#auth-error.on{display:block}
+
+/* ---- THROTTLE MESSAGE ---- */
+.throttle-msg{display:none;background:var(--wl);border:1px solid #fde68a;border-radius:var(--rs);padding:12px 14px;font-size:14px;color:#92400e;margin-bottom:14px;text-align:center;font-weight:500;line-height:1.4}
+.throttle-msg.on{display:block}
+
+/* ---- TURNSTILE WIDGET ---- */
+.ts-wrap{margin-bottom:14px;display:flex;justify-content:center;overflow:hidden}
+@media(max-width:360px){
+  .ts-wrap{transform:scale(0.88);transform-origin:center top;margin-bottom:6px}
+}
+.ts-hint{font-size:13px;color:var(--muted);text-align:center;margin-bottom:10px;line-height:1.4}
+
+/* ---- FORGOT PASSWORD LINK ---- */
+.forgot-link{display:block;text-align:right;font-size:13px;color:var(--primary);font-weight:500;cursor:pointer;margin-top:4px;padding:4px 0;min-height:var(--tap);display:flex;align-items:center;justify-content:flex-end;background:none;border:none;font-family:inherit;width:100%}
+.forgot-link:hover{text-decoration:underline}
+
+/* ---- BACK TO SIGN IN LINK ---- */
+.back-link{display:flex;align-items:center;gap:4px;background:none;border:none;color:var(--primary);font-size:13px;font-weight:500;cursor:pointer;padding:0;font-family:inherit;min-height:var(--tap)}
+.back-link:hover{text-decoration:underline}
+
+/* ---- PASSWORD GUIDANCE CALLOUT ---- */
+.pw-callout{background:#eff6ff;border:1px solid #bfdbfe;border-radius:var(--rs);padding:11px 14px;margin-bottom:4px;margin-top:6px;font-size:13px;color:#1e3a5f;line-height:1.5}
+.pw-callout strong{color:#1d4ed8;display:block;margin-bottom:2px;font-size:13px}
+
+/* ---- PASSWORD STRENGTH METER ---- */
+.pw-strength{margin-top:6px}
+.pw-strength-bar{display:flex;gap:4px;margin-bottom:4px}
+.pw-strength-bar span{flex:1;height:4px;border-radius:2px;background:var(--border);transition:background .2s}
+.pw-strength-label{font-size:12px;font-weight:600;color:var(--muted)}
+
+/* ---- COMMON PASSWORD WARNING ---- */
+.pw-warn{display:none;background:#fef3c7;border:1px solid #fcd34d;border-radius:var(--rs);padding:10px 13px;font-size:13px;color:#78350f;margin-top:6px;line-height:1.4;font-weight:500}
+.pw-warn.on{display:block}
+
+/* ---- PASSWORD SHOW/HIDE TOGGLE ---- */
+.pw-field-wrap{position:relative}
+.pw-field-wrap input{padding-right:60px}
+.pw-toggle{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);font-size:13px;font-weight:600;cursor:pointer;padding:6px 4px;font-family:inherit;min-height:36px;display:flex;align-items:center}
+.pw-toggle:hover{color:var(--text)}
+
+/* ---- FORM ELEMENTS ---- */
+.fg{margin-bottom:16px;position:relative}
+.fg label{display:block;font-size:13px;font-weight:700;color:var(--muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:.4px}
+.fg.req label::after{content:' *';color:var(--danger)}
+.fg input,.fg select,.fg textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:16px;font-family:inherit;color:var(--text);background:#fff;appearance:none;-webkit-appearance:none;transition:border-color .15s;min-height:var(--tap)}
+.fg input:focus,.fg select:focus,.fg textarea:focus{outline:none;border-color:var(--primary)}
+.fg textarea{resize:vertical;min-height:80px}
+.fg input.err,.fg select.err{border-color:var(--danger)}
+.field-hint{font-size:12px;color:var(--muted);margin-top:5px;line-height:1.4}
+.field-err{font-size:12px;color:var(--danger);margin-top:5px;display:none;font-weight:600}
+.field-err.on{display:block}
+
+/* ---- BUTTONS ---- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;padding:12px 18px;border-radius:var(--rs);border:none;font-size:15px;font-weight:600;cursor:pointer;transition:background .15s,opacity .15s;white-space:nowrap;font-family:inherit;line-height:1;min-height:var(--tap)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.bp{background:var(--primary);color:#fff}.bp:hover:not(:disabled){background:var(--ph)}
+.bs{background:var(--bg);color:var(--text);border:1.5px solid var(--border)}.bs:hover:not(:disabled){background:var(--border)}
+.bc{background:var(--pl);color:var(--primary);border:1.5px solid #bfdbfe}.bc:hover:not(:disabled){background:#dbeafe}
+.bc.done{background:var(--sl);color:var(--success);border-color:#bbf7d0}
+.bd{background:var(--dl);color:var(--danger);border:1.5px solid #fecaca}.bd:hover:not(:disabled){background:#fee2e2}
+.sm{padding:8px 14px;font-size:14px;min-height:40px}
+.full{width:100%}
+
+/* ---- STATUS BADGES ---- */
+.badge{display:inline-block;padding:4px 10px;border-radius:20px;font-size:12px;font-weight:700;white-space:nowrap}
+.bNew{background:#f1f5f9;color:#475569}
+.bContacted{background:#eff6ff;color:#2563eb}
+.bQuote{background:#f5f3ff;color:#7c3aed}
+.bDeposit{background:#fffbeb;color:#d97706}
+.bConfirmed{background:#f0fdf4;color:#16a34a}
+.bCompleted{background:#e0f2fe;color:#0369a1}
+.bLost{background:#fef2f2;color:#dc2626}
+.bAdmin{background:var(--adminl);color:var(--admin);font-weight:700}
+.bManager{background:var(--sl);color:var(--success);font-weight:700}
+.bRep{background:#f1f5f9;color:#475569}
+.bInactive{background:#f1f5f9;color:var(--light);font-style:italic}
+
+/* ---- LEAD CARDS ---- */
+.lead-list{display:flex;flex-direction:column;gap:10px}
+.lc{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;cursor:pointer;transition:box-shadow .15s,border-color .15s}
+.lc:hover{box-shadow:var(--sh);border-color:#cbd5e1}
+.org{font-weight:700;font-size:16px}
+.lmeta{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.ld{font-size:13px;color:var(--muted)}
+.nxt{font-size:13px;background:var(--wl);color:#92400e;border-radius:var(--rs);padding:5px 10px;margin-top:8px;display:inline-block}
+.nxt.od{background:var(--dl);color:#991b1b}
+
+/* ---- TODAY / SECTION HEADERS ---- */
+.shead{display:flex;align-items:center;gap:8px;margin:24px 0 12px}
+.shead:first-child{margin-top:0}
+.shead h3{font-size:16px;font-weight:700}
+.sc{background:var(--bg);border:1px solid var(--border);border-radius:20px;font-size:12px;font-weight:700;padding:2px 9px;color:var(--muted)}
+.sc.red{background:var(--dl);border-color:#fecaca;color:var(--danger)}
+.sc.yel{background:var(--wl);border-color:#fde68a;color:var(--warn)}
+.sc.blu{background:var(--pl);border-color:#bfdbfe;color:var(--primary)}
+
+/* ---- TODAY ITEM CARDS ---- */
+.ti{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;margin-bottom:8px}
+.ti.od{border-left:4px solid var(--danger)}
+.ti.td{border-left:4px solid var(--warn)}
+.ti.un{border-left:4px solid var(--primary)}
+.ti.st{border-left:4px solid var(--light)}
+.ti-acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+/* ---- EMPTY STATE ---- */
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted)}
+.empty-state .es-icon{font-size:36px;margin-bottom:12px}
+.empty-state p{font-size:15px;margin-bottom:16px;line-height:1.5}
+.allclear{text-align:center;background:var(--sl);border:1px solid #bbf7d0;border-radius:var(--r);padding:32px 20px;color:var(--success);font-weight:600;font-size:16px}
+
+/* ---- ACTIVITY LOG ---- */
+.alog{max-height:280px;overflow-y:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.aitem{background:var(--bg);border-radius:var(--rs);padding:12px 14px}
+.ameta{font-size:12px;color:var(--muted);margin-bottom:4px}
+.anote{font-size:14px}
+
+/* ---- DASHBOARD ---- */
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:20px}
+.pstat{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:14px 16px;text-align:center}
+.pstat .cnt{font-size:28px;font-weight:800}
+.pstat .val{font-size:12px;color:var(--muted);margin-top:2px}
+.pstat .lbl{font-size:11px;font-weight:700;color:var(--muted);margin-top:6px;text-transform:uppercase;letter-spacing:.3px}
+.rt{width:100%;border-collapse:collapse}
+.rt th{text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);padding:10px 12px;border-bottom:1px solid var(--border)}
+.rt td{padding:11px 12px;border-bottom:1px solid var(--border);font-size:14px;vertical-align:middle}
+.rt tr:last-child td{border-bottom:none}
+.rt-wrap{background:#fff;border:1px solid var(--border);border-radius:var(--r);overflow:hidden;overflow-x:auto}
+
+/* ---- TEMPLATES ---- */
+.tcard{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:16px 18px;margin-bottom:12px}
+.tcard h3{font-size:15px;font-weight:700;margin-bottom:3px}
+.tstage{font-size:12px;color:var(--muted);margin-bottom:8px}
+.tprev{font-size:13px;color:var(--muted);white-space:pre-wrap;background:var(--bg);padding:10px 12px;border-radius:var(--rs);max-height:90px;overflow:hidden}
+
+/* ---- FILTER BAR ---- */
+.fbar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.fbar input,.fbar select{padding:10px 12px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:15px;font-family:inherit;background:#fff;color:var(--text);min-height:var(--tap)}
+.fbar input{flex:1;min-width:160px}
+.fbar input:focus,.fbar select:focus{outline:none;border-color:var(--primary)}
+
+/* ---- DETAIL MODAL TABS ---- */
+.tabs{display:flex;border-bottom:2px solid var(--border);margin-bottom:16px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tb{background:none;border:none;padding:10px 14px;font-size:14px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;font-family:inherit;white-space:nowrap;min-height:var(--tap)}
+.tb.on{color:var(--primary);border-bottom-color:var(--primary)}
+.tp{display:none}
+.tp.on{display:block}
+
+/* ---- DETAIL GRID ---- */
+.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.df label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:3px}
+.df span{font-size:14px;font-weight:500}
+.df span.emp{color:var(--light);font-style:italic}
+
+/* ---- MODAL ---- */
+.overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:500;align-items:flex-start;justify-content:center;padding:16px 12px;overflow-y:auto}
+.overlay.on{display:flex}
+.modal{background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.2);width:100%;max-width:640px;margin:auto}
+.mh{padding:18px 20px 14px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
+.mh h2{font-size:18px;font-weight:700;flex:1}
+.mc{background:none;border:none;font-size:22px;color:var(--muted);cursor:pointer;line-height:1;padding:4px 6px;font-family:inherit;min-height:var(--tap);display:flex;align-items:center}
+.mc:hover{color:var(--text)}
+.mb{padding:18px 20px}
+.mf{padding:14px 20px;border-top:1px solid var(--border);display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+
+/* ---- LAYOUT HELPERS ---- */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.jb{justify-content:space-between}
+.divider{height:1px;background:var(--border);margin:16px 0}
+.mt8{margin-top:8px}.mt12{margin-top:12px}.mt16{margin-top:16px}.mt20{margin-top:20px}
+.mb8{margin-bottom:8px}.mb12{margin-bottom:12px}.mb16{margin-bottom:16px}
+.tm{color:var(--muted);font-size:13px}
+.spin{display:inline-block;width:22px;height:22px;border:2.5px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:sp .7s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+/* ---- WELCOME PANEL ---- */
+.welcome-panel{background:linear-gradient(135deg,var(--pl),#e0f2fe);border:1px solid #bfdbfe;border-radius:var(--r);padding:20px;margin-bottom:20px;position:relative}
+.welcome-panel h2{font-size:17px;font-weight:800;margin-bottom:6px;color:var(--primary)}
+.welcome-panel p{font-size:14px;color:#1e3a5f;margin-bottom:10px;line-height:1.5}
+.welcome-panel .dismiss{position:absolute;top:14px;right:14px;background:none;border:none;color:var(--primary);cursor:pointer;font-size:20px;padding:4px;line-height:1;min-height:var(--tap);display:flex;align-items:center}
+
+/* ---- TEAM TAB ---- */
+.team-role-info{background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:14px 16px;margin-bottom:16px;font-size:13px;color:var(--muted);line-height:1.6}
+.team-role-info strong{color:var(--text)}
+
+/* ---- STATUS HINT ---- */
+.status-hint{font-size:12px;color:var(--muted);margin-top:4px;padding:6px 10px;background:var(--bg);border-radius:var(--rs)}
+
+/* ---- TOAST ---- */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#1e293b;color:#fff;padding:12px 24px;border-radius:20px;font-size:14px;font-weight:500;z-index:9999;transition:transform .25s;white-space:nowrap;pointer-events:none;max-width:90vw;text-align:center}
+#toast.on{transform:translateX(-50%) translateY(0)}
+
+/* ---- CONFIRM DIALOG ---- */
+#confirm-overlay{display:none;position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:600;align-items:center;justify-content:center;padding:20px}
+#confirm-overlay.on{display:flex}
+.confirm-box{background:#fff;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.2);width:100%;max-width:380px;padding:24px}
+.confirm-box h3{font-size:17px;font-weight:700;margin-bottom:10px}
+.confirm-box p{font-size:14px;color:var(--muted);line-height:1.5;margin-bottom:20px}
+.confirm-btns{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+
+/* ---- SUCCESS PANEL (reset sent, set-password done) ---- */
+.success-panel{background:var(--sl);border:1px solid #bbf7d0;border-radius:var(--r);padding:20px;text-align:center}
+.success-panel .si{font-size:32px;margin-bottom:10px}
+.success-panel h2{font-size:17px;font-weight:700;color:var(--success);margin-bottom:8px}
+.success-panel p{font-size:14px;color:#166534;line-height:1.5;margin-bottom:14px}
+
+/* ---- RESPONSIVE ---- */
+@media(max-width:640px){
+  .mb,.mh,.mf{padding-left:14px;padding-right:14px}
+  .page{padding:14px 12px}
+  .nb{padding:8px 8px;font-size:13px}
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .brand{font-size:14px}
+  .lcard{padding:24px 18px}
+  .dgrid,.two{grid-template-columns:1fr}
+  .mf{justify-content:stretch}
+  .mf .btn{flex:1}
+  .chip span{display:none}
+  .rt th:nth-child(n+4),.rt td:nth-child(n+4){display:none}
+}
+@media(max-width:400px){
+  .fbar select{min-width:0;flex:1}
+}
+</style>
+</head>
+<body>
+
+<div id="banner">
+  This app is not connected to the database. Open index.html in a text editor, add your credentials at the top, and save. See SETUP.md for instructions.
+</div>
+
+<!-- ============================================================
+     LOGIN / SIGNUP / FORGOT / SET-NEW-PASSWORD SCREEN
+============================================================ -->
+<div id="login-wrap">
+  <div class="lcard">
+    <div class="logo">
+      <h1>Island <em>Waterpark</em></h1>
+      <p>Group Sales CRM</p>
+      <span class="ffn">+ Fresno Fright Nights</span>
+    </div>
+
+    <!-- Auth tab switcher (hidden on forgot/reset screens) -->
+    <div class="auth-toggle" id="auth-toggle-bar">
+      <button id="tab-signin" class="on" onclick="switchAuthTab('signin')">Sign In</button>
+      <button id="tab-signup" onclick="switchAuthTab('signup')">Create Account</button>
+    </div>
+
+    <div id="auth-error" role="alert"></div>
+    <div class="throttle-msg" id="throttle-msg" role="status"></div>
+
+    <!-- ===== SIGN IN FORM ===== -->
+    <div id="form-signin">
+      <div class="fg req">
+        <label for="si-email">Email address</label>
+        <input type="email" id="si-email" placeholder="you@example.com" autocomplete="email"
+               inputmode="email" onkeydown="if(event.key==='Enter')doSignIn()">
+        <div class="field-err" id="err-si-email"></div>
+      </div>
+      <div class="fg req">
+        <label for="si-pass">Password</label>
+        <div class="pw-field-wrap">
+          <input type="password" id="si-pass" placeholder="Your password" autocomplete="current-password"
+                 onkeydown="if(event.key==='Enter')doSignIn()">
+          <button type="button" class="pw-toggle" onclick="togglePwVisibility('si-pass',this)" aria-label="Show password">Show</button>
+        </div>
+        <div class="field-err" id="err-si-pass"></div>
+      </div>
+      <button type="button" class="forgot-link" onclick="showForgot()">Forgot your password?</button>
+      <!-- Turnstile widget injected here when enabled -->
+      <div id="ts-signin-wrap" class="ts-wrap" style="display:none;"></div>
+      <p id="ts-signin-hint" class="ts-hint" style="display:none;">Complete the security check above to continue.</p>
+      <button class="btn bp full mt8" id="signin-btn" onclick="doSignIn()">Sign In</button>
+      <p class="tm mt12" style="text-align:center;">
+        No account yet?
+        <button onclick="switchAuthTab('signup')" style="background:none;border:none;color:var(--primary);font-weight:600;cursor:pointer;font-size:13px;font-family:inherit;padding:0;">Create one</button>
+      </p>
+    </div>
+
+    <!-- ===== SIGN UP FORM ===== -->
+    <div id="form-signup" style="display:none;">
+      <div class="fg req">
+        <label for="su-name">Your full name</label>
+        <input type="text" id="su-name" placeholder="First and last name" autocomplete="name"
+               onkeydown="if(event.key==='Enter')doSignUp()">
+        <div class="field-err" id="err-su-name"></div>
+      </div>
+      <div class="fg req">
+        <label for="su-email">Email address</label>
+        <input type="email" id="su-email" placeholder="you@example.com" autocomplete="email"
+               inputmode="email" onkeydown="if(event.key==='Enter')doSignUp()">
+        <div class="field-err" id="err-su-email"></div>
+      </div>
+      <div class="fg req">
+        <label for="su-pass">Password</label>
+        <div class="pw-callout">
+          <strong>Use a unique password for this tool.</strong>
+          If you reuse a password from another site and that site gets hacked, someone could get into this system with it. Make it unique to this tool.
+        </div>
+        <div class="pw-field-wrap">
+          <input type="password" id="su-pass" placeholder="Create a password" autocomplete="new-password"
+                 oninput="onSignupPasswordInput()" onkeydown="if(event.key==='Enter')doSignUp()">
+          <button type="button" class="pw-toggle" onclick="togglePwVisibility('su-pass',this)" aria-label="Show password">Show</button>
+        </div>
+        <div class="field-hint">At least 6 characters, and must include a lowercase letter, an uppercase letter, a number, and a symbol (like ! or #).</div>
+        <!-- Strength meter -->
+        <div class="pw-strength" id="pw-strength" style="display:none;">
+          <div class="pw-strength-bar">
+            <span id="pwb1"></span><span id="pwb2"></span><span id="pwb3"></span>
+          </div>
+          <div class="pw-strength-label" id="pw-strength-label"></div>
+        </div>
+        <!-- Common password warning -->
+        <div class="pw-warn" id="pw-warn">That password is too easy to guess. Please choose something different.</div>
+        <div class="field-err" id="err-su-pass"></div>
+      </div>
+      <div class="fg req">
+        <label for="su-code">Team code</label>
+        <input type="text" id="su-code" placeholder="Ask your manager for this"
+               autocomplete="off" onkeydown="if(event.key==='Enter')doSignUp()">
+        <div class="field-hint">Your manager will give you this code.</div>
+        <div class="field-err" id="err-su-code"></div>
+      </div>
+      <!-- Turnstile widget injected here when enabled -->
+      <div id="ts-signup-wrap" class="ts-wrap" style="display:none;"></div>
+      <p id="ts-signup-hint" class="ts-hint" style="display:none;">Complete the security check above to continue.</p>
+      <button class="btn bp full mt8" id="signup-btn" onclick="doSignUp()">Create Account</button>
+      <p class="tm mt12" style="text-align:center;">
+        Already have an account?
+        <button onclick="switchAuthTab('signin')" style="background:none;border:none;color:var(--primary);font-weight:600;cursor:pointer;font-size:13px;font-family:inherit;padding:0;">Sign in</button>
+      </p>
+    </div>
+
+    <!-- ===== FORGOT PASSWORD FORM ===== -->
+    <div id="form-forgot" style="display:none;">
+      <p style="font-size:15px;font-weight:700;margin-bottom:6px;">Reset your password</p>
+      <p class="tm mb16">Enter your email address and we will send you a link to set a new password.</p>
+      <div class="fg req">
+        <label for="fp-email">Email address</label>
+        <input type="email" id="fp-email" placeholder="you@example.com" autocomplete="email"
+               inputmode="email" onkeydown="if(event.key==='Enter')doForgot()">
+        <div class="field-err" id="err-fp-email"></div>
+      </div>
+      <!-- Turnstile widget injected here when enabled -->
+      <div id="ts-forgot-wrap" class="ts-wrap" style="display:none;"></div>
+      <p id="ts-forgot-hint" class="ts-hint" style="display:none;">Complete the security check above to continue.</p>
+      <button class="btn bp full mt8" id="forgot-btn" onclick="doForgot()">Send Reset Link</button>
+      <div style="margin-top:16px;display:flex;justify-content:center;">
+        <button type="button" class="back-link" onclick="showSignIn()">&#8592; Back to sign in</button>
+      </div>
+    </div>
+
+    <!-- ===== FORGOT PASSWORD SENT CONFIRMATION ===== -->
+    <div id="form-forgot-sent" style="display:none;">
+      <div class="success-panel">
+        <div class="si">&#128140;</div>
+        <h2>Check your inbox</h2>
+        <p>If that email is registered, a reset link is on the way. Check your inbox, and look in spam if you do not see it.</p>
+        <button type="button" class="back-link" style="margin:0 auto;" onclick="showSignIn()">&#8592; Back to sign in</button>
+      </div>
+    </div>
+
+    <!-- ===== SET NEW PASSWORD FORM (after clicking reset link) ===== -->
+    <div id="form-set-password" style="display:none;">
+      <p style="font-size:15px;font-weight:700;margin-bottom:6px;">Set your new password</p>
+      <p class="tm mb16">Choose a new password for your account.</p>
+      <div class="fg req">
+        <label for="np-pass">New password</label>
+        <div class="pw-callout">
+          <strong>Use a unique password for this tool.</strong>
+          If you reuse a password from another site and that site gets hacked, someone could get into this system with it. Make it unique to this tool.
+        </div>
+        <div class="pw-field-wrap">
+          <input type="password" id="np-pass" placeholder="Create a password" autocomplete="new-password"
+                 oninput="onNewPasswordInput()" onkeydown="if(event.key==='Enter')doSetPassword()">
+          <button type="button" class="pw-toggle" onclick="togglePwVisibility('np-pass',this)" aria-label="Show password">Show</button>
+        </div>
+        <div class="field-hint">At least 6 characters, and must include a lowercase letter, an uppercase letter, a number, and a symbol (like ! or #).</div>
+        <div class="pw-strength" id="np-strength" style="display:none;">
+          <div class="pw-strength-bar">
+            <span id="npb1"></span><span id="npb2"></span><span id="npb3"></span>
+          </div>
+          <div class="pw-strength-label" id="np-strength-label"></div>
+        </div>
+        <div class="pw-warn" id="np-warn">That password is too easy to guess. Please choose something different.</div>
+        <div class="field-err" id="err-np-pass"></div>
+      </div>
+      <button class="btn bp full mt8" id="set-password-btn" onclick="doSetPassword()">Save New Password</button>
+    </div>
+
+    <p class="tm mt16" style="text-align:center;font-size:12px;" id="addr-line">6099 W. Barstow Ave, Fresno, CA 93723</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN APP
+============================================================ -->
+<div id="app">
+  <div id="topbar">
+    <div class="brand">Island <em>CRM</em></div>
+    <nav class="navs">
+      <button class="nb on" onclick="showPage('today')" id="n-today">Today</button>
+      <button class="nb" onclick="showPage('leads')" id="n-leads">All Leads</button>
+      <button class="nb" onclick="showPage('templates')" id="n-templates">Templates</button>
+      <button class="nb" onclick="showPage('dashboard')" id="n-dashboard" style="display:none;">Dashboard</button>
+      <button class="nb" onclick="showPage('team')" id="n-team" style="display:none;">Team</button>
+    </nav>
+    <div class="chip">
+      <div class="av" id="uav">?</div>
+      <span id="uname">...</span>
+      <button class="signout-btn" onclick="doSignOut()" title="Sign out" aria-label="Sign out">&#x2192;</button>
+    </div>
+  </div>
+
+  <!-- TODAY PAGE -->
+  <div class="page on" id="p-today">
+    <div class="row jb mb16">
+      <h1 style="font-size:20px;font-weight:800;">Today's Attention List</h1>
+      <button class="btn bp sm" onclick="openAddModal()">+ Add Lead</button>
+    </div>
+    <div id="today-out"><div style="padding:40px;text-align:center;"><div class="spin"></div></div></div>
+  </div>
+
+  <!-- ALL LEADS PAGE -->
+  <div class="page" id="p-leads">
+    <div class="row jb mb12">
+      <h1 style="font-size:20px;font-weight:800;">All Leads</h1>
+      <button class="btn bp sm" onclick="openAddModal()">+ Add Lead</button>
+    </div>
+    <div class="fbar">
+      <input type="text" id="f-search" placeholder="Search by name or org..." oninput="filterLeads()">
+      <select id="f-status" onchange="filterLeads()">
+        <option value="">All Statuses</option>
+        <option>New</option><option>Contacted</option><option>Quote Sent</option>
+        <option>Deposit Pending</option><option>Confirmed</option><option>Completed</option><option>Lost</option>
+      </select>
+      <select id="f-type" onchange="filterLeads()">
+        <option value="">All Group Types</option>
+        <option>School Field Trip</option><option>Corporate/Company Party</option>
+        <option>Church Group</option><option>Summer Camp</option>
+        <option>Sports Team</option><option>Birthday</option><option>Other</option>
+      </select>
+      <select id="f-owner" onchange="filterLeads()"><option value="">All Reps</option></select>
+    </div>
+    <div id="leads-out"><div style="padding:40px;text-align:center;"><div class="spin"></div></div></div>
+  </div>
+
+  <!-- TEMPLATES PAGE -->
+  <div class="page" id="p-templates">
+    <div class="row jb mb12">
+      <h1 style="font-size:20px;font-weight:800;">Email Templates</h1>
+    </div>
+    <p class="tm mb16">These are ready-to-copy email templates for each stage of a lead. Fill in placeholders like <code>{{org}}</code> and <code>{{contact}}</code> when copying. Click Edit to update a template and save it for the whole team.</p>
+    <div id="tmpl-out"><div style="padding:40px;text-align:center;"><div class="spin"></div></div></div>
+  </div>
+
+  <!-- DASHBOARD PAGE -->
+  <div class="page" id="p-dashboard">
+    <div class="row jb mb16">
+      <h1 style="font-size:20px;font-weight:800;">Manager Dashboard</h1>
+    </div>
+    <div id="dash-out"><div style="padding:40px;text-align:center;"><div class="spin"></div></div></div>
+  </div>
+
+  <!-- TEAM PAGE -->
+  <div class="page" id="p-team">
+    <div class="row jb mb12">
+      <h1 style="font-size:20px;font-weight:800;">Team</h1>
+    </div>
+    <div class="team-role-info">
+      <strong>How roles work:</strong>
+      <strong class="badge bRep" style="font-size:11px;">Rep</strong> - Works leads, logs activity, uses email templates.
+      <strong class="badge bManager" style="font-size:11px;">Manager</strong> - Everything a rep can do, plus: reassign leads between reps, view the dashboard, and manage the team.
+      <strong class="badge bAdmin" style="font-size:11px;">Admin</strong> - Full control, including changing who is a manager or admin, and editing email templates.
+    </div>
+    <div id="team-out"><div style="padding:40px;text-align:center;"><div class="spin"></div></div></div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TOAST
+============================================================ -->
+<div id="toast" role="status" aria-live="polite"></div>
+
+<!-- ============================================================
+     CONFIRM DIALOG
+============================================================ -->
+<div id="confirm-overlay">
+  <div class="confirm-box">
+    <h3 id="confirm-title">Are you sure?</h3>
+    <p id="confirm-msg"></p>
+    <div class="confirm-btns">
+      <button class="btn bs" onclick="confirmResolve(false)">Cancel</button>
+      <button class="btn bd" id="confirm-ok" onclick="confirmResolve(true)">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     ADD LEAD MODAL
+============================================================ -->
+<div class="overlay" id="m-add">
+  <div class="modal">
+    <div class="mh"><h2>Add New Lead</h2><button class="mc" onclick="closeM('m-add')" aria-label="Close">&#x2715;</button></div>
+    <div class="mb">
+      <div class="fg req">
+        <label for="a-org">Organization name</label>
+        <input type="text" id="a-org" placeholder="School, company, church..." autocomplete="off">
+        <div class="field-err" id="err-a-org"></div>
+      </div>
+      <div class="fg req">
+        <label for="a-contact">Contact name</label>
+        <input type="text" id="a-contact" placeholder="Who to reach">
+        <div class="field-err" id="err-a-contact"></div>
+      </div>
+      <div class="fg req">
+        <label for="a-type">Group type</label>
+        <select id="a-type">
+          <option value="">Select a type...</option>
+          <option>School Field Trip</option><option>Corporate/Company Party</option>
+          <option>Church Group</option><option>Summer Camp</option>
+          <option>Sports Team</option><option>Birthday</option><option>Other</option>
+        </select>
+        <div class="field-err" id="err-a-type"></div>
+      </div>
+      <div class="divider"></div>
+      <p class="tm mb12">Everything below is optional. You can fill it in later.</p>
+      <div class="two">
+        <div class="fg"><label for="a-email">Contact email</label><input type="email" id="a-email" inputmode="email"></div>
+        <div class="fg"><label for="a-phone">Contact phone</label><input type="tel" id="a-phone" placeholder="(559) 555-0000" inputmode="tel"></div>
+        <div class="fg"><label for="a-hd">Estimated group size</label><input type="number" id="a-hd" min="1" inputmode="numeric"></div>
+        <div class="fg"><label for="a-date">Target visit date</label><input type="date" id="a-date"></div>
+        <div class="fg"><label for="a-val">Estimated value ($)</label><input type="number" id="a-val" step="0.01" min="0" inputmode="decimal"></div>
+        <div class="fg"><label for="a-owner">Assign to</label><select id="a-owner"><option value="">Unassigned</option></select></div>
+      </div>
+      <div class="fg"><label for="a-notes">Notes</label><textarea id="a-notes" placeholder="Any context about this lead..."></textarea></div>
+      <div class="two">
+        <div class="fg"><label for="a-nxt">Next action</label><input type="text" id="a-nxt" placeholder="Call to discuss packages"></div>
+        <div class="fg"><label for="a-nxtd">Next action due</label><input type="date" id="a-nxtd"></div>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn bs" onclick="closeM('m-add')">Cancel</button>
+      <button class="btn bp" onclick="saveLead()" id="save-btn">Save Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     LEAD DETAIL MODAL
+============================================================ -->
+<div class="overlay" id="m-detail">
+  <div class="modal" style="max-width:700px;">
+    <div class="mh">
+      <div style="flex:1;min-width:0;">
+        <h2 id="d-org">Lead</h2>
+        <div id="d-badges" style="display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;"></div>
+      </div>
+      <button class="mc" onclick="closeM('m-detail')" aria-label="Close">&#x2715;</button>
+    </div>
+    <div class="mb">
+      <div class="tabs">
+        <button class="tb on" onclick="tab('info')">Details</button>
+        <button class="tb" onclick="tab('act')">Activity</button>
+        <button class="tb" onclick="tab('nxt')">Next Action</button>
+        <button class="tb" onclick="tab('ed')">Edit</button>
+      </div>
+
+      <div class="tp on" id="t-info">
+        <div class="dgrid" id="d-fields"></div>
+        <div class="divider"></div>
+        <div class="row" style="gap:8px;flex-wrap:wrap;">
+          <button class="btn bs sm" onclick="openStatus()">Change Status</button>
+          <button class="btn bs sm" id="reassign-btn" onclick="openAssign()">Reassign</button>
+          <button class="btn bc sm" onclick="openCopy(curLead)">Copy Email Template</button>
+        </div>
+      </div>
+
+      <div class="tp" id="t-act">
+        <div class="alog" id="alog-out"><div style="padding:20px;text-align:center;"><div class="spin"></div></div></div>
+        <div class="divider"></div>
+        <div class="fg"><label for="act-note">Log a note</label><textarea id="act-note" placeholder="What happened? What did you do?" rows="3"></textarea></div>
+        <button class="btn bp sm" onclick="addNote()">Add Note</button>
+      </div>
+
+      <div class="tp" id="t-nxt">
+        <div class="fg"><label for="d-nxt">Next action</label><input type="text" id="d-nxt" placeholder="What needs to happen next?"></div>
+        <div class="fg"><label for="d-nxtd">Due date</label><input type="date" id="d-nxtd"></div>
+        <button class="btn bp sm" onclick="saveNextAction()">Save Next Action</button>
+      </div>
+
+      <div class="tp" id="t-ed">
+        <div class="two">
+          <div class="fg req"><label for="e-org">Organization name</label><input type="text" id="e-org"></div>
+          <div class="fg req"><label for="e-contact">Contact name</label><input type="text" id="e-contact"></div>
+          <div class="fg"><label for="e-email">Contact email</label><input type="email" id="e-email" inputmode="email"></div>
+          <div class="fg"><label for="e-phone">Contact phone</label><input type="tel" id="e-phone" inputmode="tel"></div>
+          <div class="fg req"><label for="e-type">Group type</label>
+            <select id="e-type">
+              <option>School Field Trip</option><option>Corporate/Company Party</option>
+              <option>Church Group</option><option>Summer Camp</option>
+              <option>Sports Team</option><option>Birthday</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fg"><label for="e-hd">Est. group size</label><input type="number" id="e-hd" min="1" inputmode="numeric"></div>
+          <div class="fg"><label for="e-date">Target visit date</label><input type="date" id="e-date"></div>
+          <div class="fg"><label for="e-val">Est. value ($)</label><input type="number" id="e-val" step="0.01" inputmode="decimal"></div>
+        </div>
+        <div class="fg"><label for="e-rr">RocketRez booking reference</label><input type="text" id="e-rr" placeholder="Optional booking reference"></div>
+        <div class="fg"><label for="e-notes">Notes</label><textarea id="e-notes" rows="4"></textarea></div>
+        <button class="btn bp sm" onclick="saveEdits()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STATUS MODAL -->
+<div class="overlay" id="m-status">
+  <div class="modal" style="max-width:420px;">
+    <div class="mh"><h2>Change Status</h2><button class="mc" onclick="closeM('m-status')" aria-label="Close">&#x2715;</button></div>
+    <div class="mb">
+      <div class="fg">
+        <label for="s-sel">New status</label>
+        <select id="s-sel" onchange="onStatusChange()">
+          <option>New</option><option>Contacted</option><option>Quote Sent</option>
+          <option>Deposit Pending</option><option>Confirmed</option><option>Completed</option><option>Lost</option>
+        </select>
+        <div class="status-hint" id="s-hint"></div>
+      </div>
+      <div class="fg" id="lr-grp" style="display:none;">
+        <label for="lr-sel">Why was this lead lost?</label>
+        <select id="lr-sel">
+          <option value="price">Price was too high</option>
+          <option value="date unavailable">Date was not available</option>
+          <option value="went elsewhere">Went with another venue</option>
+          <option value="no response">Stopped responding</option>
+          <option value="other">Other reason</option>
+        </select>
+      </div>
+      <div class="fg"><label for="s-note">Add a note (optional)</label><textarea id="s-note" placeholder="Context about this status change..." rows="2"></textarea></div>
+    </div>
+    <div class="mf">
+      <button class="btn bs" onclick="closeM('m-status')">Cancel</button>
+      <button class="btn bp" onclick="saveStatus()">Update Status</button>
+    </div>
+  </div>
+</div>
+
+<!-- REASSIGN MODAL -->
+<div class="overlay" id="m-assign">
+  <div class="modal" style="max-width:380px;">
+    <div class="mh"><h2>Reassign Lead</h2><button class="mc" onclick="closeM('m-assign')" aria-label="Close">&#x2715;</button></div>
+    <div class="mb"><div class="fg"><label for="as-sel">Assign to</label><select id="as-sel"><option value="">Unassigned</option></select></div></div>
+    <div class="mf">
+      <button class="btn bs" onclick="closeM('m-assign')">Cancel</button>
+      <button class="btn bp" onclick="saveAssign()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- TEMPLATE EDIT MODAL -->
+<div class="overlay" id="m-tedit">
+  <div class="modal" style="max-width:640px;">
+    <div class="mh"><h2>Edit Template</h2><button class="mc" onclick="closeM('m-tedit')" aria-label="Close">&#x2715;</button></div>
+    <div class="mb">
+      <div class="fg"><label for="te-name">Template name</label><input type="text" id="te-name"></div>
+      <div class="fg"><label for="te-subj">Subject line</label><input type="text" id="te-subj"></div>
+      <div class="fg"><label for="te-body">Body</label><textarea id="te-body" rows="14"></textarea></div>
+      <p class="tm">Available placeholders: <code>{{org}}</code> <code>{{contact}}</code> <code>{{date}}</code> <code>{{headcount}}</code></p>
+    </div>
+    <div class="mf">
+      <button class="btn bs" onclick="closeM('m-tedit')">Cancel</button>
+      <button class="btn bp" onclick="saveTmpl()">Save Template</button>
+    </div>
+  </div>
+</div>
+
+<!-- COPY TEMPLATE MODAL -->
+<div class="overlay" id="m-copy">
+  <div class="modal" style="max-width:580px;">
+    <div class="mh"><h2>Copy Email Template</h2><button class="mc" onclick="closeM('m-copy')" aria-label="Close">&#x2715;</button></div>
+    <div class="mb">
+      <div class="fg"><label for="ct-sel">Choose a template</label><select id="ct-sel" onchange="prevTmpl()"></select></div>
+      <div class="fg"><label>Subject</label>
+        <div id="ct-subj" style="background:var(--bg);border:1px solid var(--border);border-radius:var(--rs);padding:12px 14px;font-size:14px;min-height:44px;"></div>
+      </div>
+      <div class="fg"><label>Body preview (with lead info filled in)</label>
+        <textarea id="ct-body" rows="12" readonly style="font-size:13px;background:var(--bg);"></textarea>
+      </div>
+    </div>
+    <div class="mf">
+      <button class="btn bs" onclick="closeM('m-copy')">Close</button>
+      <button class="btn bc" id="cs-btn" onclick="copySubj()">Copy Subject</button>
+      <button class="btn bp" id="cb-btn" onclick="copyBody()">Copy Body</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// CONFIGURATION
+// Replace the values below with your project credentials.
+// Open index.html in any text editor, find this section,
+// paste in your values, and save. See SETUP.md for details.
+// ============================================================
+const SUPABASE_URL      = 'YOUR_SUPABASE_URL_HERE';
+const SUPABASE_ANON_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+
+// Change this to your team's shared code before sharing the app.
+// Anyone who knows this code can create an account.
+const SIGNUP_CODE = 'CHANGEME';
+
+// Cloudflare Turnstile site key. Leave empty to disable the security check.
+// If you set this, you must also enable CAPTCHA in Supabase under
+// Authentication > Bot and Abuse Protection. Both must be on together.
+// See SETUP.md for the full walkthrough.
+const TURNSTILE_SITE_KEY = '';
+
+// ============================================================
+// PASSWORD RULES
+// These mirror the rules configured on the server. Keep them in
+// sync if the server settings change. Returns an error string,
+// or null when the password is acceptable.
+// ============================================================
+function passwordRuleError(pw) {
+  if (!pw || pw.length < 6) return 'Password must be at least 6 characters.';
+  if (!/[a-z]/.test(pw))    return 'Password needs at least one lowercase letter.';
+  if (!/[A-Z]/.test(pw))    return 'Password needs at least one uppercase letter.';
+  if (!/[0-9]/.test(pw))    return 'Password needs at least one number.';
+  if (!/[^A-Za-z0-9]/.test(pw)) return 'Password needs at least one symbol, like ! or # or ?.';
+  return null;
+}
+
+// ============================================================
+// STATE
+// ============================================================
+let sb = null;
+let me = null;
+let leads = [];
+let profiles = [];
+let tmpls = [];
+let curLead = null;
+let editTid = null;
+let copyLid = null;
+
+const CONNECTED = SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE'
+               && SUPABASE_ANON_KEY !== 'YOUR_SUPABASE_ANON_KEY_HERE';
+
+const STATUS_HINTS = {
+  'New':             'No contact made yet.',
+  'Contacted':       'You have reached out and are waiting to hear back.',
+  'Quote Sent':      'Pricing or a proposal has been sent to the group.',
+  'Deposit Pending': 'Waiting on the deposit to lock in the date.',
+  'Confirmed':       'Deposit received. Booking is locked in.',
+  'Completed':       'The group has visited. Close out the lead.',
+  'Lost':            'The lead did not convert. A reason is required.'
+};
+
+// ============================================================
+// COMMON PASSWORDS LIST
+// Short inline list of passwords too easy to guess.
+// Guidance only: submission is not blocked, just warned.
+// ============================================================
+const COMMON_PASSWORDS = new Set([
+  'password','password1','password123','123456','1234567','12345678','123456789',
+  'qwerty','qwerty123','letmein','welcome','abc123','iloveyou','admin','admin123',
+  'monkey','dragon','sunshine','princess','football','baseball','shadow','master',
+  'superman','batman','trustno1','hello','hello123','login','pass','pass123',
+  'island','island1','island123','waterpark','islandwaterpark','fresno','fresno1',
+  'fright','frightnights','fresnofright'
+]);
+
+// ============================================================
+// PASSWORD STRENGTH
+// Returns 0 (Weak), 1 (Okay), or 2 (Strong). Pure heuristic, no library.
+// ============================================================
+function passwordStrength(pw) {
+  if (!pw || pw.length < 6) return 0;
+  let score = 0;
+  if (pw.length >= 10) score++;
+  if (pw.length >= 14) score++;
+  if (/[A-Z]/.test(pw)) score++;
+  if (/[0-9]/.test(pw)) score++;
+  if (/[^A-Za-z0-9]/.test(pw)) score++;
+  if (score <= 1) return 0;
+  if (score <= 3) return 1;
+  return 2;
+}
+
+const STRENGTH_COLORS = ['#dc2626','#d97706','#16a34a'];
+const STRENGTH_LABELS = ['Weak','Okay','Strong'];
+
+function updateStrengthMeter(pw, barPrefix, labelId, meterId) {
+  const meter = document.getElementById(meterId);
+  if (!pw) { if (meter) meter.style.display = 'none'; return; }
+  if (meter) meter.style.display = '';
+  const level = passwordStrength(pw);
+  const color = STRENGTH_COLORS[level];
+  for (let i = 1; i <= 3; i++) {
+    const bar = document.getElementById(barPrefix + i);
+    if (bar) bar.style.background = i <= level + 1 ? color : 'var(--border)';
+  }
+  const lbl = document.getElementById(labelId);
+  if (lbl) { lbl.textContent = STRENGTH_LABELS[level]; lbl.style.color = color; }
+}
+
+function onSignupPasswordInput() {
+  const pw = document.getElementById('su-pass').value;
+  updateStrengthMeter(pw, 'pwb', 'pw-strength-label', 'pw-strength');
+  const warn = document.getElementById('pw-warn');
+  if (warn) warn.classList.toggle('on', pw.length >= 4 && COMMON_PASSWORDS.has(pw.toLowerCase()));
+}
+
+function onNewPasswordInput() {
+  const pw = document.getElementById('np-pass').value;
+  updateStrengthMeter(pw, 'npb', 'np-strength-label', 'np-strength');
+  const warn = document.getElementById('np-warn');
+  if (warn) warn.classList.toggle('on', pw.length >= 4 && COMMON_PASSWORDS.has(pw.toLowerCase()));
+}
+
+// ============================================================
+// SHOW/HIDE PASSWORD TOGGLE
+// ============================================================
+function togglePwVisibility(inputId, btn) {
+  const input = document.getElementById(inputId);
+  if (!input) return;
+  const showing = input.type === 'text';
+  input.type = showing ? 'password' : 'text';
+  btn.textContent = showing ? 'Show' : 'Hide';
+}
+
+// ============================================================
+// TURNSTILE
+// Tokens per widget, cleared after use or failed attempt.
+// ============================================================
+let tsTokens   = { signin: null, signup: null, forgot: null };
+let tsReady    = { signin: false, signup: false, forgot: false };
+let tsWidgetId = { signin: null, signup: null, forgot: null };
+
+function initTurnstile() {
+  if (!TURNSTILE_SITE_KEY) return;
+  const script = document.createElement('script');
+  script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTurnstileLoad';
+  script.async = true;
+  script.defer = true;
+  script.onerror = function() {
+    showAuthError('Security check could not load. Refresh the page and try again.');
+  };
+  document.head.appendChild(script);
+}
+
+window.onTurnstileLoad = function() {
+  try {
+    renderTurnstileWidget('signin');
+    renderTurnstileWidget('signup');
+    renderTurnstileWidget('forgot');
+  } catch(e) {
+    showAuthError('Security check could not load. Refresh the page and try again.');
+  }
+};
+
+function renderTurnstileWidget(form) {
+  const wrapId = 'ts-' + form + '-wrap';
+  const hintId = 'ts-' + form + '-hint';
+  const btnMap = { signin: 'signin-btn', signup: 'signup-btn', forgot: 'forgot-btn' };
+  const btnId  = btnMap[form];
+  const wrap   = document.getElementById(wrapId);
+  if (!wrap) return;
+
+  wrap.style.display = '';
+  const hintEl = document.getElementById(hintId);
+  if (hintEl) hintEl.style.display = '';
+
+  const btn = document.getElementById(btnId);
+  if (btn) btn.disabled = true;
+
+  try {
+    const wid = window.turnstile.render(wrap, {
+      sitekey: TURNSTILE_SITE_KEY,
+      callback: function(token) {
+        tsTokens[form]   = token;
+        tsReady[form]    = true;
+        tsWidgetId[form] = wid;
+        if (hintEl) hintEl.style.display = 'none';
+        if (btn) btn.disabled = false;
+      },
+      'error-callback': function() {
+        showAuthError('Security check could not load. Refresh the page and try again.');
+      },
+      'expired-callback': function() {
+        tsTokens[form] = null;
+        tsReady[form]  = false;
+        if (hintEl) hintEl.style.display = '';
+        if (btn) btn.disabled = true;
+      }
+    });
+    tsWidgetId[form] = wid;
+  } catch(e) {
+    showAuthError('Security check could not load. Refresh the page and try again.');
+  }
+}
+
+// Call after every failed attempt. Turnstile tokens are single-use.
+function resetTurnstile(form) {
+  if (!TURNSTILE_SITE_KEY || typeof window.turnstile === 'undefined') return;
+  const hintId = 'ts-' + form + '-hint';
+  const btnMap = { signin: 'signin-btn', signup: 'signup-btn', forgot: 'forgot-btn' };
+  const btnId  = btnMap[form];
+  try {
+    if (tsWidgetId[form] !== null) window.turnstile.reset(tsWidgetId[form]);
+  } catch(e) { /* ignore */ }
+  tsTokens[form] = null;
+  tsReady[form]  = false;
+  const hintEl = document.getElementById(hintId);
+  if (hintEl) hintEl.style.display = '';
+  const btn = document.getElementById(btnId);
+  if (btn) btn.disabled = true;
+}
+
+// ============================================================
+// CLIENT-SIDE ATTEMPT THROTTLE
+//
+// NOTE: This is a user experience feature only. It is NOT a security
+// control. An attacker using scripts or tools outside the browser can
+// bypass this entirely. The real protection comes from Supabase server-side
+// rate limiting (enforced at the API level) and Cloudflare Turnstile
+// (when enabled). This throttle exists purely to give honest feedback to
+// legitimate users who mistype their password several times in a row.
+// ============================================================
+const THROTTLE_MAX     = 5;
+const THROTTLE_SECS    = 60;
+const THROTTLE_KEY_PFX = 'crm_throttle_';
+
+let throttleTimer = null;
+
+function throttleKey(email) {
+  return THROTTLE_KEY_PFX + email.trim().toLowerCase();
+}
+
+function getThrottleRecord(email) {
+  try {
+    const raw = localStorage.getItem(throttleKey(email));
+    return raw ? JSON.parse(raw) : { count: 0, lockedUntil: 0 };
+  } catch(e) { return { count: 0, lockedUntil: 0 }; }
+}
+
+function saveThrottleRecord(email, rec) {
+  try { localStorage.setItem(throttleKey(email), JSON.stringify(rec)); } catch(e) {}
+}
+
+function clearThrottleRecord(email) {
+  try { localStorage.removeItem(throttleKey(email)); } catch(e) {}
+}
+
+function isThrottled(email) {
+  const rec = getThrottleRecord(email);
+  if (!rec.lockedUntil) return false;
+  const remaining = Math.ceil((rec.lockedUntil - Date.now()) / 1000);
+  if (remaining <= 0) { clearThrottleRecord(email); hideThrottle(); return false; }
+  showThrottle(remaining);
+  startThrottleCountdown(email);
+  return true;
+}
+
+function recordFailedAttempt(email) {
+  const rec = getThrottleRecord(email);
+  rec.count = (rec.count || 0) + 1;
+  if (rec.count >= THROTTLE_MAX) {
+    rec.lockedUntil = Date.now() + THROTTLE_SECS * 1000;
+    saveThrottleRecord(email, rec);
+    showThrottle(THROTTLE_SECS);
+    startThrottleCountdown(email);
+  } else {
+    rec.lockedUntil = 0;
+    saveThrottleRecord(email, rec);
+  }
+}
+
+function showThrottle(seconds) {
+  const el = document.getElementById('throttle-msg');
+  el.textContent = 'Too many failed attempts. Try again in ' + seconds + ' second' + (seconds === 1 ? '' : 's') + '.';
+  el.classList.add('on');
+  clearAuthError();
+}
+
+function hideThrottle() {
+  const el = document.getElementById('throttle-msg');
+  el.classList.remove('on');
+  el.textContent = '';
+}
+
+function startThrottleCountdown(email) {
+  if (throttleTimer) clearInterval(throttleTimer);
+  throttleTimer = setInterval(function() {
+    const rec = getThrottleRecord(email);
+    if (!rec.lockedUntil) { hideThrottle(); clearInterval(throttleTimer); throttleTimer = null; return; }
+    const remaining = Math.ceil((rec.lockedUntil - Date.now()) / 1000);
+    if (remaining <= 0) {
+      clearThrottleRecord(email); hideThrottle();
+      clearInterval(throttleTimer); throttleTimer = null;
+    } else {
+      showThrottle(remaining);
+    }
+  }, 1000);
+}
+
+// ============================================================
+// BOOT
+// ============================================================
+window.addEventListener('DOMContentLoaded', async () => {
+  if (!CONNECTED) {
+    document.getElementById('banner').classList.add('on');
+    document.getElementById('signin-btn').disabled = true;
+    document.getElementById('signup-btn').disabled = true;
+    return;
+  }
+
+  initTurnstile();
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+  // Listen for auth state changes, including PASSWORD_RECOVERY.
+  sb.auth.onAuthStateChange(async (event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      showSetPasswordScreen();
+      return;
+    }
+    if (event === 'SIGNED_IN' && session && me) {
+      // Already booted; ignore redundant event.
+    }
+  });
+
+  // Check URL hash for type=recovery (fallback for browsers that do not fire the event first).
+  if (window.location.hash.includes('type=recovery')) {
+    // Wait briefly for supabase-js to process the hash and fire the event.
+    await new Promise(r => setTimeout(r, 300));
+    if (!document.getElementById('form-set-password').style.display ||
+        document.getElementById('form-set-password').style.display === 'none') {
+      showSetPasswordScreen();
+    }
+    return;
+  }
+
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) {
+    await loadMyProfile(session.user.id);
+    if (me) { boot(); return; }
+  }
+});
+
+async function loadMyProfile(uid) {
+  const { data, error } = await sb.from('profiles').select('*').eq('id', uid).single();
+  if (error || !data) { me = null; return; }
+  if (!data.active) {
+    me = null;
+    showAuthError('Your account has been deactivated. Contact your manager for help.');
+    await sb.auth.signOut();
+    return;
+  }
+  me = data;
+}
+
+// ============================================================
+// AUTH SCREEN NAVIGATION
+// ============================================================
+function showSignIn() {
+  clearAuthError(); hideThrottle();
+  setAuthScreen('signin');
+  document.getElementById('auth-toggle-bar').style.display = '';
+  document.getElementById('addr-line').style.display = '';
+}
+
+function showForgot() {
+  clearAuthError(); hideThrottle();
+  setAuthScreen('forgot');
+  document.getElementById('auth-toggle-bar').style.display = 'none';
+  document.getElementById('addr-line').style.display = 'none';
+}
+
+function showSetPasswordScreen() {
+  clearAuthError(); hideThrottle();
+  setAuthScreen('set-password');
+  document.getElementById('auth-toggle-bar').style.display = 'none';
+  document.getElementById('addr-line').style.display = 'none';
+}
+
+function setAuthScreen(which) {
+  const screens = ['signin','signup','forgot','forgot-sent','set-password'];
+  screens.forEach(s => {
+    const el = document.getElementById('form-' + s);
+    if (el) el.style.display = (s === which) ? '' : 'none';
+  });
+  // Keep Sign In tab highlighted when on sign-in.
+  if (which === 'signin') {
+    document.getElementById('tab-signin').classList.add('on');
+    document.getElementById('tab-signup').classList.remove('on');
+  }
+}
+
+function switchAuthTab(tab) {
+  clearAuthError(); hideThrottle();
+  document.getElementById('auth-toggle-bar').style.display = '';
+  document.getElementById('addr-line').style.display = '';
+  const isSignin = tab === 'signin';
+  document.getElementById('tab-signin').classList.toggle('on', isSignin);
+  document.getElementById('tab-signup').classList.toggle('on', !isSignin);
+  setAuthScreen(isSignin ? 'signin' : 'signup');
+}
+
+// ============================================================
+// SIGN IN
+// ============================================================
+async function doSignIn() {
+  clearAuthError();
+  const email = document.getElementById('si-email').value.trim();
+  const pass  = document.getElementById('si-pass').value;
+  let ok = true;
+  if (!email) { showFieldErr('err-si-email', 'Email address is required.'); ok = false; }
+  if (!pass)  { showFieldErr('err-si-pass',  'Password is required.'); ok = false; }
+  if (!ok) return;
+
+  if (isThrottled(email)) return;
+
+  const btn = document.getElementById('signin-btn');
+  btn.disabled = true; btn.textContent = 'Signing in...';
+
+  const opts = {};
+  if (TURNSTILE_SITE_KEY && tsTokens.signin) opts.captchaToken = tsTokens.signin;
+
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass, options: opts });
+
+  btn.disabled = false; btn.textContent = 'Sign In';
+
+  if (error) {
+    recordFailedAttempt(email);
+    resetTurnstile('signin');
+    showAuthError(friendlyAuthError(error));
+    return;
+  }
+
+  // Success: clear throttle counter.
+  clearThrottleRecord(email);
+  tsTokens.signin = null;
+
+  await loadMyProfile(data.user.id);
+  if (!me) {
+    showAuthError('Your account was found but your profile could not be loaded. Please contact your manager.');
+    await sb.auth.signOut();
+    return;
+  }
+  boot();
+}
+
+// ============================================================
+// SIGN UP
+// ============================================================
+async function doSignUp() {
+  clearAuthError();
+  const name  = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass  = document.getElementById('su-pass').value;
+  const code  = document.getElementById('su-code').value.trim();
+
+  let ok = true;
+  if (!name)  { showFieldErr('err-su-name',  'Your full name is required.'); ok = false; }
+  if (!email) { showFieldErr('err-su-email', 'Email address is required.'); ok = false; }
+  if (!pass)  { showFieldErr('err-su-pass',  'Password is required.'); ok = false; }
+  if (pass && passwordRuleError(pass)) { showFieldErr('err-su-pass', passwordRuleError(pass)); ok = false; }
+  if (!code)  { showFieldErr('err-su-code',  'Team code is required. Ask your manager for it.'); ok = false; }
+  if (!ok) return;
+
+  if (code !== SIGNUP_CODE) {
+    showFieldErr('err-su-code', 'That team code is not correct. Ask your manager for the right one.');
+    return;
+  }
+
+  const btn = document.getElementById('signup-btn');
+  btn.disabled = true; btn.textContent = 'Creating account...';
+
+  const opts = { data: { full_name: name } };
+  if (TURNSTILE_SITE_KEY && tsTokens.signup) opts.captchaToken = tsTokens.signup;
+
+  const { data, error } = await sb.auth.signUp({ email, password: pass, options: opts });
+
+  btn.disabled = false; btn.textContent = 'Create Account';
+
+  if (error) {
+    resetTurnstile('signup');
+    showAuthError(friendlyAuthError(error));
+    return;
+  }
+
+  tsTokens.signup = null;
+
+  if (!data.session) {
+    showAuthError('Almost there. Check your email and click the confirmation link, then come back and sign in.');
+    return;
+  }
+
+  await loadMyProfile(data.user.id);
+  if (!me) {
+    await new Promise(r => setTimeout(r, 1200));
+    await loadMyProfile(data.user.id);
+  }
+  if (me) { boot(); return; }
+  showAuthError('Account created. Sign in with your new email and password.');
+  switchAuthTab('signin');
+}
+
+// ============================================================
+// FORGOT PASSWORD
+// ============================================================
+async function doForgot() {
+  clearAuthError();
+  const email = document.getElementById('fp-email').value.trim();
+  if (!email) { showFieldErr('err-fp-email', 'Email address is required.'); return; }
+
+  const btn = document.getElementById('forgot-btn');
+  btn.disabled = true; btn.textContent = 'Sending...';
+
+  // Compute redirectTo from the current page URL so this works on any domain.
+  const redirectTo = window.location.origin + window.location.pathname;
+
+  const opts = { redirectTo };
+  if (TURNSTILE_SITE_KEY && tsTokens.forgot) opts.captchaToken = tsTokens.forgot;
+
+  await sb.auth.resetPasswordForEmail(email, opts);
+  // Always reset the widget after this call, whether it succeeded or failed,
+  // because reset endpoints are an abuse target and tokens are single-use.
+  resetTurnstile('forgot');
+
+  btn.disabled = false; btn.textContent = 'Send Reset Link';
+
+  // Always show the same message regardless of whether the email exists.
+  // Never reveal whether an account is registered.
+  setAuthScreen('forgot-sent');
+}
+
+// ============================================================
+// SET NEW PASSWORD (after returning from reset link)
+// ============================================================
+async function doSetPassword() {
+  clearAuthError();
+  const pass = document.getElementById('np-pass').value;
+  if (!pass)       { showFieldErr('err-np-pass', 'Please enter a new password.'); return; }
+  if (passwordRuleError(pass)) { showFieldErr('err-np-pass', passwordRuleError(pass)); return; }
+
+  const btn = document.getElementById('set-password-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  const { data, error } = await sb.auth.updateUser({ password: pass });
+
+  btn.disabled = false; btn.textContent = 'Save New Password';
+
+  if (error) {
+    showAuthError('Could not save your new password. The reset link may have expired. Request a new one from the sign-in screen.');
+    return;
+  }
+
+  // Strip recovery parameters from the URL so a refresh does not re-trigger this screen.
+  if (window.history && window.history.replaceState) {
+    window.history.replaceState(null, '', window.location.pathname);
+  }
+
+  // Load the profile and drop them into the app signed in.
+  await loadMyProfile(data.user.id);
+  if (me) {
+    boot();
+    return;
+  }
+
+  // Fallback: profile not loaded yet, send them to sign-in with a success note.
+  showSignIn();
+  showAuthError('Your password has been updated. Sign in with your new password.');
+}
+
+// ============================================================
+// FRIENDLY ERROR MESSAGES (no jargon, no raw API text)
+// ============================================================
+function friendlyAuthError(err) {
+  const msg = (err.message || '').toLowerCase();
+  if (msg.includes('invalid login') || msg.includes('invalid credentials') || msg.includes('email not confirmed')) {
+    return 'That email and password do not match. Try again, or ask your manager if you need help.';
+  }
+  if (msg.includes('already registered') || msg.includes('user already exists')) {
+    return 'An account with that email already exists. Try signing in instead.';
+  }
+  if (msg.includes('password') && msg.includes('6')) {
+    return passwordRuleError(pw) || 'Password does not meet the requirements.';
+  }
+  if (msg.includes('email') && msg.includes('valid')) {
+    return 'Please enter a valid email address.';
+  }
+  if (msg.includes('rate limit') || msg.includes('too many')) {
+    return 'Too many attempts. Wait a minute and try again.';
+  }
+  if (msg.includes('network') || msg.includes('fetch')) {
+    return 'Could not connect. Check your internet connection and try again.';
+  }
+  return 'Something went wrong. Try again, or contact your manager if it keeps happening.';
+}
+
+function showAuthError(msg) {
+  const el = document.getElementById('auth-error');
+  el.textContent = msg;
+  el.classList.add('on');
+}
+function clearAuthError() {
+  document.getElementById('auth-error').classList.remove('on');
+  document.querySelectorAll('.field-err').forEach(e => { e.textContent = ''; e.classList.remove('on'); });
+  document.querySelectorAll('.fg input,.fg select').forEach(e => e.classList.remove('err'));
+}
+function showFieldErr(id, msg) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = msg;
+  el.classList.add('on');
+  const input = el.parentElement.querySelector('input,select');
+  if (input) input.classList.add('err');
+}
+
+// ============================================================
+// BOOT INTO APP
+// ============================================================
+function boot() {
+  document.getElementById('login-wrap').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+
+  document.getElementById('uname').textContent = me.full_name.split(' ')[0];
+  const av = document.getElementById('uav');
+  av.textContent = me.full_name[0].toUpperCase();
+  av.className = 'av' + (me.role === 'admin' ? ' adm' : me.role === 'manager' ? ' mgr' : '');
+
+  const canManage = me.role === 'manager' || me.role === 'admin';
+  document.getElementById('n-dashboard').style.display = canManage ? '' : 'none';
+  document.getElementById('n-team').style.display      = canManage ? '' : 'none';
+
+  showPage('today');
+}
+
+// ============================================================
+// SIGN OUT
+// ============================================================
+async function doSignOut() {
+  await sb.auth.signOut();
+  me = null; leads = []; profiles = []; tmpls = [];
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-wrap').style.display = '';
+  document.getElementById('si-email').value = '';
+  document.getElementById('si-pass').value  = '';
+  showSignIn();
+}
+
+// ============================================================
+// NAV
+// ============================================================
+function showPage(pg) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  const p = document.getElementById('p-' + pg);
+  const n = document.getElementById('n-' + pg);
+  if (p) p.classList.add('on');
+  if (n) n.classList.add('on');
+  if (pg === 'today')     renderToday();
+  if (pg === 'leads')     renderLeads();
+  if (pg === 'templates') renderTmpls();
+  if (pg === 'dashboard') renderDash();
+  if (pg === 'team')      renderTeam();
+}
+
+// ============================================================
+// DATA ACCESS
+// ============================================================
+async function getLeads() {
+  const { data, error } = await sb
+    .from('leads')
+    .select('*,owner:owner_id(id,full_name,role)')
+    .order('created_at', { ascending: false });
+  if (error) { console.error('Could not load leads:', error); return []; }
+  return data || [];
+}
+
+async function getProfiles() {
+  const { data, error } = await sb.from('profiles').select('*').order('full_name');
+  if (error) { console.error('Could not load profiles:', error); return []; }
+  return data || [];
+}
+
+async function getTmpls() {
+  const { data } = await sb.from('email_templates').select('*').order('name');
+  return data || [];
+}
+
+async function getActs(lid) {
+  const { data } = await sb
+    .from('activity_log')
+    .select('*,user:user_id(full_name)')
+    .eq('lead_id', lid)
+    .order('created_at', { ascending: false });
+  return data || [];
+}
+
+async function logAct(lid, note) {
+  await sb.from('activity_log').insert({ lead_id: lid, user_id: me.id, note });
+  await sb.from('leads').update({ last_activity_at: new Date().toISOString() }).eq('id', lid);
+}
+
+// ============================================================
+// TODAY VIEW
+// ============================================================
+async function renderToday() {
+  const out = document.getElementById('today-out');
+  out.innerHTML = '<div style="padding:40px;text-align:center;"><div class="spin"></div></div>';
+  [leads, tmpls, profiles] = await Promise.all([getLeads(), getTmpls(), getProfiles()]);
+  fillOwnerSelects();
+
+  let html = '';
+  if (me.role === 'admin' && !localStorage.getItem('crm_welcome_dismissed_' + me.id)) {
+    if (profiles.length === 1) {
+      html += `<div class="welcome-panel" id="welcome-panel">
+        <button class="dismiss" onclick="dismissWelcome()" aria-label="Dismiss">&#x2715;</button>
+        <h2>Welcome. You are the admin.</h2>
+        <p>You were the first to sign up, so you have full control of this system.</p>
+        <p><strong>Next step:</strong> Share the app link and your team code (<strong>${x(SIGNUP_CODE)}</strong>) with your staff. They will create their own accounts and start as reps. You can promote anyone to manager or admin from the <strong>Team</strong> tab.</p>
+        <p style="font-size:12px;color:#1e3a5f;margin-top:4px;">Tap the X to close this message.</p>
+      </div>`;
+    }
+  }
+
+  const tod = new Date(); tod.setHours(0, 0, 0, 0);
+  const wk  = new Date(tod); wk.setDate(wk.getDate() + 7);
+  const ago7 = new Date(tod); ago7.setDate(ago7.getDate() - 7);
+
+  const canManage = me.role === 'manager' || me.role === 'admin';
+  const mine   = canManage ? leads : leads.filter(l => l.owner_id === me.id);
+  const active = mine.filter(l => !['Completed', 'Lost'].includes(l.status));
+
+  const overdue  = active.filter(l => l.next_action_due && new Date(l.next_action_due) < tod);
+  const dueToday = active.filter(l => {
+    if (!l.next_action_due) return false;
+    const d = new Date(l.next_action_due); d.setHours(0,0,0,0);
+    return d.getTime() === tod.getTime();
+  });
+  const dueWk = active.filter(l => {
+    if (!l.next_action_due) return false;
+    const d = new Date(l.next_action_due); d.setHours(0,0,0,0);
+    return d > tod && d <= wk;
+  });
+  const unclaim = leads.filter(l => l.status === 'New' && !l.owner_id);
+  const stale   = active.filter(l => {
+    if (l.status === 'New' && !l.owner_id) return false;
+    return new Date(l.last_activity_at) < ago7;
+  });
+
+  const hasAlert = overdue.length || dueToday.length || unclaim.length || stale.length;
+
+  if (!hasAlert && !dueWk.length && leads.length === 0) {
+    html += `<div class="empty-state">
+      <div class="es-icon">&#128203;</div>
+      <p>No leads yet. Add your first one to get started.</p>
+      <button class="btn bp" onclick="openAddModal()">+ Add Lead</button>
+    </div>`;
+  } else if (!hasAlert && !dueWk.length) {
+    html += '<div class="allclear">All clear. Nothing needs your attention right now. Keep it up.</div>';
+  } else {
+    if (overdue.length)  { html += shead('Overdue Actions', overdue.length, 'red');     html += overdue.map(l => tiHtml(l, 'od')).join(''); }
+    if (dueToday.length) { html += shead('Due Today', dueToday.length, 'yel');          html += dueToday.map(l => tiHtml(l, 'td')).join(''); }
+    if (unclaim.length)  { html += shead('Unclaimed New Leads', unclaim.length, 'blu'); html += unclaim.map(l => tiHtml(l, 'un')).join(''); }
+    if (stale.length) {
+      html += shead('No Activity in 7+ Days', stale.length, '');
+      html += `<p class="tm mb8" style="font-size:12px;">These leads have not had any notes, status changes, or actions logged in over a week.</p>`;
+      html += stale.map(l => tiHtml(l, 'st')).join('');
+    }
+    if (dueWk.length) { html += shead('Coming Up This Week', dueWk.length, ''); html += dueWk.map(l => tiHtml(l, '')).join(''); }
+  }
+
+  out.innerHTML = html;
+}
+
+function dismissWelcome() {
+  localStorage.setItem('crm_welcome_dismissed_' + me.id, '1');
+  const p = document.getElementById('welcome-panel');
+  if (p) p.remove();
+}
+
+function shead(title, n, cls) {
+  return `<div class="shead"><h3>${title}</h3><span class="sc ${cls}">${n}</span></div>`;
+}
+
+function tiHtml(l, type) {
+  const own = l.owner ? x(l.owner.full_name) : 'Unassigned';
+  const due = l.next_action_due ? ' - due ' + fdate(l.next_action_due) : '';
+  const canManage = me.role === 'manager' || me.role === 'admin';
+  return `<div class="ti ${type}">
+    <div>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;flex-wrap:wrap;">
+        <div>
+          <span class="org" style="cursor:pointer;" onclick="openDetail('${l.id}')">${x(l.org_name)}</span>
+          <div class="lmeta">
+            ${sbadge(l.status)}
+            <span class="ld">${x(l.contact_name)}</span>
+            <span class="ld">${x(l.group_type)}</span>
+            ${l.estimated_headcount ? `<span class="ld">${l.estimated_headcount} people</span>` : ''}
+            <span class="ld">Owner: ${own}</span>
+          </div>
+        </div>
+        ${l.estimated_value ? `<span style="font-weight:700;color:var(--success);">$${Number(l.estimated_value).toLocaleString()}</span>` : ''}
+      </div>
+      ${l.next_action ? `<div class="nxt${type==='od'?' od':''}" style="margin-top:8px;">Next: ${x(l.next_action)}${due}</div>` : ''}
+    </div>
+    <div class="ti-acts">
+      <button class="btn bs sm" onclick="openDetail('${l.id}')">View</button>
+      ${type === 'un' ? `<button class="btn bp sm" onclick="claimLead('${l.id}')">Claim</button>` : ''}
+      ${canManage && type !== 'un' ? `<button class="btn bs sm" onclick="openDetail('${l.id}');setTimeout(()=>openAssign(),120)">Reassign</button>` : ''}
+      <button class="btn bc sm" onclick="openCopy('${l.id}')">Copy Email</button>
+    </div>
+  </div>`;
+}
+
+// ============================================================
+// ALL LEADS
+// ============================================================
+async function renderLeads() {
+  leads = await getLeads();
+  fillOwnerSelects();
+  filterLeads();
+}
+
+function filterLeads() {
+  const q  = (document.getElementById('f-search').value || '').toLowerCase().trim();
+  const st = document.getElementById('f-status').value;
+  const ty = document.getElementById('f-type').value;
+  const ow = document.getElementById('f-owner').value;
+
+  const filt = leads.filter(l => {
+    const ms = !q
+      || l.org_name.toLowerCase().includes(q)
+      || l.contact_name.toLowerCase().includes(q)
+      || (l.contact_email || '').toLowerCase().includes(q)
+      || (l.contact_phone || '').includes(q);
+    return ms && (!st || l.status === st) && (!ty || l.group_type === ty) && (!ow || l.owner_id === ow);
+  });
+
+  const out = document.getElementById('leads-out');
+  if (!filt.length && leads.length === 0) {
+    out.innerHTML = `<div class="empty-state">
+      <div class="es-icon">&#128203;</div>
+      <p>No leads yet. Add the first one to get started.</p>
+      <button class="btn bp" onclick="openAddModal()">+ Add Lead</button>
+    </div>`;
+    return;
+  }
+  if (!filt.length) {
+    out.innerHTML = '<div class="empty-state"><p>No leads match your filters. Try clearing a filter to see more.</p></div>';
+    return;
+  }
+  out.innerHTML = `<div class="lead-list">${filt.map(lcardHtml).join('')}</div>`;
+}
+
+function lcardHtml(l) {
+  const own = l.owner ? x(l.owner.full_name) : 'Unassigned';
+  const od  = l.next_action_due && new Date(l.next_action_due) < new Date() && !['Completed','Lost'].includes(l.status);
+  return `<div class="lc" onclick="openDetail('${l.id}')">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">
+      <div style="flex:1;min-width:0;">
+        <div class="org">${x(l.org_name)}</div>
+        <div class="lmeta">
+          ${sbadge(l.status)}
+          <span class="ld">${x(l.contact_name)}</span>
+          <span class="ld">${x(l.group_type)}</span>
+          ${l.estimated_headcount ? `<span class="ld">${l.estimated_headcount} people</span>` : ''}
+          ${l.estimated_value ? `<span class="ld" style="color:var(--success);font-weight:600;">$${Number(l.estimated_value).toLocaleString()}</span>` : ''}
+        </div>
+        ${l.next_action ? `<div class="nxt${od ? ' od' : ''}" style="margin-top:6px;">Next: ${x(l.next_action)}${l.next_action_due ? ' - ' + fdate(l.next_action_due) : ''}</div>` : ''}
+      </div>
+      <div style="text-align:right;flex-shrink:0;">
+        <div class="tm">${x(own)}</div>
+        <div class="tm">${fdate(l.created_at)}</div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function fillOwnerSelects() {
+  const active = profiles.filter(p => p.active);
+  const opts = active.map(u => `<option value="${u.id}">${x(u.full_name)}</option>`).join('');
+  [['f-owner', '<option value="">All Reps</option>'],
+   ['a-owner',  '<option value="">Unassigned</option>'],
+   ['as-sel',   '<option value="">Unassigned</option>']
+  ].forEach(([id, pre]) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = pre + opts;
+  });
+}
+
+// ============================================================
+// LEAD DETAIL
+// ============================================================
+async function openDetail(lid) {
+  curLead = lid;
+  const l = leads.find(l => l.id === lid);
+  if (!l) return;
+
+  document.getElementById('d-org').textContent = l.org_name;
+  document.getElementById('d-badges').innerHTML = sbadge(l.status) +
+    `<span class="badge" style="background:var(--bg);border:1px solid var(--border);color:var(--muted);">${x(l.group_type)}</span>`;
+
+  const own = l.owner ? l.owner.full_name : 'Unassigned';
+  const flds = [
+    ['Contact Name',      l.contact_name],
+    ['Owner',             own],
+    ['Contact Email',     l.contact_email],
+    ['Contact Phone',     l.contact_phone],
+    ['Group Size',        l.estimated_headcount],
+    ['Est. Value',        l.estimated_value ? '$' + Number(l.estimated_value).toLocaleString() : null],
+    ['Target Visit Date', l.target_visit_date ? fdate(l.target_visit_date) : null],
+    ['RocketRez Ref',     l.rocketrez_ref],
+    ['Next Action',       l.next_action],
+    ['Next Action Due',   l.next_action_due ? fdate(l.next_action_due) : null],
+    ['Last Activity',     fdatetime(l.last_activity_at)],
+    ['Created',           fdate(l.created_at)]
+  ];
+  document.getElementById('d-fields').innerHTML =
+    flds.map(([lbl, val]) =>
+      `<div class="df"><label>${lbl}</label><span class="${!val ? 'emp' : ''}">${val ? x(String(val)) : 'not set'}</span></div>`
+    ).join('') +
+    (l.notes ? `<div class="df" style="grid-column:1/-1;"><label>Notes</label><span style="white-space:pre-wrap;">${x(l.notes)}</span></div>` : '') +
+    (l.status === 'Lost' && l.lost_reason ? `<div class="df"><label>Lost Reason</label><span style="color:var(--danger);">${x(lostReasonLabel(l.lost_reason))}</span></div>` : '');
+
+  document.getElementById('e-org').value     = l.org_name || '';
+  document.getElementById('e-contact').value = l.contact_name || '';
+  document.getElementById('e-email').value   = l.contact_email || '';
+  document.getElementById('e-phone').value   = l.contact_phone || '';
+  document.getElementById('e-type').value    = l.group_type || '';
+  document.getElementById('e-hd').value      = l.estimated_headcount || '';
+  document.getElementById('e-date').value    = l.target_visit_date || '';
+  document.getElementById('e-val').value     = l.estimated_value || '';
+  document.getElementById('e-rr').value      = l.rocketrez_ref || '';
+  document.getElementById('e-notes').value   = l.notes || '';
+  document.getElementById('d-nxt').value     = l.next_action || '';
+  document.getElementById('d-nxtd').value    = l.next_action_due || '';
+  document.getElementById('s-sel').value     = l.status;
+  document.getElementById('lr-grp').style.display = l.status === 'Lost' ? 'block' : 'none';
+  document.getElementById('s-hint').textContent = STATUS_HINTS[l.status] || '';
+  if (l.lost_reason) document.getElementById('lr-sel').value = l.lost_reason;
+
+  fillOwnerSelects();
+  const asel = document.getElementById('as-sel');
+  if (l.owner_id && asel) asel.value = l.owner_id;
+
+  const canManage = me.role === 'manager' || me.role === 'admin';
+  document.getElementById('reassign-btn').style.display = canManage ? '' : 'none';
+
+  openM('m-detail');
+  tab('info');
+  loadActs(lid);
+}
+
+async function loadActs(lid) {
+  const out = document.getElementById('alog-out');
+  out.innerHTML = '<div style="padding:20px;text-align:center;"><div class="spin"></div></div>';
+  const acts = await getActs(lid);
+  if (!acts.length) {
+    out.innerHTML = '<div class="empty-state" style="padding:20px;"><p>No activity logged yet. Use the box below to add a note.</p></div>';
+    return;
+  }
+  out.innerHTML = acts.map(a =>
+    `<div class="aitem">
+       <div class="ameta">${a.user ? x(a.user.full_name) : 'Team member'} &bull; ${fdatetime(a.created_at)}</div>
+       <div class="anote">${x(a.note)}</div>
+     </div>`
+  ).join('');
+}
+
+function tab(name) {
+  const names = ['info','act','nxt','ed'];
+  document.querySelectorAll('.tb').forEach((b, i) => b.classList.toggle('on', names[i] === name));
+  document.querySelectorAll('.tp').forEach(p => p.classList.remove('on'));
+  document.getElementById('t-' + name).classList.add('on');
+  if (name === 'act') loadActs(curLead);
+}
+
+function onStatusChange() {
+  const v = document.getElementById('s-sel').value;
+  document.getElementById('lr-grp').style.display = v === 'Lost' ? 'block' : 'none';
+  document.getElementById('s-hint').textContent = STATUS_HINTS[v] || '';
+}
+
+function lostReasonLabel(r) {
+  const map = {
+    'price':           'Price was too high',
+    'date unavailable':'Date was not available',
+    'went elsewhere':  'Went with another venue',
+    'no response':     'Stopped responding',
+    'other':           'Other reason'
+  };
+  return map[r] || r;
+}
+
+// ============================================================
+// ADD LEAD
+// ============================================================
+function openAddModal() {
+  ['a-org','a-contact','a-email','a-phone','a-notes','a-nxt'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  ['a-type','a-hd','a-date','a-val','a-nxtd'].forEach(id => {
+    const el = document.getElementById(id); if (el) el.value = '';
+  });
+  document.querySelectorAll('#m-add .field-err').forEach(e => { e.textContent = ''; e.classList.remove('on'); });
+  document.querySelectorAll('#m-add .fg input,#m-add .fg select').forEach(e => e.classList.remove('err'));
+  fillOwnerSelects();
+  openM('m-add');
+  setTimeout(() => document.getElementById('a-org').focus(), 80);
+}
+
+async function saveLead() {
+  const org     = document.getElementById('a-org').value.trim();
+  const contact = document.getElementById('a-contact').value.trim();
+  const type    = document.getElementById('a-type').value;
+  let ok = true;
+  if (!org)     { showFieldErr('err-a-org',     'Organization name is required.'); ok = false; }
+  if (!contact) { showFieldErr('err-a-contact', 'Contact name is required.'); ok = false; }
+  if (!type)    { showFieldErr('err-a-type',    'Please select a group type.'); ok = false; }
+  if (!ok) return;
+
+  const btn = document.getElementById('save-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  const ownerId = document.getElementById('a-owner').value || null;
+  const payload = {
+    org_name:            org,
+    contact_name:        contact,
+    group_type:          type,
+    contact_email:       document.getElementById('a-email').value.trim() || null,
+    contact_phone:       document.getElementById('a-phone').value.trim() || null,
+    estimated_headcount: parseInt(document.getElementById('a-hd').value) || null,
+    target_visit_date:   document.getElementById('a-date').value || null,
+    estimated_value:     parseFloat(document.getElementById('a-val').value) || null,
+    owner_id:            ownerId,
+    notes:               document.getElementById('a-notes').value.trim() || null,
+    next_action:         document.getElementById('a-nxt').value.trim() || null,
+    next_action_due:     document.getElementById('a-nxtd').value || null,
+    status:              ownerId ? 'Contacted' : 'New',
+    last_activity_at:    new Date().toISOString()
+  };
+
+  const { data, error } = await sb.from('leads').insert(payload).select().single();
+  btn.disabled = false; btn.textContent = 'Save Lead';
+
+  if (error) { toast('Could not save. Check your connection and try again.'); console.error(error); return; }
+  await sb.from('activity_log').insert({ lead_id: data.id, user_id: me.id, note: 'Lead created' });
+  closeM('m-add');
+  toast('Lead added.');
+  leads = await getLeads();
+  if (document.getElementById('p-today').classList.contains('on')) renderToday();
+  if (document.getElementById('p-leads').classList.contains('on')) filterLeads();
+}
+
+// ============================================================
+// CLAIM LEAD
+// ============================================================
+async function claimLead(lid) {
+  const { error } = await sb.from('leads').update({
+    owner_id: me.id, status: 'Contacted', last_activity_at: new Date().toISOString()
+  }).eq('id', lid);
+  if (error) { toast('Could not claim lead. Try again.'); return; }
+  await sb.from('activity_log').insert({ lead_id: lid, user_id: me.id, note: 'Lead claimed by ' + me.full_name });
+  toast('Lead claimed.');
+  leads = await getLeads();
+  renderToday();
+}
+
+// ============================================================
+// STATUS CHANGE
+// ============================================================
+function openStatus() { openM('m-status'); }
+
+async function saveStatus() {
+  const status = document.getElementById('s-sel').value;
+  const note   = document.getElementById('s-note').value.trim();
+  const update = { status, last_activity_at: new Date().toISOString() };
+  if (status === 'Lost') update.lost_reason = document.getElementById('lr-sel').value;
+  else update.lost_reason = null;
+
+  const { error } = await sb.from('leads').update(update).eq('id', curLead);
+  if (error) { toast('Could not update status. Try again.'); return; }
+
+  const actNote = note ? `Status changed to ${status}. ${note}` : `Status changed to ${status}`;
+  await sb.from('activity_log').insert({ lead_id: curLead, user_id: me.id, note: actNote });
+  toast('Status updated.');
+  document.getElementById('s-note').value = '';
+  leads = await getLeads();
+  closeM('m-status');
+  await openDetail(curLead);
+  if (document.getElementById('p-today').classList.contains('on')) renderToday();
+  if (document.getElementById('p-leads').classList.contains('on')) filterLeads();
+}
+
+// ============================================================
+// REASSIGN
+// ============================================================
+function openAssign() {
+  if (me.role === 'rep') { toast('Only managers and admins can reassign leads.'); return; }
+  fillOwnerSelects();
+  const l = leads.find(l => l.id === curLead);
+  if (l && l.owner_id) document.getElementById('as-sel').value = l.owner_id;
+  openM('m-assign');
+}
+
+async function saveAssign() {
+  const uid      = document.getElementById('as-sel').value || null;
+  const newOwner = profiles.find(u => u.id === uid);
+  const { error } = await sb.from('leads').update({
+    owner_id: uid, last_activity_at: new Date().toISOString()
+  }).eq('id', curLead);
+  if (error) { toast('Could not reassign. Try again.'); return; }
+  const actNote = uid
+    ? `Assigned to ${newOwner ? newOwner.full_name : 'team member'}`
+    : 'Unassigned from owner';
+  await sb.from('activity_log').insert({ lead_id: curLead, user_id: me.id, note: actNote });
+  toast('Reassigned.');
+  leads = await getLeads();
+  closeM('m-assign');
+  await openDetail(curLead);
+}
+
+// ============================================================
+// ACTIVITY NOTE
+// ============================================================
+async function addNote() {
+  const note = document.getElementById('act-note').value.trim();
+  if (!note) { toast('Write a note first.'); return; }
+  await logAct(curLead, note);
+  document.getElementById('act-note').value = '';
+  toast('Note logged.');
+  leads = await getLeads();
+  loadActs(curLead);
+}
+
+// ============================================================
+// NEXT ACTION
+// ============================================================
+async function saveNextAction() {
+  const nxt  = document.getElementById('d-nxt').value.trim();
+  const nxtd = document.getElementById('d-nxtd').value;
+  const { error } = await sb.from('leads').update({
+    next_action:      nxt  || null,
+    next_action_due:  nxtd || null,
+    last_activity_at: new Date().toISOString()
+  }).eq('id', curLead);
+  if (error) { toast('Could not save. Try again.'); return; }
+  const note = nxt
+    ? `Next action set: ${nxt}${nxtd ? ' (due ' + fdate(nxtd) + ')' : ''}`
+    : 'Next action cleared';
+  await sb.from('activity_log').insert({ lead_id: curLead, user_id: me.id, note });
+  toast('Next action saved.');
+  leads = await getLeads();
+  await openDetail(curLead);
+  tab('nxt');
+}
+
+// ============================================================
+// EDIT LEAD
+// ============================================================
+async function saveEdits() {
+  const org     = document.getElementById('e-org').value.trim();
+  const contact = document.getElementById('e-contact').value.trim();
+  const type    = document.getElementById('e-type').value;
+  if (!org || !contact || !type) {
+    toast('Organization name, contact name, and group type are all required.');
+    return;
+  }
+  const { error } = await sb.from('leads').update({
+    org_name:            org,
+    contact_name:        contact,
+    group_type:          type,
+    contact_email:       document.getElementById('e-email').value.trim() || null,
+    contact_phone:       document.getElementById('e-phone').value.trim() || null,
+    estimated_headcount: parseInt(document.getElementById('e-hd').value) || null,
+    target_visit_date:   document.getElementById('e-date').value || null,
+    estimated_value:     parseFloat(document.getElementById('e-val').value) || null,
+    rocketrez_ref:       document.getElementById('e-rr').value.trim() || null,
+    notes:               document.getElementById('e-notes').value.trim() || null,
+    last_activity_at:    new Date().toISOString()
+  }).eq('id', curLead);
+  if (error) { toast('Could not save changes. Try again.'); return; }
+  await sb.from('activity_log').insert({ lead_id: curLead, user_id: me.id, note: 'Lead details updated' });
+  toast('Changes saved.');
+  leads = await getLeads();
+  await openDetail(curLead);
+  tab('ed');
+}
+
+// ============================================================
+// TEMPLATES PAGE
+// ============================================================
+async function renderTmpls() {
+  const out = document.getElementById('tmpl-out');
+  out.innerHTML = '<div style="padding:40px;text-align:center;"><div class="spin"></div></div>';
+  tmpls = await getTmpls();
+  if (!tmpls.length) {
+    out.innerHTML = `<div class="empty-state">
+      <div class="es-icon">&#128233;</div>
+      <p>No email templates found. Run the setup steps in SETUP.md to load the default templates.</p>
+    </div>`;
+    return;
+  }
+  const canEdit = me.role === 'admin';
+  out.innerHTML = tmpls.map(t => `
+    <div class="tcard">
+      <h3>${x(t.name)}</h3>
+      <div class="tstage">Stage: ${x(t.stage)}</div>
+      <div class="tprev"><strong>Subject:</strong> ${x(t.subject)}\n\n${x(t.body)}</div>
+      <div class="row" style="margin-top:12px;gap:8px;">
+        ${canEdit ? `<button class="btn bs sm" onclick="editTmpl('${t.id}')">Edit</button>` : ''}
+        <button class="btn bc sm" onclick="openCopyTmpl('${t.id}')">Copy Template</button>
+      </div>
+    </div>`).join('');
+}
+
+function editTmpl(tid) {
+  if (me.role !== 'admin') { toast('Only admins can edit templates.'); return; }
+  editTid = tid;
+  const t = tmpls.find(t => t.id === tid);
+  if (!t) return;
+  document.getElementById('te-name').value = t.name;
+  document.getElementById('te-subj').value = t.subject;
+  document.getElementById('te-body').value = t.body;
+  openM('m-tedit');
+}
+
+async function saveTmpl() {
+  const name = document.getElementById('te-name').value.trim();
+  const subj = document.getElementById('te-subj').value.trim();
+  const body = document.getElementById('te-body').value.trim();
+  if (!name || !subj || !body) { toast('All three fields are required.'); return; }
+  const { error } = await sb.from('email_templates').update({
+    name, subject: subj, body, updated_at: new Date().toISOString()
+  }).eq('id', editTid);
+  if (error) { toast('Could not save template. Try again.'); return; }
+  toast('Template saved.');
+  closeM('m-tedit');
+  tmpls = await getTmpls();
+  if (document.getElementById('p-templates').classList.contains('on')) renderTmpls();
+}
+
+// ============================================================
+// COPY TEMPLATE
+// ============================================================
+function openCopy(lid) {
+  copyLid = lid;
+  if (!tmpls.length) { toast('No templates available yet.'); return; }
+  const sel = document.getElementById('ct-sel');
+  sel.innerHTML = tmpls.map(t => `<option value="${t.id}">${x(t.name)}</option>`).join('');
+  prevTmpl();
+  openM('m-copy');
+}
+
+function openCopyTmpl(tid) {
+  copyLid = null;
+  const sel = document.getElementById('ct-sel');
+  sel.innerHTML = tmpls.map(t => `<option value="${t.id}">${x(t.name)}</option>`).join('');
+  sel.value = tid;
+  prevTmpl();
+  openM('m-copy');
+}
+
+function prevTmpl() {
+  const tid  = document.getElementById('ct-sel').value;
+  const t    = tmpls.find(t => t.id === tid);
+  if (!t) return;
+  const lead = copyLid ? leads.find(l => l.id === copyLid) : null;
+  const org       = lead ? lead.org_name         : '[Organization]';
+  const contact   = lead ? lead.contact_name     : '[Contact Name]';
+  const date      = lead && lead.target_visit_date ? fdate(lead.target_visit_date) : '[Visit Date]';
+  const headcount = lead && lead.estimated_headcount ? String(lead.estimated_headcount) : '[Headcount]';
+  const filled = s => s
+    .replace(/\{\{org\}\}/g, org)
+    .replace(/\{\{contact\}\}/g, contact)
+    .replace(/\{\{date\}\}/g, date)
+    .replace(/\{\{headcount\}\}/g, headcount);
+  document.getElementById('ct-subj').textContent = filled(t.subject);
+  document.getElementById('ct-body').value       = filled(t.body);
+}
+
+async function copySubj() { await copyText(document.getElementById('ct-subj').textContent, 'cs-btn'); }
+async function copyBody() { await copyText(document.getElementById('ct-body').value, 'cb-btn'); }
+async function copyText(text, btnId) {
+  try {
+    await navigator.clipboard.writeText(text);
+    const btn = document.getElementById(btnId);
+    const orig = btn.textContent;
+    btn.classList.add('done'); btn.textContent = 'Copied!';
+    setTimeout(() => { btn.classList.remove('done'); btn.textContent = orig; }, 1800);
+    toast('Copied to clipboard.');
+  } catch(e) {
+    toast('Could not copy automatically. Select the text and copy it manually.');
+  }
+}
+
+// ============================================================
+// MANAGER DASHBOARD
+// ============================================================
+async function renderDash() {
+  const canManage = me.role === 'manager' || me.role === 'admin';
+  if (!canManage) {
+    document.getElementById('dash-out').innerHTML = '<div class="empty-state"><p>This page is only available to managers and admins.</p></div>';
+    return;
+  }
+  const out = document.getElementById('dash-out');
+  out.innerHTML = '<div style="padding:40px;text-align:center;"><div class="spin"></div></div>';
+  [leads, profiles] = await Promise.all([getLeads(), getProfiles()]);
+
+  const statuses = ['New','Contacted','Quote Sent','Deposit Pending','Confirmed','Completed','Lost'];
+  const pipeline = statuses.map(s => {
+    const group = leads.filter(l => l.status === s);
+    const total = group.reduce((sum, l) => sum + (Number(l.estimated_value) || 0), 0);
+    return { status: s, count: group.length, total };
+  });
+
+  const ago7  = new Date(); ago7.setDate(ago7.getDate() - 7);
+  const stale = leads.filter(l =>
+    !['Completed','Lost'].includes(l.status) &&
+    !(l.status === 'New' && !l.owner_id) &&
+    new Date(l.last_activity_at) < ago7
+  );
+
+  const repStats = profiles.filter(p => p.active).map(u => {
+    const myLeads   = leads.filter(l => l.owner_id === u.id);
+    const active    = myLeads.filter(l => !['Completed','Lost'].includes(l.status)).length;
+    const confirmed = myLeads.filter(l => ['Confirmed','Completed'].includes(l.status)).length;
+    const headcount = myLeads
+      .filter(l => ['Confirmed','Completed'].includes(l.status))
+      .reduce((s, l) => s + (l.estimated_headcount || 0), 0);
+    return { user: u, active, confirmed, headcount };
+  });
+
+  let h = '';
+  h += `<h2 style="font-size:16px;font-weight:700;margin-bottom:12px;">Pipeline Overview</h2>`;
+  h += `<div class="pgrid">`;
+  h += pipeline.map(p => `
+    <div class="pstat">
+      <div class="cnt">${p.count}</div>
+      <div class="val">${p.total > 0 ? '$' + p.total.toLocaleString() : 'No value set'}</div>
+      <div class="lbl">${p.status}</div>
+    </div>`).join('');
+  h += `</div>`;
+
+  h += `<h2 style="font-size:16px;font-weight:700;margin-bottom:12px;margin-top:24px;">Team Breakdown</h2>`;
+  h += `<div class="rt-wrap" style="margin-bottom:20px;">`;
+  h += `<table class="rt"><thead><tr>
+    <th>Name</th><th>Role</th><th>Active Leads</th><th>Confirmed / Completed</th><th>Group Size Sold</th>
+  </tr></thead><tbody>`;
+  h += repStats.map(r => `<tr>
+    <td style="font-weight:600;">${x(r.user.full_name)}</td>
+    <td>${roleBadge(r.user.role)}</td>
+    <td>${r.active}</td>
+    <td>${r.confirmed}</td>
+    <td>${r.headcount > 0 ? r.headcount.toLocaleString() : '0'}</td>
+  </tr>`).join('');
+  h += `</tbody></table></div>`;
+
+  if (stale.length) {
+    h += `<h2 style="font-size:16px;font-weight:700;margin-bottom:8px;color:var(--warn);">No Activity in 7+ Days (${stale.length})</h2>`;
+    h += `<p class="tm mb12" style="font-size:13px;">These leads have not had any notes,
+
+ status changes, or actions logged in over a week.</p>`;
+    h += `<div class="lead-list">${stale.map(lcardHtml).join('')}</div>`;
+  } else {
+    h += `<div class="allclear" style="margin-top:20px;">No stale leads. Everything is active.</div>`;
+  }
+
+  out.innerHTML = h;
+}
+
+// ============================================================
+// TEAM PAGE
+// ============================================================
+async function renderTeam() {
+  const canManage = me.role === 'manager' || me.role === 'admin';
+  if (!canManage) {
+    document.getElementById('team-out').innerHTML = '<div class="empty-state"><p>This page is only available to managers and admins.</p></div>';
+    return;
+  }
+  const out = document.getElementById('team-out');
+  out.innerHTML = '<div style="padding:40px;text-align:center;"><div class="spin"></div></div>';
+  profiles = await getProfiles();
+
+  let h = '<div class="rt-wrap">';
+  h += `<table class="rt"><thead><tr>
+    <th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Joined</th><th>Actions</th>
+  </tr></thead><tbody>`;
+
+  for (const u of profiles) {
+    const isSelf        = u.id === me.id;
+    const isAdmin       = me.role === 'admin';
+    const isMgr         = me.role === 'manager';
+    const targetIsAdmin = u.role === 'admin';
+
+    let roleOptions = '';
+    if (isAdmin && !isSelf) {
+      roleOptions = `<select onchange="changeRole('${u.id}', this.value, this)" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:13px;background:#fff;">
+        <option value="rep"     ${u.role==='rep'     ? 'selected' : ''}>Rep</option>
+        <option value="manager" ${u.role==='manager' ? 'selected' : ''}>Manager</option>
+        <option value="admin"   ${u.role==='admin'   ? 'selected' : ''}>Admin</option>
+      </select>`;
+    } else if (isMgr && !isSelf && u.role === 'rep') {
+      roleOptions = `<select onchange="changeRole('${u.id}', this.value, this)" style="padding:6px 8px;border:1.5px solid var(--border);border-radius:var(--rs);font-size:13px;background:#fff;">
+        <option value="rep"     ${u.role==='rep'     ? 'selected' : ''}>Rep</option>
+        <option value="manager" ${u.role==='manager' ? 'selected' : ''}>Manager</option>
+      </select>`;
+    } else {
+      roleOptions = roleBadge(u.role);
+    }
+
+    let toggleBtn = '';
+    if (!isSelf && (isAdmin || (isMgr && !targetIsAdmin))) {
+      if (u.active) {
+        toggleBtn = `<button class="btn bd sm" onclick="toggleActive('${u.id}', false, '${x(u.full_name)}')">Remove</button>`;
+      } else {
+        toggleBtn = `<button class="btn bc sm" onclick="toggleActive('${u.id}', true, '${x(u.full_name)}')">Restore</button>`;
+      }
+    }
+    if (isSelf) toggleBtn = '<span class="tm" style="font-size:12px;">That\'s you</span>';
+
+    h += `<tr style="${!u.active ? 'opacity:.55;' : ''}">
+      <td style="font-weight:600;">${x(u.full_name)}</td>
+      <td style="font-size:13px;color:var(--muted);">${x(u.email)}</td>
+      <td>${roleOptions}</td>
+      <td>${u.active ? '<span class="badge bConfirmed">Active</span>' : '<span class="badge bInactive">Inactive</span>'}</td>
+      <td style="font-size:13px;color:var(--muted);">${fdate(u.created_at)}</td>
+      <td>${toggleBtn}</td>
+    </tr>`;
+  }
+
+  h += '</tbody></table></div>';
+  out.innerHTML = h;
+}
+
+async function changeRole(uid, newRole, selectEl) {
+  const target = profiles.find(p => p.id === uid);
+  if (!target) return;
+  if (target.role === 'admin' && newRole !== 'admin') {
+    const activeAdmins = profiles.filter(p => p.active && p.role === 'admin').length;
+    if (activeAdmins <= 1) {
+      toast('You are the only admin. Promote someone else to admin first.');
+      selectEl.value = 'admin';
+      return;
+    }
+  }
+  if (me.role === 'manager' && newRole === 'admin') {
+    toast('Only admins can assign the admin role.');
+    selectEl.value = target.role;
+    return;
+  }
+  const prevRole = target.role;
+  const { error } = await sb.from('profiles').update({ role: newRole }).eq('id', uid);
+  if (error) { toast('Could not update role. You may not have permission.'); selectEl.value = prevRole; return; }
+  toast(`${target.full_name} is now a ${newRole}.`);
+  profiles = await getProfiles();
+  renderTeam();
+}
+
+async function toggleActive(uid, makeActive, name) {
+  const target = profiles.find(p => p.id === uid);
+  if (!target) return;
+  if (!makeActive && target.role === 'admin') {
+    const activeAdmins = profiles.filter(p => p.active && p.role === 'admin').length;
+    if (activeAdmins <= 1) { toast('You are the only admin. Promote someone else to admin first.'); return; }
+  }
+  if (!makeActive) {
+    const confirmed = await showConfirm(
+      `Remove ${name} from the team?`,
+      `${name} will not be able to log in. Their past activity and assigned leads stay in the system. You can restore them later from this page.`
+    );
+    if (!confirmed) return;
+  }
+  const { error } = await sb.from('profiles').update({ active: makeActive }).eq('id', uid);
+  if (error) { toast('Could not update. You may not have permission.'); return; }
+  toast(makeActive ? `${name} has been restored.` : `${name} has been removed from the team.`);
+  profiles = await getProfiles();
+  renderTeam();
+}
+
+// ============================================================
+// CONFIRM DIALOG
+// ============================================================
+let _confirmResolve = null;
+
+function showConfirm(title, msg, okLabel) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-msg').textContent   = msg;
+  document.getElementById('confirm-ok').textContent    = okLabel || 'Confirm';
+  document.getElementById('confirm-overlay').classList.add('on');
+  return new Promise(resolve => { _confirmResolve = resolve; });
+}
+
+function confirmResolve(val) {
+  document.getElementById('confirm-overlay').classList.remove('on');
+  if (_confirmResolve) { _confirmResolve(val); _confirmResolve = null; }
+}
+
+// ============================================================
+// MODAL HELPERS
+// ============================================================
+function openM(id) { document.getElementById(id).classList.add('on'); document.body.style.overflow = 'hidden'; }
+function closeM(id) { document.getElementById(id).classList.remove('on'); document.body.style.overflow = ''; }
+
+document.addEventListener('click', e => { if (e.target.classList.contains('overlay')) closeM(e.target.id); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.overlay.on').forEach(o => closeM(o.id));
+    confirmResolve(false);
+  }
+});
+
+// ============================================================
+// ROLE BADGE
+// ============================================================
+function roleBadge(role) {
+  if (role === 'admin')   return '<span class="badge bAdmin">Admin</span>';
+  if (role === 'manager') return '<span class="badge bManager">Manager</span>';
+  return '<span class="badge bRep">Rep</span>';
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function x(s) {
+  if (s == null) return '';
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function sbadge(status) {
+  const cls = {
+    'New':             'bNew',
+    'Contacted':       'bContacted',
+    'Quote Sent':      'bQuote',
+    'Deposit Pending': 'bDeposit',
+    'Confirmed':       'bConfirmed',
+    'Completed':       'bCompleted',
+    'Lost':            'bLost'
+  }[status] || 'bNew';
+  return `<span class="badge ${cls}">${status}</span>`;
+}
+
+function fdate(d) {
+  if (!d) return '';
+  try {
+    const dt = new Date(d + (d.includes('T') ? '' : 'T00:00:00'));
+    return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch(e) { return d; }
+}
+
+function fdatetime(d) {
+  if (!d) return '';
+  try {
+    return new Date(d).toLocaleDateString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit'
+    });
+  } catch(e) { return d; }
+}
+
+let toastTimer = null;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), 3000);
+}
+</script>
+</body>
+</html>
