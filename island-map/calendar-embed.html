@@ -497,12 +497,10 @@ body { width: 100%; }
  openTicketEngine('bzY', '', '2 for Tuesday Tickets \u2014 ' + selectedCalDate.label);
  });
 
- /* Summer Nights LIVE! - direct item link */
+ /* Summer Nights LIVE! */
  document.getElementById('iwcBuySummerNightsBtn').addEventListener('click', function() {
- document.getElementById('iwcPopupOverlay').classList.remove('active');
- document.getElementById('iwcTicketTitle').textContent = 'Summer Nights LIVE!';
- document.getElementById('iwcTicketEngine').innerHTML = '<iframe src="https://secure.rocket-rez.com/RocketWeb2/9f5be16b3a6b913c/item/2/858" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>';
- document.getElementById('iwcTicketOverlay').classList.add('active');
+ if (!selectedCalDate) return;
+ openTicketEngine('bAW', '', 'Summer Nights LIVE!');
  });
 
  /* After Hours */
