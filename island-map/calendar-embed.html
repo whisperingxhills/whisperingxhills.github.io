@@ -82,6 +82,7 @@ body { width: 100%; }
 #iwp-calendar .iwc-tag--wlsl { background: #BFDBFE; color: #1E40AF; }
 #iwp-calendar .iwc-tag--tidalrave { background: #C4B5FD; color: #4C1D95; }
 #iwp-calendar .iwc-tag--perreo { background: #FECACA; color: #991B1B; }
+#iwp-calendar .iwc-tag--summernights { background: #FED7AA; color: #9A3412; }
 #iwp-calendar .iwc-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 999999; display: none; align-items: center; justify-content: center; padding: 24px; }
 #iwp-calendar .iwc-popup-overlay.active { display: flex; }
 #iwp-calendar .iwc-popup { background: white; border-radius: 16px; max-width: 400px; width: 100%; overflow: hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.4); animation: iwcPopIn 0.2s ease; }
@@ -103,6 +104,8 @@ body { width: 100%; }
 #iwp-calendar .iwc-buy-2for-btn:hover { background: #1E40AF; }
 #iwp-calendar .iwc-buy-afterhours-btn { display: none; width: calc(100% - 48px); margin: 8px 24px 0; padding: 14px; background: #7C3AED; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
 #iwp-calendar .iwc-buy-afterhours-btn:hover { background: #6D28D9; }
+#iwp-calendar .iwc-buy-summernights-btn { display: none; width: calc(100% - 48px); margin: 8px 24px 0; padding: 14px; background: #EA580C; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
+#iwp-calendar .iwc-buy-summernights-btn:hover { background: #C2410C; }
 #iwp-calendar .iwc-ticket-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.85); z-index: 1000000; display: none; align-items: center; justify-content: center; padding: 20px; }
 #iwp-calendar .iwc-ticket-overlay.active { display: flex; }
 #iwp-calendar .iwc-ticket-modal { max-width: 600px; width: 100%; height: 90vh; background: #fff; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 48px rgba(0,0,0,0.4); }
@@ -124,6 +127,7 @@ body { width: 100%; }
  #iwp-calendar .iwc-buy-btn { width: calc(100% - 32px); margin: 0 16px; font-size: 14px; padding: 12px; }
  #iwp-calendar .iwc-buy-2for-btn { width: calc(100% - 32px); margin: 8px 16px 0; font-size: 13px; padding: 12px; }
  #iwp-calendar .iwc-buy-afterhours-btn { width: calc(100% - 32px); margin: 8px 16px 0; font-size: 13px; padding: 12px; }
+ #iwp-calendar .iwc-buy-summernights-btn { width: calc(100% - 32px); margin: 8px 16px 0; font-size: 13px; padding: 12px; }
 }
 @media (min-width: 641px) {
  #iwp-calendar .iwc-day { padding: 6px 8px; }
@@ -174,6 +178,7 @@ body { width: 100%; }
  <button class="iwc-buy-btn" id="iwcBuyBtn">🎟️ Buy Tickets</button>
  <button class="iwc-buy-2for-btn" id="iwcBuy2forBtn">🎟️ Purchase 2 for Tuesday Tickets</button>
  <button class="iwc-buy-afterhours-btn" id="iwcBuyAfterHoursBtn">🎟️ Purchase After Hours Tickets</button>
+ <button class="iwc-buy-summernights-btn" id="iwcBuySummerNightsBtn">🌟 Buy Summer Nights LIVE! Tickets</button>
  <div style="height:12px"></div>
  <button class="iwc-popup-close" id="iwcPopupClose">Close</button>
  </div>
@@ -210,7 +215,8 @@ body { width: 100%; }
  'laborday': { label: 'Labor Day', cls: 'iwc-tag--holiday', emoji: '\u{1F1FA}\u{1F1F8}', desc: 'Labor Day' },
  'wlsl': { label: "World's Largest Swim Lesson", cls: 'iwc-tag--wlsl', emoji: '\u{1F3CA}', desc: "World's Largest Swim Lesson" },
  'tidalrave': { label: 'Tidal Rave', cls: 'iwc-tag--tidalrave', emoji: '\u{1F3B6}', desc: 'Tidal Rave \u2014 The Ultimate Water Rave Experience. Tickets available soon!' },
- 'perreo': { label: 'Perreo En La Playa', cls: 'iwc-tag--perreo', emoji: '\u{1F525}', desc: 'Perreo En La Playa ft Jowell & Randy. In collaboration with Jangue. Tickets available soon!' }
+ 'perreo': { label: 'Perreo En La Playa', cls: 'iwc-tag--perreo', emoji: '\u{1F525}', desc: 'Perreo En La Playa ft Jowell & Randy. In collaboration with Jangue. Tickets available soon!' },
+ 'summernights': { label: 'Summer Nights LIVE!', cls: 'iwc-tag--summernights', emoji: '\u{1F31F}', desc: 'Summer Nights LIVE! A special evening event at Island Waterpark.' }
  };
 
  var AFTER_HOURS_RATES = {
@@ -298,6 +304,7 @@ body { width: 100%; }
  
  [7,29,'11:00\u20136:00',[],{}],
  [7,30,'11:00\u20136:00',[],{}],
+ [8,4,'6:00 PM\u201312:00 AM',['summernights'],{}],
  [8,5,'11:00\u20136:00',[],{}],
  [8,6,'11:00\u20136:00',[],{}],
  [8,7,'11:00\u20136:00',['laborday'],{}]
@@ -453,6 +460,10 @@ body { width: 100%; }
  var is2for = entry[3].indexOf('2for') !== -1;
  document.getElementById('iwcBuy2forBtn').style.display = is2for ? 'block' : 'none';
 
+ /* Show/hide Summer Nights LIVE button */
+ var isSummerNights = entry[3].indexOf('summernights') !== -1;
+ document.getElementById('iwcBuySummerNightsBtn').style.display = isSummerNights ? 'block' : 'none';
+
  /* Show/hide After Hours button */
  var afterHoursKey = month + '-' + day;
  var afterHoursRate = AFTER_HOURS_RATES[afterHoursKey];
@@ -484,6 +495,14 @@ body { width: 100%; }
  document.getElementById('iwcBuy2forBtn').addEventListener('click', function() {
  if (!selectedCalDate) return;
  openTicketEngine('bzY', '', '2 for Tuesday Tickets \u2014 ' + selectedCalDate.label);
+ });
+
+ /* Summer Nights LIVE! - direct item link */
+ document.getElementById('iwcBuySummerNightsBtn').addEventListener('click', function() {
+ document.getElementById('iwcPopupOverlay').classList.remove('active');
+ document.getElementById('iwcTicketTitle').textContent = 'Summer Nights LIVE!';
+ document.getElementById('iwcTicketEngine').innerHTML = '<iframe src="https://secure.rocket-rez.com/RocketWeb2/9f5be16b3a6b913c/item/2/858" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>';
+ document.getElementById('iwcTicketOverlay').classList.add('active');
  });
 
  /* After Hours */
