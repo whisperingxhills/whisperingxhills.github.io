@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Fresno Fright Nights Calendar</title>
+<style>
+html, body { margin: 0; padding: 0; overflow-x: hidden; background: #0A0708; }
+body { width: 100%; }
+
+#ffn-calendar .ffn-tag--opening { background: #FF6B00; color: #1A0A00; }
+#ffn-calendar .ffn-tag--fresnoween { background: linear-gradient(135deg,#7E3FF2,#B026FF); color: #FFF; box-shadow: 0 0 10px rgba(176,38,255,0.55); }
+#ffn-calendar .ffn-tag--halloween { background: #8B0000; color: #FFD9D9; box-shadow: 0 0 8px rgba(193,18,31,0.5); }
+#ffn-calendar .ffn-soon { display:block; width: calc(100% - 48px); margin: 0 24px; padding: 14px; background: rgba(255,107,0,0.12); border: 1px solid rgba(255,107,0,0.45); border-radius: 10px; color: #FF6B00; font-size: 14px; font-weight: 800; letter-spacing: 1.5px; text-align: center; font-family: 'Inter', sans-serif; }
+@media (max-width: 640px) { #ffn-calendar .ffn-soon { width: calc(100% - 32px); margin: 0 16px; font-size: 12px; padding: 12px; } }
+#ffn-calendar .ffn-soon-inline { color: #FF6B00 !important; font-weight: 800; letter-spacing: 1px; }
+</style>
+</head>
+<body>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+#ffn-calendar *, #ffn-calendar *::before, #ffn-calendar *::after { box-sizing: border-box; margin: 0; padding: 0; }
+#ffn-calendar {
+ --iw-blue: #FF6B00; --iw-blue-dark: #7F1010; --iw-blue-deep: #3D0505; --iw-blue-light: #2A1410;
+ --iw-orange: #FF6B00; --iw-green: #7CB342; --iw-purple: #7E3FF2; --iw-red: #C1121F;
+ --iw-yellow: #F5A623; --iw-pink: #D6336C; --iw-cyan: #FF8C42;
+ --iw-dark: #EDE6DD; --iw-darker: #0A0708; --iw-light: #14100F;
+ --iw-gray: #9C8F85; --iw-gray-light: #6E635C; --iw-border: #2E2523;
+ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+ color: var(--iw-dark); max-width: 100%; margin: 0 auto; border-radius: 0;
+ overflow: hidden; box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+ display: flex; flex-direction: column; height: 950px; position: relative;
+}
+#ffn-calendar .ffn-header { background: linear-gradient(135deg, var(--iw-blue-dark) 0%, var(--iw-blue-deep) 100%); padding: 20px 24px 16px; text-align: center; position: relative; overflow: hidden; flex-shrink: 0; }
+#ffn-calendar .ffn-header::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle at 30% 70%, rgba(255,255,255,0.08) 0%, transparent 50%), radial-gradient(circle at 70% 30%, rgba(255,255,255,0.05) 0%, transparent 50%); pointer-events: none; }
+#ffn-calendar .ffn-title { font-size: 30px; font-weight: 900; letter-spacing: 3px; color: #FF6B00; text-shadow: 0 0 22px rgba(255,107,0,0.55), 0 2px 0 #000; position: relative; }
+#ffn-calendar .ffn-header p { font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px; letter-spacing: 2px; text-transform: uppercase; position: relative; }
+#ffn-calendar .ffn-nav { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; background: var(--iw-darker); flex-shrink: 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+#ffn-calendar .ffn-nav-btn { width: 44px; height: 44px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: #EDE6DD; font-size: 20px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; font-family: inherit; -webkit-tap-highlight-color: transparent; }
+#ffn-calendar .ffn-nav-btn:hover { background: rgba(255,255,255,0.12); }
+#ffn-calendar .ffn-nav-btn:active { transform: scale(0.95); }
+#ffn-calendar .ffn-nav-btn:disabled { opacity: 0.25; cursor: default; pointer-events: none; }
+#ffn-calendar .ffn-nav-center { text-align: center; }
+#ffn-calendar .ffn-nav-month { font-size: 22px; font-weight: 800; color: #EDE6DD; text-transform: uppercase; letter-spacing: 2px; }
+#ffn-calendar .ffn-nav-year { font-size: 11px; color: var(--iw-gray-light); margin-top: 2px; letter-spacing: 1px; }
+#ffn-calendar .ffn-nav-dots { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
+#ffn-calendar .ffn-nav-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.2s ease; cursor: pointer; }
+#ffn-calendar .ffn-nav-dot.active { background: var(--iw-blue); width: 18px; border-radius: 3px; }
+#ffn-calendar .ffn-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; justify-content: center; padding: 10px 16px; background: rgba(15,23,42,0.8); flex-shrink: 0; }
+#ffn-calendar .ffn-legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 500; }
+#ffn-calendar .ffn-legend-dot { width: 11px; height: 11px; border-radius: 2px; flex-shrink: 0; }
+#ffn-calendar .ffn-month-info { display: flex; justify-content: center; gap: 16px; padding: 8px 16px; background: #14100F; border-bottom: 1px solid #241C1A; flex-shrink: 0; }
+#ffn-calendar .ffn-month-stat { font-size: 11px; color: var(--iw-gray); font-weight: 600; }
+#ffn-calendar .ffn-month-stat span { color: var(--iw-dark); font-weight: 800; }
+#ffn-calendar .ffn-dow-row { display: grid; grid-template-columns: repeat(7, 1fr); background: var(--iw-light); border-bottom: 1px solid #241C1A; flex-shrink: 0; }
+#ffn-calendar .ffn-dow { padding: 10px 4px; text-align: center; font-size: 11px; font-weight: 700; color: #B8A79C; text-transform: uppercase; letter-spacing: 1px; }
+#ffn-calendar .ffn-sheet-wrap { flex: 1; overflow: hidden; position: relative; }
+#ffn-calendar .ffn-sheet { position: absolute; inset: 0; display: flex; flex-direction: column; background: #14100F; transition: opacity 0.25s ease, transform 0.25s ease; }
+#ffn-calendar .ffn-sheet.slide-left-out { transform: translateX(-100%); opacity: 0; }
+#ffn-calendar .ffn-sheet.slide-right-out { transform: translateX(100%); opacity: 0; }
+#ffn-calendar .ffn-sheet.slide-left-in { animation: ffnSlideInLeft 0.25s ease forwards; }
+#ffn-calendar .ffn-sheet.slide-right-in { animation: ffnSlideInRight 0.25s ease forwards; }
+@keyframes ffnSlideInLeft { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+@keyframes ffnSlideInRight { from { transform: translateX(-100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+#ffn-calendar .ffn-grid { flex: 1; display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(6, 1fr); gap: 1px; background: var(--iw-border); }
+#ffn-calendar .ffn-day { padding: 4px 5px; background: #14100F; position: relative; cursor: default; display: flex; flex-direction: column; overflow: hidden; transition: background 0.1s; }
+#ffn-calendar .ffn-day:hover:not(.ffn-day--empty):not(.ffn-day--closed) { background: #241A16; }
+#ffn-calendar .ffn-day--empty { background: #0D0A09; }
+#ffn-calendar .ffn-day--closed { background: #0F0C0B; }
+#ffn-calendar .ffn-day--closed .ffn-day-num { color: #7A6C64; }
+#ffn-calendar .ffn-day--closed .ffn-day-hours { color: #6B5D56; letter-spacing:0.5px; }
+#ffn-calendar .ffn-day--today { outline: 2px solid var(--iw-blue); outline-offset: -2px; z-index: 1; }
+#ffn-calendar .ffn-day--today .ffn-day-num { background: var(--iw-blue); color: #EDE6DD; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; }
+#ffn-calendar .ffn-day-num { font-size: 13px; font-weight: 700; color: var(--iw-dark); line-height: 1; }
+#ffn-calendar .ffn-day-hours { font-size: 9px; font-weight: 700; color: #FF6B00; margin-top: 2px; line-height: 1.2; }
+#ffn-calendar .ffn-tags { display: flex; flex-wrap: wrap; gap: 2px; margin-top: auto; padding-top: 2px; }
+#ffn-calendar .ffn-tag { display: inline-block; padding: 1px 5px; border-radius: 3px; font-size: 8px; font-weight: 700; letter-spacing: 0.2px; text-transform: uppercase; white-space: nowrap; line-height: 1.5; }
+#ffn-calendar .ffn-popup-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(4px); z-index: 999999; display: none; align-items: center; justify-content: center; padding: 24px; }
+#ffn-calendar .ffn-popup-overlay.active { display: flex; }
+#ffn-calendar .ffn-popup { background: #14100F; border-radius: 16px; max-width: 400px; width: 100%; overflow: hidden; box-shadow: 0 24px 48px rgba(0,0,0,0.4); animation: ffnPopIn 0.2s ease; }
+@keyframes ffnPopIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+#ffn-calendar .ffn-popup-header { padding: 20px 24px; background: linear-gradient(135deg, var(--iw-blue-dark), var(--iw-blue-deep)); color: #EDE6DD; }
+#ffn-calendar .ffn-popup-header h3 { font-size: 18px; font-weight: 800; }
+#ffn-calendar .ffn-popup-header p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+#ffn-calendar .ffn-popup-body { padding: 20px 24px; }
+#ffn-calendar .ffn-popup-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 14px; }
+#ffn-calendar .ffn-popup-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+#ffn-calendar .ffn-popup-label { font-size: 11px; color: var(--iw-gray); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+#ffn-calendar .ffn-popup-value { font-size: 14px; font-weight: 600; color: var(--iw-dark); margin-top: 2px; }
+#ffn-calendar .ffn-popup-events { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+#ffn-calendar .ffn-popup-close { display: block; width: 100%; padding: 14px; border: none; background: var(--iw-light); color: var(--iw-gray); font-weight: 700; font-size: 13px; font-family: inherit; cursor: pointer; transition: background 0.15s; }
+#ffn-calendar .ffn-popup-close:hover { background: var(--iw-border); color: var(--iw-dark); }
+#ffn-calendar .ffn-buy-btn { display: block; width: calc(100% - 48px); margin: 0 24px; padding: 14px; background: #0EA5E9; color: #fff; border: none; border-radius: 10px; font-size: 16px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
+#ffn-calendar .ffn-buy-btn:hover { background: #0284C7; }
+#ffn-calendar .ffn-buy-2for-btn { display: none; width: calc(100% - 48px); margin: 8px 24px 0; padding: 14px; background: #1D4ED8; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
+#ffn-calendar .ffn-buy-2for-btn:hover { background: #1E40AF; }
+#ffn-calendar .ffn-buy-afterhours-btn { display: none; width: calc(100% - 48px); margin: 8px 24px 0; padding: 14px; background: #7C3AED; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
+#ffn-calendar .ffn-buy-afterhours-btn:hover { background: #6D28D9; }
+#ffn-calendar .ffn-buy-summernights-btn { display: none; width: calc(100% - 48px); margin: 8px 24px 0; padding: 14px; background: #EA580C; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
+#ffn-calendar .ffn-buy-summernights-btn:hover { background: #C2410C; }
+#ffn-calendar .ffn-ticket-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.85); z-index: 1000000; display: none; align-items: center; justify-content: center; padding: 20px; }
+#ffn-calendar .ffn-ticket-overlay.active { display: flex; }
+#ffn-calendar .ffn-ticket-modal { max-width: 600px; width: 100%; height: 90vh; background: #fff; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 48px rgba(0,0,0,0.4); }
+#ffn-calendar .ffn-ticket-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #E2E8F0; }
+#ffn-calendar .ffn-ticket-modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #1E293B; font-family: 'Inter', sans-serif; }
+#ffn-calendar .ffn-ticket-modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #94A3B8; padding: 4px 8px; }
+#ffn-calendar .ffn-ticket-modal-close:hover { color: #1E293B; }
+#ffn-calendar .ffn-ticket-engine { flex: 1; overflow: auto; padding: 0; }
+@media (max-width: 640px) {
+ #ffn-calendar { height: 750px; }
+ #ffn-calendar .ffn-header { padding: 14px 16px 12px; }
+ #ffn-calendar .ffn-nav-month { font-size: 18px; }
+ #ffn-calendar .ffn-day { padding: 3px 4px; }
+ #ffn-calendar .ffn-day-num { font-size: 11px; }
+ #ffn-calendar .ffn-day-hours { font-size: 8px; }
+ #ffn-calendar .ffn-tag { font-size: 7px; padding: 1px 3px; }
+ #ffn-calendar .ffn-legend { padding: 6px 12px; gap: 4px 8px; }
+ #ffn-calendar .ffn-legend-item { font-size: 9px; }
+ #ffn-calendar .ffn-buy-btn { width: calc(100% - 32px); margin: 0 16px; font-size: 14px; padding: 12px; }
+ #ffn-calendar .ffn-buy-2for-btn { width: calc(100% - 32px); margin: 8px 16px 0; font-size: 13px; padding: 12px; }
+ #ffn-calendar .ffn-buy-afterhours-btn { width: calc(100% - 32px); margin: 8px 16px 0; font-size: 13px; padding: 12px; }
+ #ffn-calendar .ffn-buy-summernights-btn { width: calc(100% - 32px); margin: 8px 16px 0; font-size: 13px; padding: 12px; }
+}
+@media (min-width: 641px) {
+ #ffn-calendar .ffn-day { padding: 6px 8px; }
+ #ffn-calendar .ffn-day-num { font-size: 15px; }
+ #ffn-calendar .ffn-day-hours { font-size: 10px; }
+ #ffn-calendar .ffn-tag { font-size: 9px; padding: 2px 6px; }
+}
+</style>
+
+<div id="ffn-calendar">
+
+ <div class="ffn-nav">
+ <button class="ffn-nav-btn" id="ffnPrevBtn" aria-label="Previous month">&#8249;</button>
+ <div class="ffn-nav-center">
+ <div class="ffn-nav-month" id="ffnNavMonth"></div>
+ <div class="ffn-nav-year">2026 Season</div>
+ <div class="ffn-nav-dots" id="ffnNavDots"></div>
+ </div>
+ <button class="ffn-nav-btn" id="ffnNextBtn" aria-label="Next month">&#8250;</button>
+ </div>
+ <div class="ffn-legend" id="ffnLegend"></div>
+<div class="ffn-month-info" id="ffnMonthInfo"></div>
+ <div class="ffn-dow-row">
+ <div class="ffn-dow">Sun</div><div class="ffn-dow">Mon</div><div class="ffn-dow">Tue</div>
+ <div class="ffn-dow">Wed</div><div class="ffn-dow">Thu</div><div class="ffn-dow">Fri</div><div class="ffn-dow">Sat</div>
+ </div>
+ <div class="ffn-sheet-wrap" id="ffnSheetWrap">
+ <div class="ffn-sheet" id="ffnSheet">
+ <div class="ffn-grid" id="ffnGrid"></div>
+ </div>
+ </div>
+ <div class="ffn-popup-overlay" id="ffnPopupOverlay">
+ <div class="ffn-popup">
+ <div class="ffn-popup-header">
+ <h3 id="ffnPopupTitle"></h3>
+ <p id="ffnPopupSubtitle"></p>
+ </div>
+ <div class="ffn-popup-body" id="ffnPopupBody"></div>
+ <button class="ffn-buy-btn" id="ffnBuyBtn" style="display:none;">🎟️ Buy Tickets</button>
+ <div class="ffn-soon">TICKETS ON SALE MONDAY</div>
+ <div style="height:12px"></div>
+ <button class="ffn-popup-close" id="ffnPopupClose">Close</button>
+ </div>
+ </div>
+ <div class="ffn-ticket-overlay" id="ffnTicketOverlay">
+ <div class="ffn-ticket-modal">
+ <div class="ffn-ticket-modal-header">
+ <h3 id="ffnTicketTitle">Buy Tickets</h3>
+ <button class="ffn-ticket-modal-close" id="ffnTicketClose">&#10005;</button>
+ </div>
+ <div class="ffn-ticket-engine" id="ffnTicketEngine"></div>
+ </div>
+ </div>
+</div>
+
+<script>
+(function() {
+ var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+ var DAYS_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+ var SEASON_MONTHS = [9];
+ var selectedCalDate = null;
+ var selectedTicketUrl = null;
+
+ var EVENT_TYPES = {
+ 'opening': { label: 'Opening Night', cls: 'ffn-tag--opening', emoji: '\u{1F383}', desc: 'Opening night of the 2026 season.' },
+ 'fresnoween': { label: 'FRESNOWEEN', cls: 'ffn-tag--fresnoween', emoji: '\u{1F383}', desc: 'FRESNOWEEN. Special event, gates open at 6:00 PM. Tickets sold through KLIN Events.' },
+ 'halloween': { label: 'Halloween', cls: 'ffn-tag--halloween', emoji: '\u{1F387}', desc: 'Halloween night.' }
+ };
+
+ var AFTER_HOURS_RATES = {};
+
+ var CALENDAR = [
+ [9,2,'7:00 PM',['opening'],{}],
+ [9,3,'7:00 PM',[],{}],
+ [9,9,'7:00 PM',[],{}],
+ [9,10,'7:00 PM',[],{}],
+ [9,16,'6:00 PM',['fresnoween'],{ticketUrl:'https://tickets.klinevents.com/e/fresnoween/tickets'}],
+ [9,17,'7:00 PM',[],{}],
+ [9,23,'7:00 PM',[],{}],
+ [9,24,'7:00 PM',[],{}],
+ [9,25,'7:00 PM',[],{}],
+ [9,30,'7:00 PM',[],{}],
+ [9,31,'7:00 PM',['halloween'],{}]
+ ];
+
+ var calLookup = {};
+ CALENDAR.forEach(function(e) { calLookup[e[0]+'-'+e[1]] = e; });
+
+ var currentMonthIdx = 0;
+
+ function getInitialMonth() {
+ var now = new Date();
+ var m = now.getMonth();
+ var idx = SEASON_MONTHS.indexOf(m);
+ if (idx !== -1) return idx;
+ if (m < SEASON_MONTHS[0]) return 0;
+ return SEASON_MONTHS.length - 1;
+ }
+
+ function renderMonth(monthNum, direction) {
+ var grid = document.getElementById('ffnGrid');
+ var sheet = document.getElementById('ffnSheet');
+ var firstDay = new Date(2026, monthNum, 1).getDay();
+ var daysInMonth = new Date(2026, monthNum + 1, 0).getDate();
+ var today = new Date();
+
+ if (direction) {
+ sheet.className = 'ffn-sheet ' + (direction === 'left' ? 'slide-left-out' : 'slide-right-out');
+ setTimeout(function() {
+ buildGrid(grid, monthNum, firstDay, daysInMonth, today);
+ sheet.className = 'ffn-sheet ' + (direction === 'left' ? 'slide-left-in' : 'slide-right-in');
+ }, 200);
+ } else {
+ buildGrid(grid, monthNum, firstDay, daysInMonth, today);
+ }
+
+ document.getElementById('ffnNavMonth').textContent = MONTHS[monthNum];
+ document.getElementById('ffnPrevBtn').disabled = (currentMonthIdx === 0);
+ document.getElementById('ffnNextBtn').disabled = (currentMonthIdx === SEASON_MONTHS.length - 1);
+
+ var dots = document.querySelectorAll('#ffn-calendar .ffn-nav-dot');
+ for (var i = 0; i < dots.length; i++) {
+ dots[i].className = 'ffn-nav-dot' + (i === currentMonthIdx ? ' active' : '');
+ }
+
+ var openDays = 0;
+ for (var d = 1; d <= daysInMonth; d++) {
+ if (calLookup[monthNum + '-' + d]) openDays++;
+ }
+ document.getElementById('ffnMonthInfo').innerHTML = '<span class="ffn-month-stat"><span>' + openDays + '</span> NIGHTS OF TERROR</span><span class="ffn-month-stat ffn-soon-inline">TICKETS ON SALE MONDAY</span>';
+ }
+
+ function buildGrid(grid, monthNum, firstDay, daysInMonth, today) {
+ grid.innerHTML = '';
+ var totalCells = Math.ceil((firstDay + daysInMonth) /7) * 7;
+
+ for (var i = 0; i < totalCells; i++) {
+ var d = i - firstDay + 1;
+ var cell = document.createElement('div');
+
+ if (d < 1 || d > daysInMonth) {
+ cell.className = 'ffn-day ffn-day--empty';
+ grid.appendChild(cell);
+ continue;
+ }
+
+ var entry = calLookup[monthNum + '-' + d];
+ var isToday = today.getFullYear() === 2026 && today.getMonth() === monthNum && today.getDate() === d;
+
+ var classes = 'ffn-day';
+ if (!entry) classes += ' ffn-day--closed';
+ if (isToday) classes += ' ffn-day--today';
+ cell.className = classes;
+
+ var num = document.createElement('div');
+ num.className = 'ffn-day-num';
+ num.textContent = d;
+ cell.appendChild(num);
+
+ var hours = document.createElement('div');
+ hours.className = 'ffn-day-hours';
+ hours.textContent = entry ? entry[2] : 'CLOSED';
+ cell.appendChild(hours);
+
+ if (entry && entry[3].length > 0) {
+ var tagWrap = document.createElement('div');
+ tagWrap.className = 'ffn-tags';
+ entry[3].forEach(function(evt) {
+ var t = EVENT_TYPES[evt];
+ if (!t) return;
+ var tag = document.createElement('span');
+ tag.className = 'ffn-tag ' + t.cls;
+ tag.textContent = t.label;
+ tagWrap.appendChild(tag);
+ });
+ cell.appendChild(tagWrap);
+ }
+
+ if (entry) {
+ cell.style.cursor = 'pointer';
+ (function(m, day, e) {
+ cell.addEventListener('click', function() { showPopup(m, day, e); });
+ })(monthNum, d, entry);
+ }
+
+ grid.appendChild(cell);
+ }
+ grid.style.gridTemplateRows = 'repeat(' + (totalCells / 7) + ', 1fr)';
+ }
+
+ function showPopup(month, day, entry) {
+ var overlay = document.getElementById('ffnPopupOverlay');
+ var date = new Date(2026, month, day);
+
+ document.getElementById('ffnPopupTitle').textContent = MONTHS[month] + ' ' + day + ', 2026';
+ document.getElementById('ffnPopupSubtitle').textContent = DAYS_FULL[date.getDay()];
+
+ var bodyHTML = '<div class="ffn-popup-row"><span class="ffn-popup-icon">\u{1F550}</span><div><div class="ffn-popup-label">Park Hours</div><div class="ffn-popup-value">' + entry[2] + '</div></div></div>';
+
+ if (entry[3].length > 0) {
+ bodyHTML += '<div class="ffn-popup-row"><span class="ffn-popup-icon">\u{1F389}</span><div><div class="ffn-popup-label">Special Events</div><div class="ffn-popup-events">';
+ entry[3].forEach(function(e) {
+ var t = EVENT_TYPES[e];
+ if (t) bodyHTML += '<span class="ffn-tag ' + t.cls + '" style="font-size:10px;padding:3px 8px;">' + t.emoji + ' ' + t.label + '</span>';
+ });
+ bodyHTML += '</div></div></div>';
+ entry[3].forEach(function(e) {
+ var t = EVENT_TYPES[e];
+ if (t && t.desc) {
+ bodyHTML += '<div class="ffn-popup-row" style="margin-left:30px;"><div><div class="ffn-popup-value" style="font-size:12px;font-weight:500;color:#64748B;">' + t.desc + '</div></div></div>';
+ }
+ });
+ }
+
+ if (entry[4] && entry[4].note) {
+ bodyHTML += '<div class="ffn-popup-row"><span class="ffn-popup-icon">\u{1F4CB}</span><div><div class="ffn-popup-label">Details</div><div class="ffn-popup-value" style="font-size:13px;">' + entry[4].note + '</div></div></div>';
+ }
+
+ document.getElementById('ffnPopupBody').innerHTML = bodyHTML;
+
+ var mm = String(month + 1).padStart(2, '0');
+ var dd = String(day).padStart(2, '0');
+ selectedCalDate = {
+ iso: '2026-' + mm + '-' + dd,
+ label: MONTHS[month] + ' ' + day + ', 2026',
+ month: month,
+ day: day
+ };
+
+ document.getElementById('ffnBuyBtn').style.display = 'none';
+ selectedTicketUrl = (entry[4] && entry[4].ticketUrl) ? entry[4].ticketUrl : null;
+ document.getElementById('ffnBuyBtn').textContent = selectedTicketUrl ? '\u{1F39F}\uFE0F Get FRESNOWEEN Tickets' : '\u{1F39F}\uFE0F Buy Tickets';
+
+ overlay.classList.add('active');
+ }
+
+ var FFN_EID = 'e25b1f3307835e47';
+
+ function openTicketEngine(root, rate, title) {
+ document.getElementById('ffnPopupOverlay').classList.remove('active');
+ document.getElementById('ffnTicketTitle').textContent = title;
+ var container = document.getElementById('ffnTicketEngine');
+ var url = 'https://secure.rocket-rez.com/RocketWeb2/' + FFN_EID;
+ if (selectedCalDate) {
+ url += '?sd=' + selectedCalDate.iso + '&ed=' + selectedCalDate.iso;
+ }
+ container.innerHTML = '<iframe src="' + url + '" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>';
+ document.getElementById('ffnTicketOverlay').classList.add('active');
+ }
+
+ /* Buy Tickets (regular admission) */
+ document.getElementById('ffnBuyBtn').addEventListener('click', function() {
+ if (!selectedCalDate) return;
+ if (selectedTicketUrl) { window.open(selectedTicketUrl, '_blank', 'noopener'); return; }
+ openTicketEngine('bNp', '', 'Buy Tickets \u2014 ' + selectedCalDate.label);
+ });
+
+ function closeTicketOverlay() {
+ document.getElementById('ffnTicketOverlay').classList.remove('active');
+ document.getElementById('ffnTicketEngine').innerHTML = '';
+ }
+ document.getElementById('ffnTicketClose').addEventListener('click', closeTicketOverlay);
+ document.getElementById('ffnTicketOverlay').addEventListener('click', function(e) {
+ if (e.target === e.currentTarget) closeTicketOverlay();
+ });
+
+ document.getElementById('ffnPopupClose').addEventListener('click', function() {
+ document.getElementById('ffnPopupOverlay').classList.remove('active');
+ });
+ document.getElementById('ffnPopupOverlay').addEventListener('click', function(e) {
+ if (e.target === e.currentTarget) document.getElementById('ffnPopupOverlay').classList.remove('active');
+ });
+
+ document.getElementById('ffnPrevBtn').addEventListener('click', function() {
+ if (currentMonthIdx > 0) { currentMonthIdx--; renderMonth(SEASON_MONTHS[currentMonthIdx], 'right'); }
+ });
+ document.getElementById('ffnNextBtn').addEventListener('click', function() {
+ if (currentMonthIdx < SEASON_MONTHS.length - 1) { currentMonthIdx++; renderMonth(SEASON_MONTHS[currentMonthIdx], 'left'); }
+ });
+
+ var touchStartX = 0, touchStartY = 0;
+ var wrap = document.getElementById('ffnSheetWrap');
+ wrap.addEventListener('touchstart', function(e) {
+ touchStartX = e.touches[0].clientX;
+ touchStartY = e.touches[0].clientY;
+ }, { passive: true });
+ wrap.addEventListener('touchend', function(e) {
+ var dx = e.changedTouches[0].clientX - touchStartX;
+ var dy = e.changedTouches[0].clientY - touchStartY;
+ if (Math.abs(dx) > 50 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+ if (dx < 0 && currentMonthIdx < SEASON_MONTHS.length - 1) { currentMonthIdx++; renderMonth(SEASON_MONTHS[currentMonthIdx], 'left'); }
+ else if (dx > 0 && currentMonthIdx > 0) { currentMonthIdx--; renderMonth(SEASON_MONTHS[currentMonthIdx], 'right'); }
+ }
+ }, { passive: true });
+
+ document.addEventListener('keydown', function(e) {
+ if (document.getElementById('ffnTicketOverlay').classList.contains('active')) {
+ if (e.key === 'Escape') closeTicketOverlay();
+ return;
+ }
+ if (document.getElementById('ffnPopupOverlay').classList.contains('active')) {
+ if (e.key === 'Escape') document.getElementById('ffnPopupOverlay').classList.remove('active');
+ return;
+ }
+ if (e.key === 'ArrowLeft' && currentMonthIdx > 0) { currentMonthIdx--; renderMonth(SEASON_MONTHS[currentMonthIdx], 'right'); }
+ if (e.key === 'ArrowRight' && currentMonthIdx < SEASON_MONTHS.length - 1) { currentMonthIdx++; renderMonth(SEASON_MONTHS[currentMonthIdx], 'left'); }
+ });
+
+ var dotsEl = document.getElementById('ffnNavDots');
+ SEASON_MONTHS.forEach(function(m, i) {
+ var dot = document.createElement('div');
+ dot.className = 'ffn-nav-dot';
+ dot.addEventListener('click', function() {
+ var dir = i > currentMonthIdx ? 'left' : i < currentMonthIdx ? 'right' : null;
+ currentMonthIdx = i;
+ renderMonth(SEASON_MONTHS[i], dir);
+ });
+ dotsEl.appendChild(dot);
+ });
+
+ function showWelcome() { return; }
+
+ 
+ (function buildLegend(){
+   var el = document.getElementById('ffnLegend');
+   if (!el) return;
+   var html = '';
+   for (var k in EVENT_TYPES) {
+     var t = EVENT_TYPES[k];
+     html += '<div class="ffn-legend-item"><span class="ffn-legend-dot ' + t.cls + '"></span>' + t.label + '</div>';
+   }
+   el.innerHTML = html;
+ })();
+
+ currentMonthIdx = getInitialMonth();
+ renderMonth(SEASON_MONTHS[currentMonthIdx], null);
+ showWelcome();
+
+
+})();
+</script>
+
+</body>
+</html>
