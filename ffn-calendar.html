@@ -9,7 +9,7 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; background: #0A0708; }
 body { width: 100%; }
 
 #ffn-calendar .ffn-tag--opening { background: #FF6B00; color: #1A0A00; }
-#ffn-calendar .ffn-tag--earlybird { background: #F5A623; color: #1A1000; }
+#ffn-calendar .ffn-tag--fresnoween { background: linear-gradient(135deg,#7E3FF2,#B026FF); color: #FFF; box-shadow: 0 0 10px rgba(176,38,255,0.55); }
 #ffn-calendar .ffn-tag--halloween { background: #8B0000; color: #FFD9D9; box-shadow: 0 0 8px rgba(193,18,31,0.5); }
 #ffn-calendar .ffn-tag--closing { background: #7E3FF2; color: #FFF; }
 </style>
@@ -185,10 +185,11 @@ body { width: 100%; }
  var DAYS_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
  var SEASON_MONTHS = [9, 10];
  var selectedCalDate = null;
+ var selectedTicketUrl = null;
 
  var EVENT_TYPES = {
  'opening': { label: 'Opening Night', cls: 'ffn-tag--opening', emoji: '\u{1F383}', desc: 'Opening night of the 2026 season.' },
- 'earlybird': { label: 'Early Open', cls: 'ffn-tag--earlybird', emoji: '\u{1F55B}', desc: 'Gates open one hour early at 6:00 PM.' },
+ 'fresnoween': { label: 'FRESNOWEEN', cls: 'ffn-tag--fresnoween', emoji: '\u{1F383}', desc: 'FRESNOWEEN. Special event, gates open at 6:00 PM. Tickets sold through KLIN Events.' },
  'halloween': { label: 'Halloween', cls: 'ffn-tag--halloween', emoji: '\u{1F387}', desc: 'Halloween night.' },
  'closing': { label: 'Closing Night', cls: 'ffn-tag--closing', emoji: '\u{1F480}', desc: 'Final night of the 2026 season.' }
  };
@@ -200,7 +201,7 @@ body { width: 100%; }
  [9,3,'7:00 PM',[],{}],
  [9,9,'7:00 PM',[],{}],
  [9,10,'7:00 PM',[],{}],
- [9,16,'6:00 PM',['earlybird'],{}],
+ [9,16,'6:00 PM',['fresnoween'],{ticketUrl:'https://tickets.klinevents.com/e/fresnoween/tickets'}],
  [9,17,'7:00 PM',[],{}],
  [9,23,'7:00 PM',[],{}],
  [9,24,'7:00 PM',[],{}],
@@ -355,6 +356,8 @@ body { width: 100%; }
  };
 
  document.getElementById('ffnBuyBtn').style.display = (entry[4] && entry[4].noTickets) ? 'none' : 'block';
+ selectedTicketUrl = (entry[4] && entry[4].ticketUrl) ? entry[4].ticketUrl : null;
+ document.getElementById('ffnBuyBtn').textContent = selectedTicketUrl ? '\u{1F39F}\uFE0F Get FRESNOWEEN Tickets' : '\u{1F39F}\uFE0F Buy Tickets';
 
  /* Show/hide 2-for-Tuesday button */
  var is2for = entry[3].indexOf('2for') !== -1;
@@ -388,6 +391,7 @@ body { width: 100%; }
  /* Buy Tickets (regular admission) */
  document.getElementById('ffnBuyBtn').addEventListener('click', function() {
  if (!selectedCalDate) return;
+ if (selectedTicketUrl) { window.open(selectedTicketUrl, '_blank', 'noopener'); return; }
  openTicketEngine('bNp', '', 'Buy Tickets \u2014 ' + selectedCalDate.label);
  });
 
