@@ -160,9 +160,6 @@ body { width: 100%; }
  </div>
  <div class="ffn-popup-body" id="ffnPopupBody"></div>
  <button class="ffn-buy-btn" id="ffnBuyBtn">🎟️ Buy Tickets</button>
- <button class="ffn-buy-2for-btn" id="ffnBuy2forBtn">🎟️ Purchase 2 for Tuesday Tickets</button>
- <button class="ffn-buy-afterhours-btn" id="ffnBuyAfterHoursBtn">🎟️ Purchase After Hours Tickets</button>
- <button class="ffn-buy-summernights-btn" id="ffnBuySummerNightsBtn">🌟 Buy Summer Nights LIVE! Tickets</button>
  <div style="height:12px"></div>
  <button class="ffn-popup-close" id="ffnPopupClose">Close</button>
  </div>
@@ -356,30 +353,18 @@ body { width: 100%; }
  selectedTicketUrl = (entry[4] && entry[4].ticketUrl) ? entry[4].ticketUrl : null;
  document.getElementById('ffnBuyBtn').textContent = selectedTicketUrl ? '\u{1F39F}\uFE0F Get FRESNOWEEN Tickets' : '\u{1F39F}\uFE0F Buy Tickets';
 
- /* Show/hide 2-for-Tuesday button */
- var is2for = entry[3].indexOf('2for') !== -1;
- document.getElementById('ffnBuy2forBtn').style.display = is2for ? 'block' : 'none';
-
- /* Show/hide Summer Nights LIVE button */
- var isSummerNights = entry[3].indexOf('summernights') !== -1;
- document.getElementById('ffnBuySummerNightsBtn').style.display = isSummerNights ? 'block' : 'none';
-
- /* Show/hide After Hours button */
- var afterHoursKey = month + '-' + day;
- var afterHoursRate = AFTER_HOURS_RATES[afterHoursKey];
- document.getElementById('ffnBuyAfterHoursBtn').style.display = afterHoursRate ? 'block' : 'none';
-
  overlay.classList.add('active');
  }
+
+ var FFN_EID = 'e25b1f3307835e47';
 
  function openTicketEngine(root, rate, title) {
  document.getElementById('ffnPopupOverlay').classList.remove('active');
  document.getElementById('ffnTicketTitle').textContent = title;
  var container = document.getElementById('ffnTicketEngine');
- var url = 'https://secure.rocket-rez.com/RocketWeb2/9f5be16b3a6b913c?ro=' + encodeURIComponent(root);
- if (rate) url += '&ra=' + encodeURIComponent(rate);
+ var url = 'https://secure.rocket-rez.com/RocketWeb2/' + FFN_EID;
  if (selectedCalDate) {
- url += '&sd=' + selectedCalDate.iso + '&ed=' + selectedCalDate.iso;
+ url += '?sd=' + selectedCalDate.iso + '&ed=' + selectedCalDate.iso;
  }
  container.innerHTML = '<iframe src="' + url + '" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>';
  document.getElementById('ffnTicketOverlay').classList.add('active');
@@ -390,25 +375,6 @@ body { width: 100%; }
  if (!selectedCalDate) return;
  if (selectedTicketUrl) { window.open(selectedTicketUrl, '_blank', 'noopener'); return; }
  openTicketEngine('bNp', '', 'Buy Tickets \u2014 ' + selectedCalDate.label);
- });
-
- /* 2 for Tuesday */
- document.getElementById('ffnBuy2forBtn').addEventListener('click', function() {
- if (!selectedCalDate) return;
- openTicketEngine('bzY', '', '2 for Tuesday Tickets \u2014 ' + selectedCalDate.label);
- });
-
- /* Summer Nights LIVE! */
- document.getElementById('ffnBuySummerNightsBtn').addEventListener('click', function() {
- if (!selectedCalDate) return;
- openTicketEngine('bAW', '', 'Summer Nights LIVE!');
- });
-
- /* After Hours */
- document.getElementById('ffnBuyAfterHoursBtn').addEventListener('click', function() {
- if (!selectedCalDate) return;
- var rate = AFTER_HOURS_RATES[selectedCalDate.month + '-' + selectedCalDate.day] || '';
- openTicketEngine('NBj', rate, 'After Hours Tickets \u2014 ' + selectedCalDate.label);
  });
 
  function closeTicketOverlay() {
