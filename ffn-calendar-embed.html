@@ -11,7 +11,6 @@ body { width: 100%; }
 #ffn-calendar .ffn-tag--opening { background: #FF6B00; color: #1A0A00; }
 #ffn-calendar .ffn-tag--fresnoween { background: linear-gradient(135deg,#7E3FF2,#B026FF); color: #FFF; box-shadow: 0 0 10px rgba(176,38,255,0.55); }
 #ffn-calendar .ffn-tag--halloween { background: #8B0000; color: #FFD9D9; box-shadow: 0 0 8px rgba(193,18,31,0.5); }
-#ffn-calendar .ffn-tag--closing { background: #7E3FF2; color: #FFF; }
 </style>
 </head>
 <body>
@@ -183,15 +182,14 @@ body { width: 100%; }
 (function() {
  var MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
  var DAYS_FULL = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
- var SEASON_MONTHS = [9, 10];
+ var SEASON_MONTHS = [9];
  var selectedCalDate = null;
  var selectedTicketUrl = null;
 
  var EVENT_TYPES = {
  'opening': { label: 'Opening Night', cls: 'ffn-tag--opening', emoji: '\u{1F383}', desc: 'Opening night of the 2026 season.' },
  'fresnoween': { label: 'FRESNOWEEN', cls: 'ffn-tag--fresnoween', emoji: '\u{1F383}', desc: 'FRESNOWEEN. Special event, gates open at 6:00 PM. Tickets sold through KLIN Events.' },
- 'halloween': { label: 'Halloween', cls: 'ffn-tag--halloween', emoji: '\u{1F387}', desc: 'Halloween night.' },
- 'closing': { label: 'Closing Night', cls: 'ffn-tag--closing', emoji: '\u{1F480}', desc: 'Final night of the 2026 season.' }
+ 'halloween': { label: 'Halloween', cls: 'ffn-tag--halloween', emoji: '\u{1F387}', desc: 'Halloween night.' }
  };
 
  var AFTER_HOURS_RATES = {};
@@ -207,8 +205,7 @@ body { width: 100%; }
  [9,24,'7:00 PM',[],{}],
  [9,25,'7:00 PM',[],{}],
  [9,30,'7:00 PM',[],{}],
- [9,31,'7:00 PM',['halloween'],{}],
- [10,1,'7:00 PM',['closing'],{}]
+ [9,31,'7:00 PM',['halloween'],{}]
  ];
 
  var calLookup = {};
