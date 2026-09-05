@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Applicant Scoring</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;background:#0A0708;color:#EDE6DD;font-size:15px;line-height:1.45;padding-bottom:90px}
+
+.top{background:linear-gradient(135deg,#7F1010 0%,#3D0505 100%);padding:18px 20px;position:sticky;top:0;z-index:50;box-shadow:0 4px 20px rgba(0,0,0,.6)}
+.top h1{font-size:22px;font-weight:900;letter-spacing:1.5px;color:#FF6B00;text-shadow:0 0 18px rgba(255,107,0,.5)}
+.top .sub{font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.55);text-transform:uppercase;margin-top:2px}
+
+.meta{display:flex;gap:10px;flex-wrap:wrap;padding:14px 20px;background:#14100F;border-bottom:1px solid #241C1A}
+.meta input{flex:1;min-width:150px;background:#0F0C0B;border:1px solid #2E2523;color:#EDE6DD;padding:10px 12px;border-radius:8px;font-family:inherit;font-size:15px}
+.meta input:focus{outline:none;border-color:#FF6B00}
+
+.bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:12px 20px;background:#0F0C0B;border-bottom:1px solid #241C1A;position:sticky;top:74px;z-index:40}
+.bar input[type=search]{flex:1;min-width:160px;background:#14100F;border:1px solid #2E2523;color:#EDE6DD;padding:10px 12px;border-radius:8px;font-family:inherit;font-size:15px}
+.bar input[type=search]:focus{outline:none;border-color:#FF6B00}
+.chip{background:#14100F;border:1px solid #2E2523;color:#9C8F85;padding:8px 12px;border-radius:20px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.4px}
+.chip.on{background:#FF6B00;border-color:#FF6B00;color:#1A0A00}
+.count{font-size:12px;color:#9C8F85;font-weight:600;margin-left:auto}
+
+.wrap{padding:14px 16px;max-width:900px;margin:0 auto}
+
+.card{background:#14100F;border:1px solid #2E2523;border-radius:12px;margin-bottom:12px;overflow:hidden}
+.card.filled{border-color:#4A3A32}
+.card.yes{border-left:5px solid #2E7D32}
+.card.maybe{border-left:5px solid #F5A623}
+.card.no{border-left:5px solid #6E635C}
+.card.stop{border-left:5px solid #C1121F}
+.card.hidden{display:none}
+
+.chd{display:flex;align-items:center;gap:10px;padding:11px 13px;background:#0F0C0B;border-bottom:1px solid #241C1A}
+.num{font-size:11px;font-weight:800;color:#6E635C;min-width:26px;letter-spacing:.5px}
+.chd input{flex:1;background:transparent;border:none;border-bottom:1px solid #2E2523;color:#EDE6DD;font-family:inherit;font-size:16px;font-weight:600;padding:5px 2px}
+.chd input::placeholder{color:#4A403B;font-weight:400}
+.chd input:focus{outline:none;border-bottom-color:#FF6B00}
+
+.cbody{padding:12px 13px}
+.srow{display:flex;align-items:center;gap:8px;margin-bottom:7px;flex-wrap:wrap}
+.slab{font-size:10px;font-weight:800;letter-spacing:.8px;color:#9C8F85;text-transform:uppercase;min-width:82px}
+.dots{display:flex;gap:5px}
+.dot{width:34px;height:34px;border-radius:8px;border:1px solid #2E2523;background:#0F0C0B;color:#6E635C;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;transition:all .12s}
+.dot:active{transform:scale(.92)}
+.dot.sel{background:#FF6B00;border-color:#FF6B00;color:#1A0A00}
+.dot.sel.lo{background:#C1121F;border-color:#C1121F;color:#fff}
+.dot.sel.mid{background:#F5A623;border-color:#F5A623;color:#1A1000}
+
+textarea{width:100%;background:#0F0C0B;border:1px solid #2E2523;color:#EDE6DD;border-radius:8px;padding:10px;font-family:inherit;font-size:14px;resize:vertical;min-height:62px;margin-top:6px}
+textarea:focus{outline:none;border-color:#FF6B00}
+.nlab{font-size:10px;font-weight:800;letter-spacing:.8px;color:#8B2020;text-transform:uppercase;margin-top:9px}
+
+.verd{display:flex;gap:6px;margin-top:10px;flex-wrap:wrap}
+.vb{flex:1;min-width:70px;padding:10px 6px;border-radius:8px;border:1px solid #2E2523;background:#0F0C0B;color:#9C8F85;font-family:inherit;font-size:11px;font-weight:800;letter-spacing:.6px;cursor:pointer;text-transform:uppercase}
+.vb.on[data-v=yes]{background:#2E7D32;border-color:#2E7D32;color:#fff}
+.vb.on[data-v=maybe]{background:#F5A623;border-color:#F5A623;color:#1A1000}
+.vb.on[data-v=no]{background:#4A403B;border-color:#4A403B;color:#EDE6DD}
+.vb.on[data-v=stop]{background:#C1121F;border-color:#C1121F;color:#fff}
+
+.foot{position:fixed;bottom:0;left:0;right:0;background:#14100F;border-top:1px solid #2E2523;padding:12px 16px;display:flex;gap:8px;z-index:60;flex-wrap:wrap;align-items:center}
+.btn{padding:12px 16px;border-radius:9px;border:none;font-family:inherit;font-size:13px;font-weight:800;cursor:pointer;letter-spacing:.5px}
+.btn.p{background:#FF6B00;color:#1A0A00}
+.btn.s{background:#0F0C0B;color:#EDE6DD;border:1px solid #2E2523}
+.btn.d{background:#0F0C0B;color:#C1121F;border:1px solid #3A1A1A}
+.stat{font-size:11px;color:#9C8F85;font-weight:700;margin-right:auto;letter-spacing:.4px}
+.stat b{color:#FF6B00}
+.saved{font-size:10px;color:#2E7D32;font-weight:700;letter-spacing:.5px}
+
+@media(max-width:600px){
+ .slab{min-width:100%;margin-bottom:2px}
+ .dot{width:44px;height:38px}
+ .wrap{padding:12px}
+ .bar{top:70px}
+}
+@media print{
+ body{background:#fff;color:#000;padding:0}
+ .top,.bar,.foot,.meta{display:none}
+ .card{border:1px solid #999;break-inside:avoid;background:#fff}
+ .card.hidden{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <h1>APPLICANT SCORING</h1>
+  <div class="sub">Fresno Fright Nights</div>
+</div>
+
+<div class="meta">
+  <input id="mDate" type="date">
+  <input id="mWho" placeholder="Interviewer">
+  <input id="mSess" placeholder="Session / location">
+</div>
+
+<div class="bar">
+  <input type="search" id="q" placeholder="Search names or notes...">
+  <button class="chip on" data-f="all">All</button>
+  <button class="chip" data-f="filled">Filled</button>
+  <button class="chip" data-f="yes">Yes</button>
+  <button class="chip" data-f="maybe">Maybe</button>
+  <button class="chip" data-f="stop">Hard Stop</button>
+  <span class="count" id="cnt"></span>
+</div>
+
+<div class="wrap" id="list"></div>
+
+<div class="foot">
+  <span class="stat" id="stat"></span>
+  <span class="saved" id="savedMsg"></span>
+  <button class="btn p" id="csv">Export CSV</button>
+  <button class="btn s" id="prt">Print</button>
+  <button class="btn d" id="clr">Clear All</button>
+</div>
+
+<script>
+(function(){
+ var TOTAL = 100;
+ var CATS = [
+   ['avail','Availability'],
+   ['skin','Thick Skin'],
+   ['team','Team'],
+   ['coach','Coachable'],
+   ['judge','Judgment'],
+   ['vibe','Vibe']
+ ];
+ var KEY = 'ffnScoring_v1';
+ var data = {};
+ var filter = 'all';
+ var query = '';
+
+ try { data = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch(e) { data = {}; }
+ if (!data.rows) data.rows = {};
+ if (!data.meta) data.meta = {};
+
+ var saveTimer = null;
+ function save(){
+   clearTimeout(saveTimer);
+   saveTimer = setTimeout(function(){
+     try {
+       localStorage.setItem(KEY, JSON.stringify(data));
+       var m = document.getElementById('savedMsg');
+       m.textContent = 'SAVED';
+       setTimeout(function(){ m.textContent=''; }, 1200);
+     } catch(e){}
+     refreshStats();
+   }, 250);
+ }
+
+ function row(i){
+   if (!data.rows[i]) data.rows[i] = { name:'', notes:'', verdict:'', scores:{} };
+   return data.rows[i];
+ }
+
+ function build(){
+   var out = '';
+   for (var i=1; i<=TOTAL; i++){
+     var r = row(i);
+     out += '<div class="card" data-i="'+i+'">';
+     out += '<div class="chd"><span class="num">'+String(i).padStart(3,'0')+'</span>';
+     out += '<input class="f-name" data-i="'+i+'" placeholder="Name" value="'+esc(r.name)+'"></div>';
+     out += '<div class="cbody">';
+     for (var c=0;c<CATS.length;c++){
+       var key = CATS[c][0], lab = CATS[c][1];
+       out += '<div class="srow"><span class="slab">'+lab+'</span><div class="dots">';
+       for (var n=1;n<=5;n++){
+         out += '<button class="dot" data-i="'+i+'" data-k="'+key+'" data-n="'+n+'">'+n+'</button>';
+       }
+       out += '</div></div>';
+     }
+     out += '<div class="nlab">Who are they? Conflicts? What stood out?</div>';
+     out += '<textarea class="f-notes" data-i="'+i+'" placeholder="One sentence about who they are, not what they did.">'+esc(r.notes)+'</textarea>';
+     out += '<div class="verd">';
+     ['yes','maybe','no','stop'].forEach(function(v){
+       var lbl = v==='stop' ? 'Hard Stop' : v.charAt(0).toUpperCase()+v.slice(1);
+       out += '<button class="vb" data-i="'+i+'" data-v="'+v+'">'+lbl+'</button>';
+     });
+     out += '</div></div></div>';
+   }
+   document.getElementById('list').innerHTML = out;
+   for (var j=1;j<=TOTAL;j++) paint(j);
+ }
+
+ function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+ function paint(i){
+   var r = row(i);
+   var card = document.querySelector('.card[data-i="'+i+'"]');
+   if (!card) return;
+   card.classList.remove('yes','maybe','no','stop','filled');
+   if (r.verdict) card.classList.add(r.verdict);
+   if (r.name || r.notes || Object.keys(r.scores).length) card.classList.add('filled');
+   card.querySelectorAll('.dot').forEach(function(d){
+     var k = d.getAttribute('k') || d.dataset.k, n = +d.dataset.n;
+     d.classList.remove('sel','lo','mid');
+     if (r.scores[k] === n){
+       d.classList.add('sel');
+       if (n<=2) d.classList.add('lo');
+       else if (n===3) d.classList.add('mid');
+     }
+   });
+   card.querySelectorAll('.vb').forEach(function(b){
+     b.classList.toggle('on', r.verdict === b.dataset.v);
+   });
+ }
+
+ document.addEventListener('click', function(e){
+   var d = e.target.closest('.dot');
+   if (d){
+     var i = +d.dataset.i, k = d.dataset.k, n = +d.dataset.n;
+     var r = row(i);
+     r.scores[k] = (r.scores[k] === n) ? undefined : n;
+     if (r.scores[k] === undefined) delete r.scores[k];
+     paint(i); save(); return;
+   }
+   var v = e.target.closest('.vb');
+   if (v){
+     var i2 = +v.dataset.i;
+     var r2 = row(i2);
+     r2.verdict = (r2.verdict === v.dataset.v) ? '' : v.dataset.v;
+     paint(i2); save(); applyFilter(); return;
+   }
+   var chip = e.target.closest('.chip');
+   if (chip){
+     document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+     chip.classList.add('on');
+     filter = chip.dataset.f;
+     applyFilter(); return;
+   }
+ });
+
+ document.addEventListener('input', function(e){
+   if (e.target.classList.contains('f-name')){
+     row(+e.target.dataset.i).name = e.target.value; paint(+e.target.dataset.i); save();
+   }
+   if (e.target.classList.contains('f-notes')){
+     row(+e.target.dataset.i).notes = e.target.value; paint(+e.target.dataset.i); save();
+   }
+   if (e.target.id === 'q'){ query = e.target.value.toLowerCase(); applyFilter(); }
+   if (['mDate','mWho','mSess'].indexOf(e.target.id) !== -1){
+     data.meta[e.target.id] = e.target.value; save();
+   }
+ });
+
+ function applyFilter(){
+   var shown = 0;
+   for (var i=1;i<=TOTAL;i++){
+     var r = row(i);
+     var card = document.querySelector('.card[data-i="'+i+'"]');
+     if (!card) continue;
+     var isFilled = !!(r.name || r.notes || Object.keys(r.scores).length || r.verdict);
+     var ok = true;
+     if (filter === 'filled') ok = isFilled;
+     else if (filter === 'yes') ok = r.verdict === 'yes';
+     else if (filter === 'maybe') ok = r.verdict === 'maybe';
+     else if (filter === 'stop') ok = r.verdict === 'stop';
+     if (ok && query){
+       ok = (r.name + ' ' + r.notes).toLowerCase().indexOf(query) !== -1;
+     }
+     card.classList.toggle('hidden', !ok);
+     if (ok) shown++;
+   }
+   document.getElementById('cnt').textContent = shown + ' shown';
+ }
+
+ function refreshStats(){
+   var f=0,y=0,m=0,n=0,s=0;
+   for (var i=1;i<=TOTAL;i++){
+     var r = data.rows[i]; if (!r) continue;
+     if (r.name || r.notes || Object.keys(r.scores||{}).length || r.verdict) f++;
+     if (r.verdict==='yes') y++;
+     if (r.verdict==='maybe') m++;
+     if (r.verdict==='no') n++;
+     if (r.verdict==='stop') s++;
+   }
+   document.getElementById('stat').innerHTML =
+     '<b>'+f+'</b> scored &nbsp; <b>'+y+'</b> yes &nbsp; <b>'+m+'</b> maybe &nbsp; <b>'+n+'</b> no &nbsp; <b>'+s+'</b> stop';
+ }
+
+ document.getElementById('csv').addEventListener('click', function(){
+   var head = ['#','Name'].concat(CATS.map(function(c){return c[1];})).concat(['Average','Verdict','Notes']);
+   var lines = [head.join(',')];
+   for (var i=1;i<=TOTAL;i++){
+     var r = data.rows[i]; if (!r) continue;
+     var filled = r.name || r.notes || Object.keys(r.scores||{}).length || r.verdict;
+     if (!filled) continue;
+     var vals = CATS.map(function(c){ return r.scores[c[0]] || ''; });
+     var nums = vals.filter(function(v){ return v !== ''; });
+     var avg = nums.length ? (nums.reduce(function(a,b){return a+b;},0)/nums.length).toFixed(1) : '';
+     var cells = [i, r.name||''].concat(vals).concat([avg, r.verdict||'', r.notes||'']);
+     lines.push(cells.map(function(c){
+       var t = String(c).replace(/"/g,'""');
+       return /[",\n]/.test(t) ? '"'+t+'"' : t;
+     }).join(','));
+   }
+   var meta = [];
+   if (data.meta.mDate) meta.push('Date: '+data.meta.mDate);
+   if (data.meta.mWho) meta.push('Interviewer: '+data.meta.mWho);
+   if (data.meta.mSess) meta.push('Session: '+data.meta.mSess);
+   var csv = (meta.length ? meta.join(' | ')+'\n\n' : '') + lines.join('\n');
+   var blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+   var a = document.createElement('a');
+   a.href = URL.createObjectURL(blob);
+   a.download = 'ffn-applicants-' + (data.meta.mDate || new Date().toISOString().slice(0,10)) + '.csv';
+   a.click();
+ });
+
+ document.getElementById('prt').addEventListener('click', function(){
+   document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('on'); });
+   var fc = document.querySelector('.chip[data-f="filled"]');
+   if (fc) fc.classList.add('on');
+   filter = 'filled'; applyFilter();
+   setTimeout(function(){ window.print(); }, 120);
+ });
+
+ document.getElementById('clr').addEventListener('click', function(){
+   if (!confirm('Erase all scores and notes? This cannot be undone.')) return;
+   if (!confirm('Really erase everything? Export a CSV first if you want a copy.')) return;
+   data = { rows:{}, meta:{} };
+   try { localStorage.removeItem(KEY); } catch(e){}
+   build(); applyFilter(); refreshStats();
+   ['mDate','mWho','mSess'].forEach(function(id){ document.getElementById(id).value=''; });
+ });
+
+ build();
+ ['mDate','mWho','mSess'].forEach(function(id){
+   if (data.meta[id]) document.getElementById(id).value = data.meta[id];
+ });
+ if (!data.meta.mDate) document.getElementById('mDate').value = new Date().toISOString().slice(0,10);
+ applyFilter();
+ refreshStats();
+})();
+</script>
+
+</body>
+</html>
