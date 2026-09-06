@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>ffn_ticketing_STAGING_v2.4.1 [DEV]</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{background:#070509;color:#c9c2bb;font-family:'IBM Plex Mono',monospace;overflow-x:hidden}
+body{min-height:100vh;position:relative}
+
+/* scanlines */
+body::after{
+ content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;
+ background:repeating-linear-gradient(0deg,rgba(0,0,0,.22) 0px,rgba(0,0,0,.22) 1px,transparent 1px,transparent 3px);
+ mix-blend-mode:multiply;opacity:.55;
+}
+/* vignette + flicker */
+body::before{
+ content:'';position:fixed;inset:0;pointer-events:none;z-index:9998;
+ background:radial-gradient(ellipse at center,transparent 45%,rgba(0,0,0,.65) 100%);
+ animation:flick 5.5s infinite steps(1);
+}
+@keyframes flick{0%,96%{opacity:1}97%{opacity:.82}98%{opacity:1}99%{opacity:.9}100%{opacity:1}}
+
+.devbar{
+ background:#1b0a0a;border-bottom:1px solid #3a1414;padding:5px 12px;
+ font-size:10px;letter-spacing:1px;color:#ff5555;display:flex;gap:14px;flex-wrap:wrap;align-items:center;
+ position:sticky;top:0;z-index:60;
+}
+.devbar .b{background:#ff3b30;color:#0a0000;font-weight:700;padding:1px 6px;border-radius:2px}
+.devbar .dim{color:#7a4a4a}
+
+.wrap{max-width:1080px;margin:0 auto;padding:18px 16px 60px}
+
+.warn{
+ border:1px solid #4a1c1c;background:#150808;padding:11px 14px;margin-bottom:16px;
+ font-size:11px;line-height:1.6;color:#c98a8a;
+}
+.warn b{color:#ff5555}
+
+h1{
+ font-family:'Inter',sans-serif;font-size:clamp(30px,7vw,58px);font-weight:900;letter-spacing:-1px;
+ color:#e8e2db;line-height:1.02;margin:10px 0 4px;position:relative;
+}
+.glitch{position:relative;display:inline-block}
+.glitch::before,.glitch::after{
+ content:attr(data-t);position:absolute;left:0;top:0;width:100%;overflow:hidden;
+}
+.glitch::before{color:#ff2d2d;transform:translate(-2px,0);clip-path:inset(0 0 55% 0);animation:g1 3.4s infinite steps(2)}
+.glitch::after{color:#00e5ff;transform:translate(2px,0);clip-path:inset(50% 0 0 0);animation:g2 2.7s infinite steps(2)}
+@keyframes g1{0%,92%{transform:translate(-2px,0)}93%{transform:translate(-7px,1px)}95%{transform:translate(1px,-1px)}100%{transform:translate(-2px,0)}}
+@keyframes g2{0%,90%{transform:translate(2px,0)}91%{transform:translate(8px,-1px)}94%{transform:translate(-2px,1px)}100%{transform:translate(2px,0)}}
+
+.sub{font-size:12px;color:#6e6560;letter-spacing:1px;margin-bottom:18px}
+.sub .err{color:#ff5555}
+
+.console{
+ background:#0a0710;border:1px solid #241a2e;padding:14px 16px;font-size:12px;line-height:1.85;
+ margin-bottom:18px;overflow-x:auto;
+}
+.console .ln{white-space:pre;color:#5f5a66}
+.console .ok{color:#3ad07a}
+.console .wr{color:#e0b341}
+.console .er{color:#ff4d4d}
+.console .hi{color:#00e5ff}
+
+.leak{
+ border:2px dashed #ff6b00;background:rgba(255,107,0,.06);padding:18px;margin:20px 0;position:relative;
+}
+.leak .tag{
+ position:absolute;top:-10px;left:12px;background:#070509;color:#ff6b00;font-size:9px;
+ letter-spacing:2px;padding:0 7px;font-weight:700;
+}
+.leak .k{font-size:10px;color:#8a7f76;letter-spacing:1.5px;margin-bottom:6px}
+.code{
+ font-size:14px;font-weight:700;color:#ff6b00;letter-spacing:1px;
+ text-shadow:0 0 10px rgba(255,107,0,.45);user-select:all;cursor:pointer;
+ border-bottom:1px dotted rgba(255,107,0,.4);
+}
+.leak .v{font-size:11px;color:#7a7169;margin-top:8px;line-height:1.7}
+.leak .v b{color:#c9c2bb}
+.copied{color:#3ad07a;font-size:11px;margin-top:6px;height:14px;letter-spacing:1px}
+
+.enginebox{border:1px solid #241a2e;background:#0a0710;margin-top:6px}
+.enginehd{
+ display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #241a2e;
+ font-size:10px;letter-spacing:1.2px;color:#6e6560;flex-wrap:wrap;
+}
+.dotr{width:7px;height:7px;border-radius:50%;background:#ff3b30}
+.dotg{width:7px;height:7px;border-radius:50%;background:#3ad07a}
+.engine{width:100%;height:1180px;border:none;display:block;background:#fff}
+
+.hint{
+ font-size:11px;color:#6e6560;text-align:center;padding:14px 10px;line-height:1.8;
+}
+.hint b{color:#ff6b00}
+
+.foot{
+ margin-top:26px;padding-top:12px;border-top:1px solid #1c1520;
+ font-size:9px;color:#4a4440;line-height:1.8;letter-spacing:.5px;
+}
+@media(max-width:640px){
+ .engine{height:1320px}
+ .devbar{font-size:9px;gap:8px}
+}
+</style>
+</head>
+<body>
+
+<div class="devbar">
+  <span class="b">STAGING</span>
+  <span>build ffn_ticketing_v2.4.1</span>
+  <span class="dim">env=preprod</span>
+  <span class="dim">node=us-west-2c</span>
+  <span class="dim" id="ts"></span>
+</div>
+
+<div class="wrap">
+
+  <div class="warn">
+    <b>[!] INTERNAL BUILD.</b> This deployment is not intended for public traffic. Payment gateway is <b>LIVE</b> in this environment pending migration to sandbox keys. Do not distribute this URL.
+  </div>
+
+  <h1><span class="glitch" data-t="TICKET ENGINE">TICKET ENGINE</span></h1>
+  <div class="sub">route: /checkout/ffn/opening-weekend &nbsp;&#183;&nbsp; <span class="err">promo_validator: BYPASS</span></div>
+
+  <div class="console">
+<div class="ln"><span class="ok">[ OK ]</span>  mounting rocketrez_engine ................ <span class="ok">done</span></div>
+<div class="ln"><span class="ok">[ OK ]</span>  inventory sync ........................... <span class="ok">done</span></div>
+<div class="ln"><span class="wr">[WARN]</span>  promo_validator.strict = <span class="er">false</span></div>
+<div class="ln"><span class="wr">[WARN]</span>  test_promos exposed in client bundle</div>
+<div class="ln"><span class="er">[FAIL]</span>  scrub_test_codes() ....................... <span class="er">not run</span></div>
+<div class="ln"><span class="hi">[INFO]</span>  loaded 1 test promo from config.staging</div>
+<div class="ln">          &#8627; <span class="hi">promo.bogo.opening_weekend</span></div>
+<div class="ln">          &#8627; redemption_cap: <span class="er">null</span></div>
+<div class="ln">          &#8627; expires: <span class="hi">2026-10-04T02:00:00Z</span></div>
+<div class="ln"><span class="er">[FAIL]</span>  GET /assets/theme.prod.css .............. <span class="er">404</span></div>
+<div class="ln"><span class="er">[FAIL]</span>  GET /assets/ffn-logo.svg ................ <span class="er">404</span></div>
+<div class="ln"><span class="wr">[WARN]</span>  falling back to unstyled base template</div>
+  </div>
+
+  <div class="leak">
+    <span class="tag">config.staging.json</span>
+    <div class="k">// TODO: strip test_promos before prod push -jm</div>
+    <div style="font-size:11px;color:#5f5a66;line-height:1.9;margin-bottom:8px">"test_promos": [ {</div>
+    <div style="padding-left:16px">
+      <div style="font-size:11px;color:#7a7169;line-height:1.9">"id": "bogo_opening_weekend",</div>
+      <div style="font-size:11px;color:#7a7169;line-height:1.9">"code": <span class="code" id="code" title="click to copy">"CRYPTID26"</span>,</div>
+      <div class="copied" id="copied"></div>
+      <div style="font-size:11px;color:#7a7169;line-height:1.9">"type": "buy_one_get_one",</div>
+      <div style="font-size:11px;color:#7a7169;line-height:1.9">"scope": "general_admission",</div>
+      <div style="font-size:11px;color:#7a7169;line-height:1.9">"redemption_cap": <span style="color:#ff5555">null</span>,</div>
+      <div style="font-size:11px;color:#7a7169;line-height:1.9">"active": <span style="color:#3ad07a">true</span></div>
+    </div>
+    <div style="font-size:11px;color:#5f5a66;line-height:1.9;margin-top:4px">} ]</div>
+  </div>
+
+  <div class="enginebox">
+    <div class="enginehd">
+      <span class="dotr"></span><span class="dotg"></span>
+      <span>rocketrez_webengine</span>
+      <span style="margin-left:auto" class="dim">eid: e25b1f3307835e47</span>
+    </div>
+    <iframe class="engine" src="https://secure.rocket-rez.com/RocketWeb2/e25b1f3307835e47" allowfullscreen loading="eager"></iframe>
+  </div>
+
+  <div class="foot">
+    ffn_ticketing &#183; staging &#183; commit 7f3a91c &#183; deployed by ci-runner<br>
+    this environment mirrors production. transactions processed here are real.
+  </div>
+
+</div>
+
+<script>
+(function(){
+  // fake timestamp that ticks
+  function pad(n){return String(n).padStart(2,'0')}
+  function tick(){
+    var d=new Date();
+    document.getElementById('ts').textContent =
+      'last_deploy ' + d.getUTCFullYear()+'-'+pad(d.getUTCMonth()+1)+'-'+pad(d.getUTCDate())+
+      ' '+pad(d.getUTCHours())+':'+pad(d.getUTCMinutes())+':'+pad(d.getUTCSeconds())+'Z';
+  }
+  tick(); setInterval(tick,1000);
+
+  // click to copy the code
+  var code=document.getElementById('code'), msg=document.getElementById('copied');
+  code.addEventListener('click',function(){
+    var t=code.textContent.trim();
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(t).then(function(){
+        msg.textContent='copied to clipboard';
+        setTimeout(function(){msg.textContent='';},1800);
+      }).catch(function(){ fallback(t); });
+    } else { fallback(t); }
+  });
+  function fallback(t){
+    var r=document.createRange(); r.selectNodeContents(code);
+    var s=window.getSelection(); s.removeAllRanges(); s.addRange(r);
+    msg.textContent='select and copy';
+    setTimeout(function(){msg.textContent='';},1800);
+  }
+})();
+</script>
+
+</body>
+</html>
