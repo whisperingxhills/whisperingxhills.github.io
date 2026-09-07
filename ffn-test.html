@@ -235,10 +235,8 @@ h1{
   if (gateBtn) {
     gateBtn.addEventListener('click', function(){
       gate.classList.add('hide');
-      try { sessionStorage.setItem('ffnGateAck','1'); } catch(e){}
     });
   }
-  try { if (sessionStorage.getItem('ffnGateAck') === '1') gate.classList.add('hide'); } catch(e){}
 
   // fake timestamp that ticks
   function pad(n){return String(n).padStart(2,'0')}
