@@ -12,8 +12,8 @@ body { width: 100%; }
 #ffn-calendar .ffn-tag--fresnoween { background: linear-gradient(135deg,#7E3FF2,#B026FF); color: #FFF; box-shadow: 0 0 10px rgba(176,38,255,0.55); }
 #ffn-calendar .ffn-tag--halloween { background: #8B0000; color: #FFD9D9; box-shadow: 0 0 8px rgba(193,18,31,0.5); }
 #ffn-calendar .ffn-soon { display:block; width: calc(100% - 48px); margin: 0 24px; padding: 14px; background: rgba(255,107,0,0.12); border: 1px solid rgba(255,107,0,0.45); border-radius: 10px; color: #FF6B00; font-size: 14px; font-weight: 800; letter-spacing: 1.5px; text-align: center; font-family: 'Inter', sans-serif; }
-@media (max-width: 640px) { #ffn-calendar .ffn-soon { width: calc(100% - 32px); margin: 0 16px; font-size: 12px; padding: 12px; } }
 #ffn-calendar .ffn-soon-inline { color: #FF6B00 !important; font-weight: 800; letter-spacing: 1px; }
+@media (max-width: 640px) { #ffn-calendar .ffn-soon { width: calc(100% - 32px); margin: 0 16px; font-size: 12px; padding: 12px; } }
 </style>
 </head>
 <body>
@@ -444,7 +444,35 @@ body { width: 100%; }
  dotsEl.appendChild(dot);
  });
 
- function showWelcome() { return; }
+ function showWelcome() {
+ var seen = false;
+ try { seen = localStorage.getItem('ffnCalendarWelcomeSeen') === '1'; } catch(e) {}
+ if (seen) return;
+
+ var overlay = document.createElement('div');
+ overlay.id = 'ffnWelcomeOverlay';
+ overlay.style.cssText = 'position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(10,7,8,0.92);z-index:1000001;display:flex;align-items:center;justify-content:center;padding:20px;';
+
+ overlay.innerHTML = '<div style="background:#14100F;border:1px solid #2E2523;border-radius:16px;max-width:460px;width:100%;padding:28px;box-shadow:0 20px 60px rgba(0,0,0,0.6);text-align:center;">'
+ + '<div style="font-size:38px;margin-bottom:10px;">\u{1F383}</div>'
+ + '<h2 style="font-size:20px;font-weight:800;color:#FF6B00;margin:0 0 14px;font-family:Inter,sans-serif;letter-spacing:0.5px;">HOW TO GET TICKETS</h2>'
+ + '<div style="text-align:left;font-size:14px;color:#C9C2BB;line-height:1.7;font-family:Inter,sans-serif;">'
+ + '<p style="margin:0 0 11px;"><strong style="color:#EDE6DD;">Step 1:</strong> Tap any open night on the calendar to see hours and event details for that date.</p>'
+ + '<p style="margin:0 0 11px;"><strong style="color:#EDE6DD;">Step 2:</strong> Hit the <strong style="color:#FF6B00;">Buy Tickets</strong> button in the popup.</p>'
+ + '<p style="margin:0 0 11px;"><strong style="color:#EDE6DD;">Step 3:</strong> Pick your ticket type and complete checkout. Your tickets arrive by email.</p>'
+ + '<p style="margin:0 0 11px;"><strong style="color:#EDE6DD;">Color Tags:</strong> Special nights are marked with tags. Tap the date to see what they mean.</p>'
+ + '<p style="margin:0;color:#9C8F85;font-size:13px;">Nights marked <span style="color:#7A6C64;font-weight:600;">CLOSED</span> are not open this season.</p>'
+ + '</div>'
+ + '<button id="ffnWelcomeBtn" style="margin-top:18px;padding:13px 34px;background:#FF6B00;color:#1A0A00;border:none;border-radius:10px;font-size:15px;font-weight:800;cursor:pointer;font-family:Inter,sans-serif;letter-spacing:0.5px;">GOT IT</button>'
+ + '</div>';
+
+ document.getElementById('ffn-calendar').appendChild(overlay);
+
+ document.getElementById('ffnWelcomeBtn').addEventListener('click', function() {
+ overlay.remove();
+ try { localStorage.setItem('ffnCalendarWelcomeSeen', '1'); } catch(e) {}
+ });
+ }
 
  
  (function buildLegend(){
