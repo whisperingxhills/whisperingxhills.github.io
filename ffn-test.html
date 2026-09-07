@@ -108,9 +108,44 @@ h1{
  .engine{height:1320px}
  .devbar{font-size:9px;gap:8px}
 }
+
+/* entry gate */
+.gate{position:fixed;inset:0;z-index:99999;background:rgba(7,5,9,.96);display:flex;align-items:center;justify-content:center;padding:18px;overflow-y:auto}
+.gate.hide{display:none}
+.gatebox{max-width:520px;width:100%;background:#0d0a10;border:1px solid #2a1f34;padding:26px 24px}
+.gatebox h2{font-family:'Inter',sans-serif;font-size:17px;font-weight:800;color:#ff6b00;letter-spacing:1px;margin-bottom:16px;text-transform:uppercase}
+.gatebox p{font-size:12.5px;line-height:1.75;color:#b9b2ab;margin-bottom:12px;font-family:'Inter',sans-serif}
+.gatebox p b{color:#e8e2db}
+.gatebox .rule{border-left:3px solid #ff6b00;padding-left:12px;margin-bottom:14px}
+.gatebox .deny{border-left:3px solid #ff3b30;padding-left:12px;margin-bottom:16px}
+.gatebox .deny b{color:#ff5555}
+.gatebtn{width:100%;padding:14px;background:#ff6b00;color:#1a0a00;border:none;font-family:'Inter',sans-serif;font-size:14px;font-weight:800;letter-spacing:1.2px;cursor:pointer}
+.gatebtn:active{transform:scale(.99)}
+.gatefine{font-size:10.5px;color:#6e6560;margin-top:12px;line-height:1.6;text-align:center}
 </style>
 </head>
 <body>
+
+<div class="gate" id="gate">
+  <div class="gatebox">
+    <h2>Before You Continue</h2>
+
+    <div class="rule">
+      <p><b>Photo ID is required at the gate.</b> Any order placed with a discount code must be presented at entry by the cardholder, with a government issued photo ID matching the name on the payment method used.</p>
+    </div>
+
+    <div class="rule">
+      <p><b>The purchaser must be present.</b> Discounted tickets are admitted with the cardholder only. If the cardholder is not present, the discounted tickets in that order will not be honored.</p>
+    </div>
+
+    <div class="deny">
+      <p><b>Resale is prohibited.</b> Discounted tickets are non transferable and may not be resold, traded, or redistributed. Any ticket found to have been resold will be voided at the gate with no refund and no admission.</p>
+    </div>
+
+    <button class="gatebtn" id="gateBtn">GOT IT</button>
+    <div class="gatefine">By continuing you agree to present matching photo ID at entry.</div>
+  </div>
+</div>
 
 <div class="devbar">
   <span class="b">STAGING</span>
@@ -195,6 +230,16 @@ h1{
 
 <script>
 (function(){
+  var gate = document.getElementById('gate');
+  var gateBtn = document.getElementById('gateBtn');
+  if (gateBtn) {
+    gateBtn.addEventListener('click', function(){
+      gate.classList.add('hide');
+      try { sessionStorage.setItem('ffnGateAck','1'); } catch(e){}
+    });
+  }
+  try { if (sessionStorage.getItem('ffnGateAck') === '1') gate.classList.add('hide'); } catch(e){}
+
   // fake timestamp that ticks
   function pad(n){return String(n).padStart(2,'0')}
   function tick(){
