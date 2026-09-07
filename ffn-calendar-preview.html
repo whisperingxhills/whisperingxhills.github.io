@@ -109,7 +109,9 @@ body { width: 100%; }
 #ffn-calendar .ffn-ticket-modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #1E293B; font-family: 'Inter', sans-serif; }
 #ffn-calendar .ffn-ticket-modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #94A3B8; padding: 4px 8px; }
 #ffn-calendar .ffn-ticket-modal-close:hover { color: #1E293B; }
-#ffn-calendar .ffn-ticket-engine { flex: 1; overflow: auto; padding: 0; }
+#ffn-calendar .ffn-ticket-engine { flex: 1; overflow: hidden; padding: 0; overscroll-behavior: contain; }
+#ffn-calendar .ffn-ticket-engine iframe { width: 100%; height: 100%; border: none; display: block; }
+html.ffn-locked, body.ffn-locked { overflow: hidden !important; height: 100% !important; overscroll-behavior: none !important; }
 @media (max-width: 640px) {
  #ffn-calendar { height: 750px; }
  #ffn-calendar .ffn-header { padding: 14px 16px 12px; }
@@ -372,6 +374,9 @@ body { width: 100%; }
  }
  container.innerHTML = '<iframe src="' + url + '" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>';
  document.getElementById('ffnTicketOverlay').classList.add('active');
+ document.documentElement.classList.add('ffn-locked');
+ document.body.classList.add('ffn-locked');
+ try { if (window.parent !== window) window.parent.postMessage({ffn:'modal-open'}, '*'); } catch(e) {}
  }
 
  /* Buy Tickets (regular admission) */
@@ -384,6 +389,9 @@ body { width: 100%; }
  function closeTicketOverlay() {
  document.getElementById('ffnTicketOverlay').classList.remove('active');
  document.getElementById('ffnTicketEngine').innerHTML = '';
+ document.documentElement.classList.remove('ffn-locked');
+ document.body.classList.remove('ffn-locked');
+ try { if (window.parent !== window) window.parent.postMessage({ffn:'modal-close'}, '*'); } catch(e) {}
  }
  document.getElementById('ffnTicketClose').addEventListener('click', closeTicketOverlay);
  document.getElementById('ffnTicketOverlay').addEventListener('click', function(e) {
