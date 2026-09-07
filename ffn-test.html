@@ -142,6 +142,21 @@ h1{
 <div class="ln"><span class="er">[FAIL]</span>  GET /assets/theme.prod.css .............. <span class="er">404</span></div>
 <div class="ln"><span class="er">[FAIL]</span>  GET /assets/ffn-logo.svg ................ <span class="er">404</span></div>
 <div class="ln"><span class="wr">[WARN]</span>  falling back to unstyled base template</div>
+<div class="ln"> </div>
+<div class="ln"><span class="hi">[INFO]</span>  running promo integrity check ............ <span class="er">3 issues</span></div>
+<div class="ln"><span class="er">[BUG ]</span>  <span class="hi">CRYPTID-114</span> date_gate malformed</div>
+<div class="ln">          &#8627; validator only matches <span class="hi">2026-10-02</span> and <span class="hi">2026-10-03</span></div>
+<div class="ln">          &#8627; all other dates return <span class="er">PROMO_NOT_FOUND</span></div>
+<div class="ln">          &#8627; assigned: unassigned &#183; status: <span class="er">open</span></div>
+<div class="ln"> </div>
+<div class="ln"><span class="er">[BUG ]</span>  <span class="hi">CRYPTID-118</span> qty_check off-by-one</div>
+<div class="ln">          &#8627; discount applies only when cart qty == <span class="hi">2</span></div>
+<div class="ln">          &#8627; qty 1 or qty 3+ silently drops the promo</div>
+<div class="ln">          &#8627; repro: add 2 GA tickets, apply code at checkout</div>
+<div class="ln"> </div>
+<div class="ln"><span class="er">[BUG ]</span>  <span class="hi">CRYPTID-121</span> scrub job never scheduled</div>
+<div class="ln">          &#8627; test_promos remain live in this build</div>
+<div class="ln">          &#8627; <span class="wr">nobody has picked this up yet</span></div>
   </div>
 
   <div class="leak">
@@ -154,6 +169,8 @@ h1{
       <div class="copied" id="copied"></div>
       <div style="font-size:11px;color:#7a7169;line-height:1.9">"type": "buy_one_get_one",</div>
       <div style="font-size:11px;color:#7a7169;line-height:1.9">"scope": "general_admission",</div>
+      <div style="font-size:11px;color:#7a7169;line-height:1.9">"qty_required": <span style="color:#00e5ff">2</span>, <span style="color:#5f5a66">// CRYPTID-118</span></div>
+      <div style="font-size:11px;color:#7a7169;line-height:1.9">"valid_dates": [ <span style="color:#00e5ff">"2026-10-02"</span>, <span style="color:#00e5ff">"2026-10-03"</span> ], <span style="color:#5f5a66">// CRYPTID-114</span></div>
       <div style="font-size:11px;color:#7a7169;line-height:1.9">"redemption_cap": <span style="color:#ff5555">null</span>,</div>
       <div style="font-size:11px;color:#7a7169;line-height:1.9">"active": <span style="color:#3ad07a">true</span></div>
     </div>
