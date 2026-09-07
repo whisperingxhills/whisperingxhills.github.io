@@ -99,13 +99,13 @@ body { width: 100%; }
 #ffn-calendar .ffn-buy-afterhours-btn:hover { background: #6D28D9; }
 #ffn-calendar .ffn-buy-summernights-btn { display: none; width: calc(100% - 48px); margin: 8px 24px 0; padding: 14px; background: #EA580C; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; cursor: pointer; font-family: 'Inter', sans-serif; transition: background 0.2s; text-align: center; }
 #ffn-calendar .ffn-buy-summernights-btn:hover { background: #C2410C; }
-#ffn-calendar .ffn-ticket-overlay { position: fixed; inset: 0; background: rgba(15,23,42,0.85); z-index: 1000000; display: none; align-items: center; justify-content: center; padding: 20px; }
+#ffn-calendar .ffn-ticket-overlay { position: fixed; inset: 0; background: #0A0708; z-index: 1000000; display: none; align-items: stretch; justify-content: stretch; padding: 0; }
 #ffn-calendar .ffn-ticket-overlay.active { display: flex; }
-#ffn-calendar .ffn-ticket-modal { max-width: 600px; width: 100%; height: 90vh; background: #fff; border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 24px 48px rgba(0,0,0,0.4); }
-#ffn-calendar .ffn-ticket-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-bottom: 1px solid #E2E8F0; }
-#ffn-calendar .ffn-ticket-modal-header h3 { margin: 0; font-size: 18px; font-weight: 700; color: #1E293B; font-family: 'Inter', sans-serif; }
-#ffn-calendar .ffn-ticket-modal-close { background: none; border: none; font-size: 24px; cursor: pointer; color: #94A3B8; padding: 4px 8px; }
-#ffn-calendar .ffn-ticket-modal-close:hover { color: #1E293B; }
+#ffn-calendar .ffn-ticket-modal { max-width: none; width: 100%; height: 100%; background: #fff; border-radius: 0; overflow: hidden; display: flex; flex-direction: column; box-shadow: none; }
+#ffn-calendar .ffn-ticket-modal-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; border-bottom: 1px solid #E2E8F0; background: #14100F; flex-shrink: 0; }
+#ffn-calendar .ffn-ticket-modal-header h3 { margin: 0; font-size: 15px; font-weight: 800; color: #FF6B00; font-family: 'Inter', sans-serif; letter-spacing: 0.5px; }
+#ffn-calendar .ffn-ticket-modal-close { background: #C1121F; border: none; font-size: 15px; font-weight: 800; cursor: pointer; color: #fff; padding: 9px 18px; border-radius: 8px; font-family: 'Inter', sans-serif; letter-spacing: 1px; line-height: 1; }
+#ffn-calendar .ffn-ticket-modal-close:hover { background: #8B0000; }
 #ffn-calendar .ffn-ticket-engine { flex: 1; overflow: auto; padding: 0; }
 @media (max-width: 640px) {
  #ffn-calendar { height: 750px; }
@@ -168,7 +168,7 @@ body { width: 100%; }
  <div class="ffn-ticket-modal">
  <div class="ffn-ticket-modal-header">
  <h3 id="ffnTicketTitle">Buy Tickets</h3>
- <button class="ffn-ticket-modal-close" id="ffnTicketClose">&#10005;</button>
+ <button class="ffn-ticket-modal-close" id="ffnTicketClose">&#10005; CLOSE</button>
  </div>
  <div class="ffn-ticket-engine" id="ffnTicketEngine"></div>
  </div>
@@ -368,6 +368,7 @@ body { width: 100%; }
  }
  container.innerHTML = '<iframe src="' + url + '" style="width:100%;height:100%;border:none;" allowfullscreen></iframe>';
  document.getElementById('ffnTicketOverlay').classList.add('active');
+ try { if (window.parent !== window) window.parent.postMessage({ffn:'ticket-open'}, '*'); } catch(e) {}
  }
 
  /* Buy Tickets (regular admission) */
@@ -380,6 +381,7 @@ body { width: 100%; }
  function closeTicketOverlay() {
  document.getElementById('ffnTicketOverlay').classList.remove('active');
  document.getElementById('ffnTicketEngine').innerHTML = '';
+ try { if (window.parent !== window) window.parent.postMessage({ffn:'ticket-close'}, '*'); } catch(e) {}
  }
  document.getElementById('ffnTicketClose').addEventListener('click', closeTicketOverlay);
  document.getElementById('ffnTicketOverlay').addEventListener('click', function(e) {
