@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shipwreck VIP Cabins - Fresno Fright Nights</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --iw-blue: #0EA5E9;
+  --iw-blue-dark: #0284C7;
+  --iw-blue-light: #E0F2FE;
+  --iw-orange: #F97316;
+  --iw-orange-light: #FFF7ED;
+  --iw-green: #22C55E;
+  --iw-green-light: #F0FDF4;
+  --iw-purple: #8B5CF6;
+  --iw-purple-light: #F5F3FF;
+  --iw-red: #EF4444;
+  --iw-red-dark: #DC2626;
+  --iw-dark: #1E293B;
+  --iw-darker: #0F172A;
+  --iw-light: #F8FAFC;
+  --iw-gray: #64748B;
+  --iw-gray-light: #94A3B8;
+  --iw-border: #E2E8F0;
+  --sidebar-width: 320px;
+}
+
+html, body { height: 100%; overflow: hidden; }
+
+/* ── Video Modal ── */
+.iw-video-modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.85);
+  z-index: 9999;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.iw-video-modal-overlay.active { display: flex; }
+.iw-video-modal {
+  position: relative;
+  width: 90vw;
+  max-width: 900px;
+  aspect-ratio: 16/9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  cursor: default;
+}
+.iw-video-modal iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+.iw-video-modal-close {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  width: 32px;
+  height: 32px;
+  background: rgba(255,255,255,0.15);
+  border: none;
+  border-radius: 50%;
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+}
+.iw-video-modal-close:hover { background: rgba(255,255,255,0.3); }
+
+/* Video thumbnail in sidebar */
+.iw-video-thumb {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%;
+  margin: 12px 0;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #000;
+}
+.iw-video-thumb img {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s, brightness 0.3s;
+}
+.iw-video-thumb:hover img {
+  transform: scale(1.05);
+  brightness: 0.8;
+}
+.iw-video-play-btn {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 56px; height: 56px;
+  background: rgba(0,0,0,0.6);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  pointer-events: none;
+}
+.iw-video-thumb:hover .iw-video-play-btn {
+  background: var(--iw-blue);
+  transform: translate(-50%, -50%) scale(1.1);
+}
+.iw-video-play-btn::after {
+  content: '';
+  display: block;
+  width: 0; height: 0;
+  border-style: solid;
+  border-width: 10px 0 10px 18px;
+  border-color: transparent transparent transparent white;
+  margin-left: 3px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--iw-dark);
+  color: var(--iw-dark);
+  display: flex;
+}
+
+/* ── Sidebar ── */
+.iw-sidebar {
+  width: var(--sidebar-width);
+  height: 100vh;
+  background: white;
+  border-right: 1px solid var(--iw-border);
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  z-index: 30;
+  transition: transform 0.3s ease;
+}
+
+.iw-sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--iw-border);
+  background: var(--iw-darker);
+}
+
+.iw-sidebar-header h1 {
+  font-size: 18px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: 0.5px;
+}
+
+.iw-sidebar-header p {
+  font-size: 11px;
+  color: var(--iw-gray-light);
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.iw-sidebar-body {
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.iw-sidebar-body::-webkit-scrollbar { width: 4px; }
+.iw-sidebar-body::-webkit-scrollbar-thumb { background: var(--iw-border); border-radius: 4px; }
+
+/* ── Legend ── */
+.iw-legend {
+  border-bottom: 1px solid var(--iw-border);
+}
+
+.iw-legend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.iw-legend-header:hover { background: var(--iw-light); }
+
+.iw-legend-title {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--iw-dark);
+}
+
+.iw-legend-chevron {
+  font-size: 12px;
+  color: var(--iw-gray-light);
+  transition: transform 0.2s;
+}
+
+.iw-legend.open .iw-legend-chevron { transform: rotate(180deg); }
+
+.iw-legend-items {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.iw-legend.open .iw-legend-items {
+  max-height: 600px;
+}
+
+.iw-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px;
+  font-size: 12px;
+  color: var(--iw-dark);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.iw-legend-item:hover { background: var(--iw-light); }
+
+.iw-legend-swatch {
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.iw-legend-name { flex: 1; font-weight: 500; }
+
+.iw-legend-count {
+  font-size: 11px;
+  color: var(--iw-gray-light);
+  background: var(--iw-light);
+  padding: 1px 6px;
+  border-radius: 8px;
+}
+
+/* Zone sections in sidebar */
+.iw-zone-section {
+  border-bottom: 1px solid var(--iw-border);
+}
+
+.iw-zone-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.iw-zone-header:hover { background: var(--iw-light); }
+
+.iw-zone-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.iw-zone-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.iw-zone-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--iw-dark);
+}
+
+.iw-zone-price {
+  font-size: 11px;
+  color: var(--iw-gray);
+  margin-top: 1px;
+}
+
+.iw-zone-chevron {
+  font-size: 12px;
+  color: var(--iw-gray-light);
+  transition: transform 0.2s;
+}
+
+.iw-zone-section.open .iw-zone-chevron { transform: rotate(180deg); }
+
+.iw-zone-items {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+}
+
+.iw-zone-section.open .iw-zone-items {
+  max-height: 2000px;
+}
+
+.iw-zone-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 20px 8px 58px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border-top: 1px solid rgba(0,0,0,0.03);
+}
+
+.iw-zone-item:hover { background: var(--iw-light); }
+.iw-zone-item.active { background: var(--iw-blue-light); }
+
+.iw-zone-item-num {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+}
+
+.iw-zone-item-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--iw-dark);
+  flex: 1;
+}
+
+.iw-zone-item-status {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+.iw-zone-item-status.available {
+  background: var(--iw-green-light);
+  color: #15803D;
+}
+
+.iw-zone-item-status.booked {
+  background: #FEF2F2;
+  color: #DC2626;
+}
+
+/* Sidebar toggle */
+.iw-sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 40;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+  cursor: pointer;
+  font-size: 20px;
+  align-items: center;
+  justify-content: center;
+}
+
+.iw-sidebar-toggle.visible { display: flex; }
+
+/* ── Map Area ── */
+.iw-map-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  background: #87CEEB;
+  cursor: grab;
+
+}
+
+.iw-map-area.grabbing { cursor: grabbing; }
+
+.iw-map-inner {
+  position: absolute;
+  transform-origin: 0 0;
+}
+
+.iw-map-inner img {
+  display: block;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+/* ── Cabana Pins ── */
+.iw-pin {
+  position: absolute;
+  transform: translate(-50%, -100%);
+  cursor: pointer;
+  z-index: 10;
+  transition: transform 0.15s, opacity 0.2s;
+}
+
+.iw-pin:hover {
+  transform: translate(-50%, -100%) scale(1.25);
+  z-index: 15;
+}
+
+.iw-pin.hidden { opacity: 0; pointer-events: none; }
+.iw-pin.highlight .iw-pin-marker { animation: iw-bounce 0.6s ease; }
+.iw-pin.booked { opacity: 0.5; filter: grayscale(0.7); }
+
+@keyframes iw-bounce {
+  0%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-12px); }
+  60% { transform: translateY(-4px); }
+}
+
+.iw-pin-marker {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.iw-pin-dot {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.9);
+}
+
+.iw-pin-dot span {
+  transform: rotate(45deg);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.iw-pin-shadow {
+  width: 10px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(0,0,0,0.15);
+  margin-top: 1px;
+}
+
+/* ── Cluster Pins ── */
+.iw-cluster {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  z-index: 12;
+  transition: transform 0.15s, opacity 0.2s;
+}
+
+.iw-cluster:hover {
+  transform: translate(-50%, -50%) scale(1.15);
+  z-index: 16;
+}
+
+.iw-cluster.hidden { opacity: 0; pointer-events: none; }
+
+.iw-cluster-dot {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.3);
+  border: 3px solid rgba(255,255,255,0.9);
+  position: relative;
+}
+
+.iw-cluster-label {
+  position: absolute;
+  bottom: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 9px;
+  font-weight: 700;
+  color: white;
+  white-space: nowrap;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.7);
+  letter-spacing: 0.3px;
+}
+
+/* ── Detail Panel ── */
+.iw-panel-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.3);
+  z-index: 60;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.iw-panel-backdrop.open { opacity: 1; pointer-events: auto; }
+
+.iw-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: 400px;
+  max-width: 90vw;
+  height: 100vh;
+  background: white;
+  z-index: 70;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+}
+
+.iw-panel.open { transform: translateX(0); }
+
+.iw-panel-header {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--iw-border);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.iw-panel-header h2 {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.iw-panel-close {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: var(--iw-light);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--iw-gray);
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.iw-panel-close:hover { background: var(--iw-border); color: var(--iw-dark); }
+
+.iw-panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+.iw-panel-tag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+
+.iw-panel-desc {
+  font-size: 14px;
+  color: var(--iw-gray);
+  line-height: 1.7;
+  margin-bottom: 16px;
+}
+
+.iw-panel-meta {
+  padding: 12px 16px;
+  background: var(--iw-light);
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+.iw-panel-meta-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 0;
+  font-size: 13px;
+}
+
+.iw-panel-meta-row:not(:last-child) { border-bottom: 1px solid var(--iw-border); }
+
+.iw-panel-meta-label { color: var(--iw-gray); white-space: nowrap; }
+.iw-panel-meta-value { font-weight: 600; color: var(--iw-dark); text-align: right; }
+
+.iw-book-btn {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 14px;
+  background: var(--iw-red);
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 16px;
+  transition: background 0.2s;
+  font-family: inherit;
+}
+
+.iw-book-btn:hover { background: var(--iw-red-dark); }
+
+.iw-book-btn:disabled {
+  background: var(--iw-border);
+  color: var(--iw-gray);
+  cursor: not-allowed;
+}
+
+.iw-slot-btn {
+  flex: 1;
+  padding: 8px 10px;
+  border: 2px solid var(--iw-border);
+  border-radius: 8px;
+  background: #fff;
+  color: var(--iw-dark);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: Inter, sans-serif;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+.iw-slot-btn:hover { border-color: var(--iw-blue); color: var(--iw-blue); }
+.iw-slot-btn.active {
+  background: var(--iw-blue);
+  border-color: var(--iw-blue);
+  color: #fff;
+}
+
+.iw-sold-out {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 14px;
+  background: var(--iw-light);
+  color: var(--iw-gray);
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  border: 2px solid var(--iw-border);
+}
+
+/* ── Zoom Controls ── */
+.iw-zoom {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.iw-zoom button {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  cursor: pointer;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--iw-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.iw-zoom button:hover { background: var(--iw-light); transform: scale(1.05); }
+
+/* ── Map link ── */
+.iw-map-link {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  z-index: 20;
+  padding: 8px 14px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--iw-blue-dark);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.iw-map-link:hover { background: var(--iw-blue-light); }
+
+/* ── Mobile ── */
+@media (max-width: 768px) {
+  .iw-sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 50;
+    box-shadow: 4px 0 24px rgba(0,0,0,0.15);
+  }
+  .iw-sidebar-toggle { display: flex; }
+  .iw-panel {
+    width: 100vw;
+    max-width: 100vw;
+    top: auto;
+    bottom: 0;
+    height: 65vh;
+    transform: translateY(100%);
+    border-radius: 16px 16px 0 0;
+  }
+  .iw-panel.open { transform: translateY(0); }
+  .iw-pin-dot { width: 26px; height: 26px; }
+  .iw-pin-dot span { font-size: 9px; }
+  .iw-cluster-dot { width: 38px; height: 38px; font-size: 11px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Mobile sidebar toggle -->
+<button class="iw-sidebar-toggle" id="sidebarToggle" onclick="toggleSidebar()">&#9776;</button>
+
+<!-- Sidebar -->
+<aside class="iw-sidebar" id="sidebar">
+  <div class="iw-sidebar-header" style="display:flex;align-items:center;justify-content:space-between;">
+    <div style="flex:1;">
+      <div style="font-family:inherit;font-weight:800;letter-spacing:1px;color:#e9ecf1;font-size:19px;line-height:1.2;">SHIPWRECK<br><span style="color:#2f9e5f;">VIP CABINS</span><div style="font-size:9px;letter-spacing:2.5px;color:#9aa3b2;font-weight:600;margin-top:4px;">FRESNO FRIGHT NIGHTS</div></div>
+      <p style="font-size:11px;color:var(--iw-gray-light);margin-top:6px;text-transform:uppercase;letter-spacing:1px;">Cabin Map</p>
+    </div>
+    <button onclick="collapseSidebar()" style="background:rgba(255,255,255,0.15);border:none;color:white;width:32px;height:32px;border-radius:8px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;" title="Hide sidebar">&#10005;</button>
+  </div>
+  <div style="padding:12px 16px;background:var(--iw-blue-light);border-bottom:1px solid var(--iw-border);">
+    <label for="datePicker" style="font-size:12px;font-weight:600;color:var(--iw-dark);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Select The Date Of Your Visit</label>
+    <input type="date" id="datePicker" onchange="onDateChange()" style="width:100%;padding:8px 12px;border:1px solid var(--iw-border);border-radius:8px;font-size:14px;font-family:Inter,sans-serif;color:var(--iw-dark);background:#fff;cursor:pointer;">
+    <div id="timeSlotContainer" style="display:none;margin-top:8px;">
+      <label style="font-size:11px;font-weight:600;color:var(--iw-dark);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:4px;">Time Slot</label>
+      <div id="timeSlotButtons" style="display:flex;gap:6px;"></div>
+    </div>
+    <div id="dateStatus" style="font-size:11px;color:var(--iw-gray);margin-top:6px;"></div>
+  </div>
+  <div class="iw-sidebar-body" id="sidebarBody">
+    <!-- Injected by JS -->
+  </div>
+</aside>
+
+<!-- Map Area -->
+<div class="iw-map-area" id="mapArea">
+  <!-- Zoom Controls -->
+  <div class="iw-zoom">
+    <button onclick="zoomMap(1)">+</button>
+    <button onclick="zoomMap(-1)">&minus;</button>
+    <button onclick="resetMap()" style="font-size:14px;">&#10227;</button>
+  </div>
+
+  <!-- Link to rides map -->
+  <a href="index.html" class="iw-map-link">&#8592; Park Map</a>
+
+  <!-- Map -->
+  <div class="iw-map-inner" id="mapInner">
+    <!-- TODO: Teddy is creating the FFN map image. Drop it in as ffn-map-base.png -->
+    <img src="ffn-map-base.png" id="mapImg" draggable="false">
+  </div>
+</div>
+
+<!-- Detail Panel -->
+<div class="iw-panel-backdrop" id="panelBackdrop" onclick="closePanel()"></div>
+<div class="iw-panel" id="panel">
+  <div class="iw-panel-header">
+    <h2 id="panelTitle">&mdash;</h2>
+    <button class="iw-panel-close" onclick="closePanel()">&#10005;</button>
+  </div>
+  <div class="iw-panel-body" id="panelBody"></div>
+</div>
+
+<script>
+/* ================================================================
+   CABIN DATA: merged from coordinates + inventory + pricing
+   Map image: coords are x%, y% on the FFN map image
+   ================================================================ */
+
+var ZONE_COLORS = {
+  "Siren's Shanty":     "#2f9e5f",
+  "Shipwreck Shack":    "#1f7a6b",
+  "Smuggler's Hideout": "#4a8c2a"
+};
+
+/* Vibe details: capacity, seating, features. */
+var ZONE_DETAILS = {
+  "Siren's Shanty":     { capacity:"10 survivors", seating:"Private reserved cabin space", features:"Green and teal LED uplighting for a swampy glow. Tattered fishnets, Spanish moss, creeping cloth. Scare-free zone: actors cannot follow you in. Chiller Theatre flat screen with live feeds from the haunted attractions. Steps from the water's edge of Stranger Tides." },
+  "Shipwreck Shack":    { capacity:"10 survivors", seating:"Private reserved cabin space", features:"Green and teal LED uplighting for a swampy glow. Tattered fishnets, Spanish moss, creeping cloth. Scare-free zone: actors cannot follow you in. Chiller Theatre flat screen with live feeds from the haunted attractions. Steps from the water's edge of Stranger Tides." },
+  "Smuggler's Hideout": { capacity:"10 survivors", seating:"Private reserved cabin space", features:"Green and teal LED uplighting for a swampy glow. Tattered fishnets, Spanish moss, creeping cloth. Scare-free zone: actors cannot follow you in. Chiller Theatre flat screen with live feeds from the haunted attractions. Steps from the water's edge of Stranger Tides." }
+};
+
+var ZONE_DESCRIPTIONS = {
+  "Siren's Shanty":     "She has been singing out there since the ship went down. Green light pools under a canopy strung with tattered fishnets and Spanish moss. Your private shelter on the water's edge, close enough to hear the Stranger Tides show, far enough that nothing reaches in. Reserved for up to 10 survivors.",
+  "Shipwreck Shack":    "Built from whatever washed ashore and was never claimed. A swampy green glow overhead, creeping moss in the corners, and a clear view of the cursed water. Private reserved space for up to 10 survivors, steps from the Stranger Tides attraction.",
+  "Smuggler's Hideout": "Whatever came off that ship, somebody hid it here. Low teal light, hanging net, and the kind of privacy that only comes from being somewhere you should not be. Your own base camp at the edge of the haunted zone, for up to 10 survivors."
+};
+
+/* FFN pricing. $199 flat per night across all 11 October nights.
+   Same shape as the IWP table (values are STRINGS with a dollar sign) so
+   getPriceForDate() works unchanged. FFN only operates Fri / Sat / Sun.
+   If a premium is added for Fresnoween (Oct 16) or Halloween (Oct 31),
+   change ONLY those values. Do not rewrite the table.
+   See memory/projects/cabana-map-runbook.md, June 29 2026 lesson. */
+var ZONE_PRICING = {
+  "Siren's Shanty":     { "M/Th":"N/A","T/W":"N/A","Fri":"$199","Fri Night":"$199","Sat":"$199","Sun":"$199" },
+  "Shipwreck Shack":    { "M/Th":"N/A","T/W":"N/A","Fri":"$199","Fri Night":"$199","Sat":"$199","Sun":"$199" },
+  "Smuggler's Hideout": { "M/Th":"N/A","T/W":"N/A","Fri":"$199","Fri Night":"$199","Sat":"$199","Sun":"$199" }
+};
+
+/* The 11 FFN operating nights, October 2026. Weekdays verified with `date`. */
+var FFN_NIGHTS = [
+  "2026-10-02","2026-10-03","2026-10-09","2026-10-10","2026-10-16",
+  "2026-10-17","2026-10-23","2026-10-24","2026-10-25","2026-10-30","2026-10-31"
+];
+var FFN_NIGHT_LABELS = { "2026-10-16":"FRESNOWEEN", "2026-10-31":"Halloween" };
+
+
+/* Coordinates: 120 cabanas with x,y positions */
+var CABANA_COORDS = [
+  /* FFN Shipwreck VIP Cabins.
+     Populate with cabin-picker.html once the FFN map image is in place.
+     x / y are PERCENTAGES of the map image, matching the IWP pattern.
+     zone = the vibe: "Siren's Shanty" | "Shipwreck Shack" | "Smuggler's Hideout"
+     PLACEHOLDERS below so the map renders during development. Replace with real coords. */
+  {"zone":"Siren's Shanty","unit":"Siren's Shanty 01","x":28,"y":58},
+  {"zone":"Siren's Shanty","unit":"Siren's Shanty 02","x":33,"y":60},
+  {"zone":"Shipwreck Shack","unit":"Shipwreck Shack 01","x":42,"y":62},
+  {"zone":"Shipwreck Shack","unit":"Shipwreck Shack 02","x":47,"y":64},
+  {"zone":"Smuggler's Hideout","unit":"Smuggler's Hideout 01","x":56,"y":61},
+  {"zone":"Smuggler's Hideout","unit":"Smuggler's Hideout 02","x":61,"y":59}
+];
+
+/* Booking data: rate codes, root IDs, eids.
+   TODO: real RocketRez root + rate codes per cabin. FFN webstore eid is e25b1f3307835e47.
+   Until these are real, the map renders but CANNOT take a booking. */
+var CABANAS = [
+  {"zone":"Siren's Shanty","name":"Siren's Shanty 01","root":"","rate":"","eid":"e25b1f3307835e47"},
+  {"zone":"Siren's Shanty","name":"Siren's Shanty 02","root":"","rate":"","eid":"e25b1f3307835e47"},
+  {"zone":"Shipwreck Shack","name":"Shipwreck Shack 01","root":"","rate":"","eid":"e25b1f3307835e47"},
+  {"zone":"Shipwreck Shack","name":"Shipwreck Shack 02","root":"","rate":"","eid":"e25b1f3307835e47"},
+  {"zone":"Smuggler's Hideout","name":"Smuggler's Hideout 01","root":"","rate":"","eid":"e25b1f3307835e47"},
+  {"zone":"Smuggler's Hideout","name":"Smuggler's Hideout 02","root":"","rate":"","eid":"e25b1f3307835e47"}
+];
+CABANA_COORDS.forEach(function(coord) {
+  /* Match by unit name. Handles "Siren's Shanty" -> "Siren's Shanty 01" */
+  var inv = inventoryByName[coord.unit];
+  if (!inv) {
+    /* Try appending " 01" for single-unit zones */
+    inv = inventoryByName[coord.unit + " 01"];
+  }
+
+  /* Extract unit number from name */
+  var numMatch = coord.unit.match(/(\d+)$/);
+  var unitNum = numMatch ? parseInt(numMatch[1], 10) : 1;
+  var displayNum = numMatch ? numMatch[1].replace(/^0+/, '') : '';
+
+  CABANAS.push({
+    zone: coord.zone,
+    unit: coord.unit,
+    x: coord.x,
+    y: coord.y,
+    num: unitNum,
+    displayNum: displayNum,
+    rate: inv ? inv.rate : '',
+    root: inv ? inv.root : '',
+    eid: inv ? inv.eid : '',
+    available: true  /* default, updated by fetchAvailability() */
+  });
+});
+
+/* Build zone groups for sidebar and clustering */
+var ZONE_ORDER = [
+  "Siren's Shanty","Shipwreck Shack","Smuggler's Hideout"
+];
+
+var ZONES = {};
+CABANAS.forEach(function(c) {
+  if (!ZONES[c.zone]) {
+    ZONES[c.zone] = { name: c.zone, cabanas: [], cx: 0, cy: 0 };
+  }
+  ZONES[c.zone].cabanas.push(c);
+});
+
+/* Compute zone centroids for cluster pins */
+Object.keys(ZONES).forEach(function(z) {
+  var zone = ZONES[z];
+  var sx = 0, sy = 0;
+  zone.cabanas.forEach(function(c) { sx += c.x; sy += c.y; });
+  zone.cx = sx / zone.cabanas.length;
+  zone.cy = sy / zone.cabanas.length;
+});
+/* Nudge clusters to avoid Beach Villa / Beach Bungalow overlap */
+if (ZONES['Beach Villa']) { ZONES['Beach Villa'].cx -= 2; }
+if (ZONES['Beach Bungalow']) { ZONES['Beach Bungalow'].cx += 2; }
+
+/* ================================================================
+   STATE
+   ================================================================ */
+var scale = 1, panX = 0, panY = 0;
+var isDragging = false, dragStartX = 0, dragStartY = 0, startPanX = 0, startPanY = 0;
+var imgW = 0, imgH = 0;
+var CLUSTER_THRESHOLD = 0.7; /* show clusters below this zoom */
+var pinElements = [];
+var clusterElements = [];
+
+/* ================================================================
+   INIT
+   ================================================================ */
+var mapImg = document.getElementById('mapImg');
+var mapInner = document.getElementById('mapInner');
+var mapArea = document.getElementById('mapArea');
+
+mapImg.onload = function() {
+  imgW = mapImg.naturalWidth;
+  imgH = mapImg.naturalHeight;
+  mapImg.style.width = imgW + 'px';
+  mapImg.style.height = imgH + 'px';
+  resetMap();
+  renderSidebar();
+  renderPins();
+  renderClusters();
+  updatePinVisibility();
+  fetchAvailability();
+  startAvailRefresh();
+};
+
+function updateTransform() {
+  mapInner.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ')';
+}
+
+/* ================================================================
+   SIDEBAR
+   ================================================================ */
+function renderSidebar() {
+  var body = document.getElementById('sidebarBody');
+  var frag = document.createDocumentFragment();
+
+  /* Legend section */
+  var legend = document.createElement('div');
+  legend.className = 'iw-legend open';
+  var legendHeader = document.createElement('div');
+  legendHeader.className = 'iw-legend-header';
+  legendHeader.setAttribute('onclick', 'toggleLegend()');
+  legendHeader.innerHTML = '<span class="iw-legend-title">Zone Legend</span><span class="iw-legend-chevron">&#9660;</span>';
+  legend.appendChild(legendHeader);
+
+  var legendItems = document.createElement('div');
+  legendItems.className = 'iw-legend-items';
+  ZONE_ORDER.forEach(function(zoneName) {
+    var zone = ZONES[zoneName];
+    if (!zone) return;
+    var item = document.createElement('div');
+    item.className = 'iw-legend-item';
+    item.setAttribute('onclick', 'flyToZone("' + escapeAttr(zoneName) + '")');
+    var swatch = document.createElement('div');
+    swatch.className = 'iw-legend-swatch';
+    swatch.style.background = ZONE_COLORS[zoneName] || '#888';
+    item.appendChild(swatch);
+    var nameSpan = document.createElement('span');
+    nameSpan.className = 'iw-legend-name';
+    nameSpan.textContent = zoneName;
+    item.appendChild(nameSpan);
+    var countSpan = document.createElement('span');
+    countSpan.className = 'iw-legend-count';
+    countSpan.textContent = zone.cabanas.length;
+    item.appendChild(countSpan);
+    legendItems.appendChild(item);
+  });
+  legend.appendChild(legendItems);
+  frag.appendChild(legend);
+
+  /* Zone sections */
+  ZONE_ORDER.forEach(function(zoneName) {
+    var zone = ZONES[zoneName];
+    if (!zone) return;
+
+    var pricing = ZONE_PRICING[zoneName];
+    var startPrice = pricing ? getStartPrice(pricing) : '';
+
+    var section = document.createElement('div');
+    section.className = 'iw-zone-section';
+    section.dataset.zone = zoneName;
+
+    var header = document.createElement('div');
+    header.className = 'iw-zone-header';
+    header.setAttribute('onclick', 'toggleZoneSection("' + escapeAttr(zoneName) + '")');
+
+    header.innerHTML =
+      '<div class="iw-zone-header-left">' +
+        '<div class="iw-zone-icon" style="background:' + (ZONE_COLORS[zoneName] || '#888') + '">' + zone.cabanas.length + '</div>' +
+        '<div><div class="iw-zone-name">' + escapeHtml(zoneName) + '</div>' +
+        
+        '</div></div>' +
+      '<span class="iw-zone-chevron">&#9660;</span>';
+
+    section.appendChild(header);
+
+    var items = document.createElement('div');
+    items.className = 'iw-zone-items';
+
+    zone.cabanas.forEach(function(cabana, idx) {
+      var item = document.createElement('div');
+      item.className = 'iw-zone-item';
+      item.dataset.cabanaId = cabana.unit;
+      item.setAttribute('onclick', 'flyToCabana("' + escapeAttr(cabana.unit) + '")');
+
+      var numCircle = document.createElement('div');
+      numCircle.className = 'iw-zone-item-num';
+      numCircle.style.background = ZONE_COLORS[zoneName] || '#888';
+      numCircle.textContent = cabana.displayNum || '1';
+      item.appendChild(numCircle);
+
+      var name = document.createElement('span');
+      name.className = 'iw-zone-item-name';
+      name.textContent = cabana.unit;
+      item.appendChild(name);
+
+      var status = document.createElement('span');
+      status.className = 'iw-zone-item-status available';
+      status.dataset.cabanaStatus = cabana.unit;
+      status.textContent = 'Available';
+      item.appendChild(status);
+
+      items.appendChild(item);
+    });
+
+    section.appendChild(items);
+    frag.appendChild(section);
+  });
+
+  body.appendChild(frag);
+}
+
+function getStartPrice(pricing) {
+  var prices = [];
+  Object.keys(pricing).forEach(function(k) {
+    var v = pricing[k];
+    if (v && v !== 'N/A') {
+      var num = parseInt(v.replace('$', ''), 10);
+      if (!isNaN(num)) prices.push(num);
+    }
+  });
+  if (prices.length === 0) return '';
+  return '$' + Math.min.apply(null, prices);
+}
+
+function getPriceForDate(pricing, dateStr, isEvening) {
+  if (!pricing || !dateStr) return '';
+  /* Special dates first */
+  if (dateStr === '2026-07-03') return isEvening ? (pricing['Jul 3 Night'] || '') : (pricing['Jul 3'] || '');
+  if (dateStr === '2026-07-04') return pricing['Jul 4'] || '';
+  /* Day of week */
+  var d = new Date(dateStr + 'T12:00:00');
+  var day = d.getDay(); /* 0=Sun, 1=Mon, ..., 6=Sat */
+  if (isEvening) {
+    if (day === 5) return pricing['Fri Night'] || '';
+    return ''; /* most nights don't have separate pricing */
+  }
+  if (day === 0) return pricing['Sun'] || '';
+  if (day === 1 || day === 4) return pricing['M/Th'] || '';
+  if (day === 2 || day === 3) return pricing['T/W'] || '';
+  if (day === 5) return pricing['Fri'] || '';
+  if (day === 6) return pricing['Sat'] || '';
+  return '';
+}
+
+function toggleLegend() {
+  document.querySelector('.iw-legend').classList.toggle('open');
+}
+
+function toggleZoneSection(zoneName) {
+  var section = document.querySelector('.iw-zone-section[data-zone="' + zoneName + '"]');
+  if (section) section.classList.toggle('open');
+}
+
+/* ================================================================
+   RENDER PINS (individual cabana pins)
+   ================================================================ */
+function renderPins() {
+  var frag = document.createDocumentFragment();
+
+  CABANAS.forEach(function(cabana) {
+    var pin = document.createElement('div');
+    pin.className = 'iw-pin';
+    pin.dataset.unit = cabana.unit;
+    pin.dataset.zone = cabana.zone;
+    pin.style.left = cabana.x + '%';
+    pin.style.top = cabana.y + '%';
+
+    var color = ZONE_COLORS[cabana.zone] || '#888';
+    var label = cabana.displayNum || '&#9679;';
+
+    pin.innerHTML =
+      '<div class="iw-pin-marker">' +
+        '<div class="iw-pin-dot" style="background:' + color + '"><span>' + label + '</span></div>' +
+        '<div class="iw-pin-shadow"></div>' +
+      '</div>';
+
+    pin.addEventListener('click', function() {
+      openPanel(cabana);
+      highlightSidebarItem(cabana.unit);
+    });
+
+    mapInner.appendChild(pin);
+    frag.appendChild(pin);
+    pinElements.push({ el: pin, cabana: cabana });
+  });
+
+  mapInner.appendChild(frag);
+}
+
+/* ================================================================
+   RENDER CLUSTERS (zone-level groupings at low zoom)
+   ================================================================ */
+function renderClusters() {
+  var frag = document.createDocumentFragment();
+
+  ZONE_ORDER.forEach(function(zoneName) {
+    var zone = ZONES[zoneName];
+    if (!zone) return;
+
+    var cluster = document.createElement('div');
+    cluster.className = 'iw-cluster';
+    cluster.dataset.zone = zoneName;
+    cluster.style.left = zone.cx + '%';
+    cluster.style.top = zone.cy + '%';
+
+    var color = ZONE_COLORS[zoneName] || '#888';
+    cluster.innerHTML =
+      '<div class="iw-cluster-dot" style="background:' + color + '">' +
+        zone.cabanas.length +
+        '<div class="iw-cluster-label">' + escapeHtml(zoneName) + '</div>' +
+      '</div>';
+
+    cluster.addEventListener('click', function() {
+      flyToZone(zoneName);
+    });
+
+    frag.appendChild(cluster);
+    clusterElements.push({ el: cluster, zone: zoneName });
+  });
+
+  mapInner.appendChild(frag);
+}
+
+/* ================================================================
+   PIN VISIBILITY (clustering vs. individual)
+   ================================================================ */
+function updatePinVisibility() {
+  /* Always show individual pins, never show clusters */
+  pinElements.forEach(function(p) {
+    p.el.classList.remove('hidden');
+  });
+
+  clusterElements.forEach(function(c) {
+    c.el.classList.add('hidden');
+  });
+}
+
+/* ================================================================
+   FLY TO / NAVIGATE
+   ================================================================ */
+function flyToZone(zoneName) {
+  var zone = ZONES[zoneName];
+  if (!zone) return;
+
+  var ww = mapArea.clientWidth;
+  var wh = mapArea.clientHeight;
+  scale = 1.8;
+  panX = ww / 2 - (zone.cx / 100 * imgW) * scale;
+  panY = wh / 2 - (zone.cy / 100 * imgH) * scale;
+  mapInner.style.transition = 'transform 0.5s ease';
+  updateTransform();
+  updatePinVisibility();
+  setTimeout(function() { mapInner.style.transition = ''; }, 500);
+
+  /* Open the zone section in sidebar */
+  var section = document.querySelector('.iw-zone-section[data-zone="' + zoneName + '"]');
+  if (section && !section.classList.contains('open')) {
+    section.classList.add('open');
+  }
+}
+
+function flyToCabana(unitName) {
+  var cabana = null;
+  for (var i = 0; i < CABANAS.length; i++) {
+    if (CABANAS[i].unit === unitName) { cabana = CABANAS[i]; break; }
+  }
+  if (!cabana) return;
+
+  var ww = mapArea.clientWidth;
+  var wh = mapArea.clientHeight;
+  scale = 2.2;
+  panX = ww / 2 - (cabana.x / 100 * imgW) * scale;
+  panY = wh / 2 - (cabana.y / 100 * imgH) * scale;
+  mapInner.style.transition = 'transform 0.5s ease';
+  updateTransform();
+  updatePinVisibility();
+  setTimeout(function() { mapInner.style.transition = ''; }, 500);
+
+  /* Bounce the pin */
+  var pin = mapInner.querySelector('[data-unit="' + unitName + '"]');
+  if (pin) {
+    pin.classList.remove('highlight');
+    void pin.offsetWidth;
+    pin.classList.add('highlight');
+  }
+
+  highlightSidebarItem(unitName);
+  openPanel(cabana);
+
+  /* Close mobile sidebar */
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function highlightSidebarItem(unitName) {
+  document.querySelectorAll('.iw-zone-item').forEach(function(el) {
+    el.classList.remove('active');
+  });
+  var item = document.querySelector('[data-cabana-id="' + unitName + '"]');
+  if (item) item.classList.add('active');
+}
+
+/* ================================================================
+   DETAIL PANEL
+   ================================================================ */
+function openPanel(cabana) {
+  var panel = document.getElementById('panel');
+  var backdrop = document.getElementById('panelBackdrop');
+  var title = document.getElementById('panelTitle');
+  var body = document.getElementById('panelBody');
+
+  title.textContent = cabana.unit;
+
+  var color = ZONE_COLORS[cabana.zone] || '#888';
+  var pricing = ZONE_PRICING[cabana.zone];
+  var desc = ZONE_DESCRIPTIONS[cabana.zone] || '';
+
+  var details = ZONE_DETAILS[cabana.zone] || {};
+  var html = '';
+
+  /* Zone tag */
+  html += '<span class="iw-panel-tag" style="background:' + hexToRgba(color, 0.12) + ';color:' + color + ';">' + escapeHtml(cabana.zone) + '</span>';
+
+  /* Video thumbnail or static photo */
+  var thumbImg = details.photo || details.thumb || null;
+  if (thumbImg && details.video) {
+    html += '<div class="iw-video-thumb" onclick="openVideoModal(\'' + escapeAttr(details.video) + '\')">';
+    html += '<img src="' + escapeAttr(thumbImg) + '" alt="' + escapeAttr(cabana.zone) + '" loading="lazy">';
+    html += '<div class="iw-video-play-btn"></div>';
+    html += '</div>';
+  } else if (thumbImg) {
+    html += '<div class="iw-video-thumb" style="cursor:default;">';
+    html += '<img src="' + escapeAttr(thumbImg) + '" alt="' + escapeAttr(cabana.zone) + '" loading="lazy">';
+    html += '</div>';
+  } else if (details.video) {
+    var isLocalVid = /\.(mp4|webm|mov)$/i.test(details.video);
+    var fallbackThumb = isLocalVid ? '' : 'https://img.youtube.com/vi/' + escapeAttr(details.video) + '/hqdefault.jpg';
+    if (fallbackThumb) {
+      html += '<div class="iw-video-thumb" onclick="openVideoModal(\'' + escapeAttr(details.video) + '\')">';
+      html += '<img src="' + fallbackThumb + '" alt="Watch video" loading="lazy">';
+      html += '<div class="iw-video-play-btn"></div>';
+      html += '</div>';
+    }
+  }
+
+  /* Description */
+  if (desc) {
+    html += '<p class="iw-panel-desc">' + escapeHtml(desc) + '</p>';
+  }
+
+  /* Zone specs (size, capacity, seating, features) */
+  if (details.size || details.capacity || details.seating) {
+    html += '<div class="iw-panel-meta" style="margin-bottom:12px;">';
+    if (details.size) {
+      html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Size</span><span class="iw-panel-meta-value">' + escapeHtml(details.size) + '</span></div>';
+    }
+    if (details.capacity) {
+      html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Capacity</span><span class="iw-panel-meta-value">' + escapeHtml(details.capacity) + '</span></div>';
+    }
+    if (details.seating) {
+      html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Seating</span><span class="iw-panel-meta-value">' + escapeHtml(details.seating) + '</span></div>';
+    }
+    html += '</div>';
+  }
+
+  /* Price for selected date */
+  var selectedDate = document.getElementById('datePicker') ? document.getElementById('datePicker').value : '';
+  var isEvening = selectedSlotIndex > 0; /* second slot = evening */
+  var dayPrice = getPriceForDate(pricing, selectedDate, isEvening);
+  if (dayPrice && dayPrice !== 'N/A') {
+    html += '<div style="font-size:22px;font-weight:800;color:#15803D;margin:8px 0;text-align:center;">' + escapeHtml(dayPrice) + '</div>';
+  }
+
+  /* Availability status: block past dates */
+  var isPast = isDatePast(selectedDate);
+  if (isPast) {
+    html += '<div class="iw-sold-out">This date has passed</div>';
+  } else if (cabana.available) {
+    html += '<button class="iw-book-btn" data-root="' + escapeAttr(cabana.root || '') + '" data-eid="' + escapeAttr(cabana.eid) + '" data-unit="' + escapeAttr(cabana.unit) + '" data-rate="' + escapeAttr(cabana.rate || '') + '" onclick="openBooking(this.dataset.root, this.dataset.eid, this.dataset.unit, this.dataset.rate)">Book Now</button>';
+  } else {
+    html += '<div class="iw-sold-out">Sold Out Today</div>';
+    html += '<div style="text-align:center;padding:12px 16px;background:#FEF3C7;border:2px solid #F59E0B;border-radius:10px;margin-bottom:16px;"><div style="font-size:13px;font-weight:700;color:#92400E;">Cabins Sold Out?</div><div style="font-size:12px;color:#78350F;margin-top:4px;line-height:1.5;">We MAY have extras. Call us at <a href="tel:5592776800" style="color:#1D4ED8;font-weight:700;text-decoration:none;">(559) 277-6800</a> to find out if we have more options available</div></div>';
+  }
+
+  /* Meta info */
+  html += '<div class="iw-panel-meta">';
+  html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Zone</span><span class="iw-panel-meta-value">' + escapeHtml(cabana.zone) + '</span></div>';
+  html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Unit</span><span class="iw-panel-meta-value">' + escapeHtml(cabana.unit) + '</span></div>';
+  if (cabana.rate) {
+    html += '<div class="iw-panel-meta-row"><span class="iw-panel-meta-label">Status</span><span class="iw-panel-meta-value" style="color:' + (cabana.available ? '#15803D' : '#DC2626') + ';">' + (cabana.available ? 'Available' : 'Booked') + '</span></div>';
+  }
+  html += '</div>';
+
+  body.innerHTML = html;
+  panel.classList.add('open');
+  backdrop.classList.add('open');
+}
+
+function closePanel() {
+  document.getElementById('panel').classList.remove('open');
+  document.getElementById('panelBackdrop').classList.remove('open');
+  document.querySelectorAll('.iw-zone-item').forEach(function(el) {
+    el.classList.remove('active');
+  });
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closePanel();
+});
+
+/* ================================================================
+   BOOKING STUB
+   ================================================================ */
+function openBooking(root, eid, unitName, rate) {
+  /* Opens RocketRez web engine in an iframe so each click gets a fresh instance */
+  var selectedDate = document.getElementById('datePicker') ? document.getElementById('datePicker').value : '';
+  var modal = document.getElementById('bookingModal');
+  var container = document.getElementById('bookingEngineContainer');
+  var title = document.getElementById('bookingModalTitle');
+
+  title.textContent = unitName ? ('Book ' + unitName) : 'Book Cabana';
+
+  /* Build RocketRez engine URL directly, bypasses iframe doc.write timing issues */
+  var rrBase = 'https://secure.rocket-rez.com/RocketWeb2/' + eid;
+  var rrParams = [];
+  rrParams.push('puri=' + encodeURIComponent(document.location.href));
+  if (root) rrParams.push('ro=' + root);
+  if (rate) rrParams.push('ra=' + rate);
+  if (selectedDate) { rrParams.push('sd=' + selectedDate); rrParams.push('ed=' + selectedDate); }
+  var rrUrl = rrBase + '?' + rrParams.join('&');
+
+  /* Create fresh iframe each time */
+  container.innerHTML = '';
+  var iframe = document.createElement('iframe');
+  iframe.style.cssText = 'width:100%;height:100%;border:none;';
+  iframe.src = rrUrl;
+  iframe.allow = 'payment';
+  iframe.setAttribute('allowTransparency', 'true');
+  container.appendChild(iframe);
+
+  modal.classList.add('active');
+  /* Prevent iframe focus/hover from scrolling parent page */
+  iframe.setAttribute('tabindex', '-1');
+  iframe.style.position = 'relative';
+  container.style.position = 'relative';
+  container.style.overflow = 'hidden';
+  /* Intercept any scroll attempts while modal is open */
+  var scrollX = window.scrollX, scrollY = window.scrollY;
+  window.__bookingScrollLock = function() {
+    window.scrollTo(scrollX, scrollY);
+  };
+  window.addEventListener('scroll', window.__bookingScrollLock, { passive: false });
+  /* Also prevent on the modal overlay and container */
+  modal.addEventListener('scroll', window.__bookingScrollLock, { passive: false });
+  document.addEventListener('keydown', bookingModalEsc);
+}
+
+function closeBookingModal() {
+  var modal = document.getElementById('bookingModal');
+  var container = document.getElementById('bookingEngineContainer');
+  modal.classList.remove('active');
+  container.innerHTML = '';
+  if (window.__bookingScrollLock) {
+    window.removeEventListener('scroll', window.__bookingScrollLock);
+    modal.removeEventListener('scroll', window.__bookingScrollLock);
+    window.__bookingScrollLock = null;
+  }
+  document.removeEventListener('keydown', bookingModalEsc);
+}
+
+function bookingModalEsc(e) { if (e.key === 'Escape') closeBookingModal(); }
+
+/* ================================================================
+   DATE PICKER + TIME SLOTS
+   ================================================================ */
+var lastAvailData = null;
+var selectedSlotIndex = 0;
+
+(function initDatePicker() {
+  var picker = document.getElementById('datePicker');
+  if (!picker) return;
+  /* Use Fresno/PST time to determine "today" */
+  var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+  var yyyy = now.getFullYear();
+  var mm = String(now.getMonth() + 1).padStart(2, '0');
+  var dd = String(now.getDate()).padStart(2, '0');
+  var today = yyyy + '-' + mm + '-' + dd;
+  picker.value = today;
+  picker.min = today;
+})();
+
+var availRefreshTimer = null;
+function startAvailRefresh() {
+  if (availRefreshTimer) clearInterval(availRefreshTimer);
+  availRefreshTimer = setInterval(fetchAvailability, 10000);
+}
+
+/* Check if a date string (YYYY-MM-DD) is in the past based on Fresno time */
+function isDatePast(dateStr) {
+  if (!dateStr) return false;
+  var now = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Los_Angeles' }));
+  var todayStr = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+  return dateStr < todayStr;
+}
+
+function onDateChange() {
+  var statusEl = document.getElementById('dateStatus');
+  var picker = document.getElementById('datePicker');
+  var pickedDate = picker ? picker.value : '';
+
+  /* Block past dates: mark everything booked, no fetching */
+  if (isDatePast(pickedDate)) {
+    selectedSlotIndex = 0;
+    hideTimeSlots();
+    markAllUnavailable();
+    if (statusEl) statusEl.textContent = 'This date has passed';
+    if (availRefreshTimer) { clearInterval(availRefreshTimer); availRefreshTimer = null; }
+    return;
+  }
+
+  if (statusEl) statusEl.textContent = 'Loading availability...';
+  selectedSlotIndex = 0;
+  hideTimeSlots();
+  resetAvailability();
+  fetchAvailability();
+  startAvailRefresh();
+}
+
+function resetAvailability() {
+  CABANAS.forEach(function(c) { c.available = true; });
+  pinElements.forEach(function(p) { p.el.classList.remove('booked'); });
+}
+
+function markAllUnavailable() {
+  CABANAS.forEach(function(c) { c.available = false; });
+  pinElements.forEach(function(p) { p.el.classList.add('booked'); });
+  /* Update sidebar status badges */
+  CABANAS.forEach(function(cabana) {
+    var badge = document.querySelector('[data-cabana-status="' + cabana.unit + '"]');
+    if (badge) {
+      badge.className = 'iw-zone-item-status booked';
+      badge.textContent = 'Booked';
+    }
+  });
+}
+
+function hideTimeSlots() {
+  var container = document.getElementById('timeSlotContainer');
+  if (container) container.style.display = 'none';
+}
+
+function renderTimeSlots(data) {
+  var container = document.getElementById('timeSlotContainer');
+  var buttonsEl = document.getElementById('timeSlotButtons');
+  if (!container || !buttonsEl) return;
+
+  if (data.slotCount <= 1) {
+    container.style.display = 'none';
+    return;
+  }
+
+  buttonsEl.innerHTML = '';
+  data.timeSlots.forEach(function(slot, idx) {
+    var btn = document.createElement('button');
+    btn.className = 'iw-slot-btn' + (idx === selectedSlotIndex ? ' active' : '');
+    btn.textContent = slot.label;
+    btn.onclick = function() {
+      selectedSlotIndex = idx;
+      /* Update active state */
+      buttonsEl.querySelectorAll('.iw-slot-btn').forEach(function(b, i) {
+        b.className = 'iw-slot-btn' + (i === idx ? ' active' : '');
+      });
+      /* Apply this slot's availability */
+      applySlotAvailability(data, idx);
+    };
+    buttonsEl.appendChild(btn);
+  });
+  container.style.display = 'block';
+}
+
+function applySlotAvailability(data, slotIdx) {
+  var slot = data.timeSlots[slotIdx];
+  if (!slot) return;
+
+  resetAvailability();
+  applyAvailability({ zones: slot.zones, hasSchedules: true });
+
+  var statusEl = document.getElementById('dateStatus');
+  if (statusEl) {
+    var totalAvail = 0, totalCap = 0;
+    slot.zones.forEach(function(z) { totalAvail += z.available; totalCap += z.capacity; });
+    statusEl.textContent = totalAvail + ' of ' + totalCap + ' cabanas available';
+    statusEl.style.color = totalAvail > 0 ? '#15803D' : '#DC2626';
+  }
+}
+
+/* ================================================================
+   AVAILABILITY (architecture: calls server-side proxy)
+   ================================================================ */
+function fetchAvailability() {
+  /*
+   * Calls our backend proxy which handles RocketRez OAuth + API calls.
+   * The proxy caches responses server-side (~10s TTL) to stay within
+   * RocketRez rate limits (100 req/rolling minute per James @ RocketRez).
+   * Auto-refreshes every 10s to keep availability current.
+   *
+   * Expected response format from /api/cabana-availability:
+   * {
+   *   "date": "2026-04-03",
+   *   "zones": [
+   *     {
+   *       "name": "Siren's Shanty",
+   *       "capacity": 30,
+   *       "available": 22,
+   *       "reserved": 8,
+   *       "cabanas": [
+   *         { "name": "Siren's Shanty 01", "rate": "", "available": true },
+   *         { "name": "Siren's Shanty 02", "rate": "", "available": false },
+   *         ...
+   *       ]
+   *     },
+   *     ...
+   *   ]
+   * }
+   *
+   * Maps to RocketRez Headless API:
+   *   GET /api/v1/headless/products/event/2/schedules?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD
+   *   Response: schedules[].seatTypes[].name = zone name
+   *             schedules[].seatTypes[].available = count
+   *             schedules[].seatTypes[].rates[].name = individual cabana
+   */
+
+  /* FFN has its OWN endpoint. Do NOT point this at /api/cabana-availability,
+   which returns Island Waterpark cabanas and would show wrong inventory.
+   TODO: stand up this endpoint, or add an FFN filter to the existing proxy.
+   Until it exists, fetchAvailability() fails soft and all cabins show available. */
+var AVAILABILITY_API = 'https://api.whisperingxhills.com/api/ffn-cabin-availability';
+  var selectedDate = document.getElementById('datePicker') ? document.getElementById('datePicker').value : new Date().toISOString().split('T')[0];
+  var url = AVAILABILITY_API + '?date=' + selectedDate;
+
+  var statusEl = document.getElementById('dateStatus');
+
+  fetch(url).then(function(res) {
+    if (!res.ok) throw new Error('Availability fetch failed: ' + res.status);
+    return res.json();
+  }).then(function(data) {
+    lastAvailData = data;
+
+    if (!data.hasSchedules) {
+      hideTimeSlots();
+      markAllUnavailable();
+      if (statusEl) {
+        statusEl.textContent = 'No cabanas available on this date';
+        statusEl.style.color = '#DC2626';
+      }
+      return;
+    }
+
+    /* Render time slot buttons if multiple slots */
+    renderTimeSlots(data);
+
+    /* Apply availability for the selected slot */
+    applySlotAvailability(data, selectedSlotIndex);
+
+  }).catch(function(err) {
+    hideTimeSlots();
+    markAllUnavailable();
+    if (statusEl) {
+      statusEl.textContent = 'Unable to load availability';
+      statusEl.style.color = '#DC2626';
+    }
+    console.warn('[CabanaMap] Availability fetch failed:', err.message);
+  });
+}
+
+function applyAvailability(data) {
+  if (!data || !data.zones) return;
+
+  /* Build lookup: cabana name -> available boolean */
+  var availability = {};
+  data.zones.forEach(function(zone) {
+    if (!zone.cabanas) return;
+    zone.cabanas.forEach(function(c) {
+      availability[c.name] = !!c.available;
+    });
+  });
+
+  /* Update CABANAS state */
+  CABANAS.forEach(function(cabana) {
+    if (cabana.unit in availability) {
+      cabana.available = availability[cabana.unit];
+    }
+  });
+
+  /* Update pin appearance */
+  pinElements.forEach(function(p) {
+    p.el.classList.toggle('booked', !p.cabana.available);
+  });
+
+  /* Update sidebar status badges */
+  CABANAS.forEach(function(cabana) {
+    var badge = document.querySelector('[data-cabana-status="' + cabana.unit + '"]');
+    if (badge) {
+      if (cabana.available) {
+        badge.className = 'iw-zone-item-status available';
+        badge.textContent = 'Available';
+      } else {
+        badge.className = 'iw-zone-item-status booked';
+        badge.textContent = 'Booked';
+      }
+    }
+  });
+}
+
+/* ================================================================
+   PAN & ZOOM
+   ================================================================ */
+mapArea.addEventListener('mousedown', function(e) {
+  if (e.target.closest('.iw-pin') || e.target.closest('.iw-cluster')) return;
+  isDragging = true;
+  dragStartX = e.clientX;
+  dragStartY = e.clientY;
+  startPanX = panX;
+  startPanY = panY;
+  mapArea.classList.add('grabbing');
+});
+
+window.addEventListener('mousemove', function(e) {
+  if (!isDragging) return;
+  panX = startPanX + (e.clientX - dragStartX);
+  panY = startPanY + (e.clientY - dragStartY);
+  updateTransform();
+});
+
+window.addEventListener('mouseup', function() {
+  isDragging = false;
+  mapArea.classList.remove('grabbing');
+});
+
+/* Touch */
+var lastTouchDist = 0;
+mapArea.addEventListener('touchstart', function(e) {
+  if (e.touches.length === 1) {
+    isDragging = true;
+    dragStartX = e.touches[0].clientX;
+    dragStartY = e.touches[0].clientY;
+    startPanX = panX;
+    startPanY = panY;
+  } else if (e.touches.length === 2) {
+    isDragging = false;
+    lastTouchDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+  }
+}, { passive: true });
+
+mapArea.addEventListener('touchmove', function(e) {
+  if (e.touches.length === 1 && isDragging) {
+    panX = startPanX + (e.touches[0].clientX - dragStartX);
+    panY = startPanY + (e.touches[0].clientY - dragStartY);
+    updateTransform();
+  } else if (e.touches.length === 2) {
+    var dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    scale = Math.max(0.3, Math.min(3, scale + (dist - lastTouchDist) * 0.003));
+    lastTouchDist = dist;
+    updateTransform();
+    updatePinVisibility();
+  }
+}, { passive: true });
+
+mapArea.addEventListener('touchend', function() { isDragging = false; });
+
+mapArea.addEventListener('wheel', function(e) {
+  e.preventDefault();
+  var factor = e.deltaY > 0 ? 0.9 : 1.1;
+  var rect = mapArea.getBoundingClientRect();
+  var mx = e.clientX - rect.left;
+  var my = e.clientY - rect.top;
+  var newScale = Math.max(0.3, Math.min(3, scale * factor));
+  panX = mx - (mx - panX) * (newScale / scale);
+  panY = my - (my - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+  updatePinVisibility();
+}, { passive: false });
+
+function zoomMap(dir) {
+  var factor = dir > 0 ? 1.25 : 0.8;
+  var ww = mapArea.clientWidth / 2;
+  var wh = mapArea.clientHeight / 2;
+  var newScale = Math.max(0.3, Math.min(3, scale * factor));
+  panX = ww - (ww - panX) * (newScale / scale);
+  panY = wh - (wh - panY) * (newScale / scale);
+  scale = newScale;
+  updateTransform();
+  updatePinVisibility();
+}
+
+function resetMap() {
+  var ww = mapArea.clientWidth;
+  var wh = mapArea.clientHeight;
+  scale = Math.min(ww / imgW, wh / imgH);
+  panX = (ww - imgW * scale) / 2;
+  panY = (wh - imgH * scale) / 2;
+  updateTransform();
+  updatePinVisibility();
+}
+
+/* ================================================================
+   MOBILE SIDEBAR
+   ================================================================ */
+function toggleSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  var toggle = document.getElementById('sidebarToggle');
+  sidebar.classList.add('open');
+  sidebar.style.transform = '';
+  toggle.classList.remove('visible');
+}
+
+function collapseSidebar() {
+  var sidebar = document.getElementById('sidebar');
+  var toggle = document.getElementById('sidebarToggle');
+  sidebar.classList.remove('open');
+  sidebar.style.transform = 'translateX(-100%)';
+  toggle.classList.add('visible');
+}
+
+/* ================================================================
+   UTILITY
+   ================================================================ */
+function escapeHtml(str) {
+  var div = document.createElement('div');
+  div.appendChild(document.createTextNode(str));
+  return div.innerHTML;
+}
+
+function escapeAttr(str) {
+  return str.replace(/&/g, '&amp;').replace(/'/g, '&#39;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function hexToRgba(hex, alpha) {
+  var r = parseInt(hex.slice(1, 3), 16);
+  var g = parseInt(hex.slice(3, 5), 16);
+  var b = parseInt(hex.slice(5, 7), 16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+</script>
+
+<!-- Booking Modal -->
+<div class="iw-video-modal-overlay" id="bookingModal" onclick="closeBookingModal()">
+  <div style="position:relative;width:90vw;max-width:960px;height:85vh;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.5);cursor:default;" onclick="event.stopPropagation()">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;background:var(--iw-darker);color:#fff;">
+      <span id="bookingModalTitle" style="font-weight:700;font-size:16px;">Book Cabin</span>
+      <button onclick="closeBookingModal()" style="background:none;border:none;color:#fff;font-size:22px;cursor:pointer;padding:0 4px;">&times;</button>
+    </div>
+    <div style="padding:10px 20px;background:#EFF6FF;border-bottom:1px solid #BFDBFE;display:flex;align-items:center;gap:8px;">
+      <span style="font-size:16px;">💡</span>
+      <span style="font-size:12px;color:#1E40AF;font-weight:600;line-height:1.4;">Want more than one cabin? Hit Confirm to add this cabin to your cart, then close this window or click outside to pick another cabin from the map.</span>
+    </div>
+    <div id="bookingEngineContainer" style="width:100%;height:calc(100% - 88px);overflow:hidden;padding:0;"></div>
+  </div>
+</div>
+
+<!-- Welcome Overlay -->
+<div id="welcomeOverlay" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(15,23,42,0.85);z-index:10000;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;-webkit-overflow-scrolling:touch;">
+  <div style="background:#fff;border-radius:16px;max-width:480px;width:100%;padding:28px 24px;box-shadow:0 20px 60px rgba(0,0,0,0.3);text-align:center;margin:auto 0;">
+    <div style="font-size:36px;margin-bottom:8px;">🏝️</div>
+    <h2 style="font-size:20px;font-weight:800;color:#1E293B;margin:0 0 12px;">Welcome to the Cabin Map</h2>
+    <div style="text-align:left;font-size:13px;color:#475569;line-height:1.6;">
+      <p style="margin:0 0 10px;"><strong>Step 1:</strong> Use the date picker in the sidebar to choose your night. Cabin pins are color-coded by vibe. Available cabins are bright and clickable, booked cabins appear dimmed.</p>
+      <p style="margin:0 0 10px;"><strong>Step 2:</strong> Browse the map to find a cabin you like. Drag to move around, pinch or scroll to zoom.</p>
+      <p style="margin:0 0 10px;"><strong>Step 3:</strong> Tap any cabin pin to see details: capacity, theming, and what your rental includes.</p>
+      <p style="margin:0 0 10px;"><strong>Step 4:</strong> Click the <strong>"Book Now"</strong> button to reserve your cabin. You'll be taken to a secure checkout.</p>
+      <p style="margin:0;"><strong>Tip:</strong> Shipwreck VIP Cabins are evening only, for the night you select. Fresno Fright Nights operates 11 nights in October.</p>
+    </div>
+    <button onclick="dismissWelcome()" style="margin-top:16px;padding:12px 36px;background:#0EA5E9;color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:700;cursor:pointer;font-family:Inter,sans-serif;transition:background 0.2s;">Got It, Let's Go!</button>
+  </div>
+</div>
+<style>
+@keyframes startHereFlash {
+  0%, 100% { box-shadow: inset 0 0 0 2px #EF4444, 0 0 8px rgba(239,68,68,0.3); }
+  50% { box-shadow: inset 0 0 0 2px #EF4444, 0 0 20px rgba(239,68,68,0.6); }
+}
+.start-here-highlight {
+  animation: startHereFlash 1s ease-in-out infinite;
+  border-radius: 10px;
+  position: relative;
+}
+.start-here-label {
+  position: absolute;
+  left: -90px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: #EF4444;
+  color: #fff;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  font-family: Inter, sans-serif;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  box-shadow: 0 2px 8px rgba(239,68,68,0.4);
+  cursor: pointer;
+}
+.start-here-label::after {
+  content: '';
+  position: absolute;
+  right: -6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 6px solid transparent;
+  border-bottom: 6px solid transparent;
+  border-left: 6px solid #EF4444;
+}
+</style>
+
+<script>
+function dismissWelcome() {
+  document.getElementById('welcomeOverlay').style.display = 'none';
+  try { localStorage.setItem('iwCabanaWelcomeSeen', '1'); } catch(e) {}
+  showStartHere();
+}
+
+function showStartHere() {
+  var picker = document.getElementById('datePicker');
+  if (!picker) return;
+
+  /* Highlight the whole date picker zone */
+  var zone = picker.parentElement;
+  zone.style.position = 'relative';
+  zone.style.overflow = 'visible';
+  zone.classList.add('start-here-highlight');
+
+  /* Add START HERE label */
+  var label = document.createElement('div');
+  label.className = 'start-here-label';
+  label.id = 'startHereLabel';
+  label.textContent = 'START HERE';
+  label.onclick = dismissStartHere;
+  zone.appendChild(label);
+
+  /* Auto-dismiss after 5 seconds */
+  setTimeout(dismissStartHere, 5000);
+}
+
+function dismissStartHere() {
+  var label = document.getElementById('startHereLabel');
+  if (label) label.remove();
+  var picker = document.getElementById('datePicker');
+  if (picker) picker.parentElement.classList.remove('start-here-highlight');
+}
+
+/* Also dismiss when they interact with the date picker */
+(function() {
+  var picker = document.getElementById('datePicker');
+  if (picker) picker.addEventListener('focus', dismissStartHere);
+})();
+
+/* Skip overlay for returning visitors */
+try { if (localStorage.getItem('iwCabanaWelcomeSeen')) document.getElementById('welcomeOverlay').style.display = 'none'; } catch(e) {}
+</script>
+
+<!-- Video Modal -->
+<div class="iw-video-modal-overlay" id="videoModal" onclick="closeVideoModal()">
+  <div class="iw-video-modal" onclick="event.stopPropagation()">
+    <button class="iw-video-modal-close" onclick="closeVideoModal()">&times;</button>
+    <iframe id="videoModalIframe" src="" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>
+    <video id="videoModalVideo" src="" controls autoplay playsinline style="display:none;width:100%;height:100%;border-radius:12px;background:#000;"></video>
+  </div>
+</div>
+<script>
+function openVideoModal(videoId) {
+  var modal = document.getElementById('videoModal');
+  var iframe = document.getElementById('videoModalIframe');
+  var video = document.getElementById('videoModalVideo');
+  if (videoId.endsWith('.mp4') || videoId.endsWith('.webm') || videoId.endsWith('.mov')) {
+    iframe.style.display = 'none';
+    iframe.src = '';
+    video.style.display = 'block';
+    video.src = videoId;
+    video.play();
+  } else {
+    video.style.display = 'none';
+    video.src = '';
+    video.pause();
+    iframe.style.display = '';
+    iframe.src = 'https://www.youtube.com/embed/' + videoId + '?rel=0&modestbranding=1&autoplay=1';
+  }
+  modal.classList.add('active');
+  document.addEventListener('keydown', videoModalEsc);
+}
+function closeVideoModal() {
+  var modal = document.getElementById('videoModal');
+  var iframe = document.getElementById('videoModalIframe');
+  var video = document.getElementById('videoModalVideo');
+  modal.classList.remove('active');
+  iframe.src = '';
+  video.pause();
+  video.src = '';
+  video.style.display = 'none';
+  iframe.style.display = '';
+  document.removeEventListener('keydown', videoModalEsc);
+}
+function videoModalEsc(e) { if (e.key === 'Escape') closeVideoModal(); }
+</script>
+<script>document.addEventListener("contextmenu",function(e){e.preventDefault()});document.addEventListener("keydown",function(e){if(e.key==="F12"||(e.ctrlKey&&e.shiftKey&&(e.key==="I"||e.key==="J"||e.key==="C"))||(e.ctrlKey&&e.key==="u")){e.preventDefault()}});</script>
+</body>
+</html>
