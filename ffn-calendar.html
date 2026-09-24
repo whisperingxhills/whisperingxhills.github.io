@@ -9,6 +9,8 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; background: #0A0708; }
 body { width: 100%; }
 
 #ffn-calendar .ffn-tag--opening { background: #FF6B00; color: #1A0A00; }
+#ffn-calendar .ffn-buy-btn--alt { display:none; margin-top:8px; background:#1f2937; color:#fff; border:1px solid #4b5563; }
+#ffn-calendar .ffn-buy-btn--alt:hover { background:#374151; }
 #ffn-calendar .ffn-tag--fresnoween { background: linear-gradient(135deg,#7E3FF2,#B026FF); color: #FFF; box-shadow: 0 0 10px rgba(176,38,255,0.55); }
 #ffn-calendar .ffn-tag--halloween { background: #8B0000; color: #FFD9D9; box-shadow: 0 0 8px rgba(193,18,31,0.5); }
 </style>
@@ -160,6 +162,7 @@ body { width: 100%; }
  </div>
  <div class="ffn-popup-body" id="ffnPopupBody"></div>
  <button class="ffn-buy-btn" id="ffnBuyBtn">🎟️ Buy Tickets</button>
+ <button class="ffn-buy-btn ffn-buy-btn--alt" id="ffnCompanyBtn">🎟️ Purchase Company Code Tickets</button>
  <div style="height:12px"></div>
  <button class="ffn-popup-close" id="ffnPopupClose">Close</button>
  </div>
@@ -352,6 +355,7 @@ body { width: 100%; }
  document.getElementById('ffnBuyBtn').style.display = (entry[4] && entry[4].noTickets) ? 'none' : 'block';
  selectedTicketUrl = (entry[4] && entry[4].ticketUrl) ? entry[4].ticketUrl : null;
  document.getElementById('ffnBuyBtn').textContent = selectedTicketUrl ? '\u{1F39F}\uFE0F Get FRESNOWEEN Tickets' : '\u{1F39F}\uFE0F Buy Tickets';
+ document.getElementById('ffnCompanyBtn').style.display = (selectedTicketUrl && !(entry[4] && entry[4].noTickets)) ? 'block' : 'none';
 
  overlay.classList.add('active');
  }
@@ -370,6 +374,12 @@ body { width: 100%; }
  document.getElementById('ffnTicketOverlay').classList.add('active');
  try { if (window.parent !== window) window.parent.postMessage({ffn:'ticket-open'}, '*'); } catch(e) {}
  }
+
+ /* Company code tickets: standard RocketRez portal, same as every other night */
+ document.getElementById('ffnCompanyBtn').addEventListener('click', function() {
+ if (!selectedCalDate) return;
+ openTicketEngine('bNp', '', 'Company Code Tickets \u2014 ' + selectedCalDate.label);
+ });
 
  /* Buy Tickets (regular admission) */
  document.getElementById('ffnBuyBtn').addEventListener('click', function() {
