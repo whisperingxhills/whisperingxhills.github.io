@@ -11,6 +11,7 @@ body { width: 100%; }
 #ffn-calendar .ffn-tag--opening { background: #FF6B00; color: #1A0A00; }
 #ffn-calendar .ffn-buy-btn--alt { display:none; margin-top:8px; background:#1f2937; color:#fff; border:1px solid #4b5563; }
 #ffn-calendar .ffn-buy-btn--alt:hover { background:#374151; }
+#ffn-calendar .ffn-tag--strangertides { background: linear-gradient(135deg,#E8611A,#4B0082); color: #FFF; box-shadow: 0 0 10px rgba(232,97,26,0.5); }
 #ffn-calendar .ffn-tag--fresnoween { background: linear-gradient(135deg,#7E3FF2,#B026FF); color: #FFF; box-shadow: 0 0 10px rgba(176,38,255,0.55); }
 #ffn-calendar .ffn-tag--halloween { background: #8B0000; color: #FFD9D9; box-shadow: 0 0 8px rgba(193,18,31,0.5); }
 </style>
@@ -189,23 +190,24 @@ body { width: 100%; }
  var EVENT_TYPES = {
  'opening': { label: 'Opening Night', cls: 'ffn-tag--opening', emoji: '\u{1F383}', desc: 'Opening night of the 2026 season.' },
  'fresnoween': { label: 'FRESNOWEEN', cls: 'ffn-tag--fresnoween', emoji: '\u{1F383}', desc: 'FRESNOWEEN. Special event, gates open at 6:00 PM. Tickets sold through KLIN Events.' },
- 'halloween': { label: 'Halloween', cls: 'ffn-tag--halloween', emoji: '\u{1F387}', desc: 'Halloween night.' }
+ 'halloween': { label: 'Halloween', cls: 'ffn-tag--halloween', emoji: '\u{1F387}', desc: 'Halloween night.' },
+ 'strangertides': { label: 'STRANGER TIDES', cls: 'ffn-tag--strangertides', emoji: '\u{1F30A}', desc: 'Stranger Tides live stage show by Jazzy D Studios. Pirates, sea creatures, fire and light. Included with admission.' }
  };
 
  var AFTER_HOURS_RATES = {};
 
  var CALENDAR = [
- [9,2,'7:00 PM',['opening'],{}],
- [9,3,'7:00 PM',[],{}],
- [9,9,'7:00 PM',[],{}],
- [9,10,'7:00 PM',[],{}],
+ [9,2,'7:00 PM',['opening','strangertides'],{}],
+ [9,3,'7:00 PM',['strangertides'],{}],
+ [9,9,'7:00 PM',['strangertides'],{}],
+ [9,10,'7:00 PM',['strangertides'],{}],
  [9,16,'6:00 PM',['fresnoween'],{ticketUrl:'https://tickets.klinevents.com/e/fresnoween/tickets'}],
- [9,17,'7:00 PM',[],{}],
- [9,23,'7:00 PM',[],{}],
- [9,24,'7:00 PM',[],{}],
- [9,25,'7:00 PM',[],{}],
- [9,30,'7:00 PM',[],{}],
- [9,31,'7:00 PM',['halloween'],{}]
+ [9,17,'7:00 PM',['strangertides'],{}],
+ [9,23,'7:00 PM',['strangertides'],{}],
+ [9,24,'7:00 PM',['strangertides'],{}],
+ [9,25,'7:00 PM',['strangertides'],{}],
+ [9,30,'7:00 PM',['strangertides'],{}],
+ [9,31,'7:00 PM',['halloween','strangertides'],{}]
  ];
 
  var calLookup = {};
