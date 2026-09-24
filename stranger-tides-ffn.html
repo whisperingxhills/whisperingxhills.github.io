@@ -142,6 +142,7 @@ body { padding: 24px 16px; }
 #st-landing .st-engine-wrap {
  border: 1px solid #E2E8F0;
  border-top: none;
+ border-radius: 0 0 16px 16px;
  overflow: hidden;
  background: #fff;
 }
@@ -158,56 +159,6 @@ body { padding: 24px 16px; }
  #st-landing .st-engine-wrap iframe { height: 1350px; }
 }
 
-#st-landing .st-stations {
- border: 1px solid #E2E8F0;
- border-top: none;
- border-radius: 0 0 16px 16px;
- background: #F8FAFC;
- padding: 22px 24px 24px;
- text-align: center;
-}
-
-#st-landing .st-stations-title {
- font-size: 12px;
- font-weight: 700;
- text-transform: uppercase;
- letter-spacing: 1px;
- color: #64748B;
- margin-bottom: 18px;
-}
-
-#st-landing .st-station-grid {
- display: flex;
- flex-wrap: wrap;
- justify-content: center;
- align-items: center;
- gap: 26px;
-}
-
-#st-landing .st-station {
- display: flex;
- align-items: center;
- justify-content: center;
- padding: 10px 14px;
- border-radius: 10px;
- background: #fff;
- border: 1px solid #E2E8F0;
- transition: transform .15s ease, box-shadow .15s ease;
- min-height: 74px;
-}
-#st-landing .st-station:hover {
- transform: translateY(-2px);
- box-shadow: 0 4px 14px rgba(0,0,0,0.08);
-}
-
-#st-landing .st-station img {
- display: block;
- max-height: 52px;
- max-width: 150px;
- width: auto;
- height: auto;
-}
-
 #st-landing .st-fine-print {
  text-align: center;
  font-size: 11px;
@@ -222,10 +173,6 @@ body { padding: 24px 16px; }
  #st-landing .st-subtitle { font-size: 13px; }
  #st-landing .st-steps { padding: 16px; }
  #st-landing .st-step-text { font-size: 13px; }
- #st-landing .st-stations { padding: 18px 14px 20px; }
- #st-landing .st-station-grid { gap: 14px; }
- #st-landing .st-station { padding: 8px 10px; min-height: 62px; }
- #st-landing .st-station img { max-height: 42px; max-width: 118px; }
 }
 </style>
 </head>
@@ -265,24 +212,6 @@ body { padding: 24px 16px; }
           title="Buy Fresno Fright Nights tickets"
           allow="payment"
           scrolling="yes"></iframe>
- </div>
-
- <div class="st-stations">
-  <div class="st-stations-title">Brought to you by Lotus Broadcasting</div>
-  <div class="st-station-grid">
-   <a class="st-station" href="https://www.1019labuena.com/" target="_blank" rel="noopener noreferrer" aria-label="La Buena 101.9">
-    <img src="assets/radio/labuena-1019.png" alt="La Buena 101.9">
-   </a>
-   <a class="st-station" href="https://www.caliente1051.com/" target="_blank" rel="noopener noreferrer" aria-label="Caliente 105.1">
-    <img src="assets/radio/caliente-1051.png" alt="Caliente 105.1">
-   </a>
-   <a class="st-station" href="https://www.q971.com/" target="_blank" rel="noopener noreferrer" aria-label="Q97.1">
-    <img src="assets/radio/q971.png" alt="Q97.1">
-   </a>
-   <a class="st-station" href="https://www.exitos1071.com/" target="_blank" rel="noopener noreferrer" aria-label="Exitos 107.1">
-    <img src="assets/radio/exitos-1071.png" alt="Exitos 107.1">
-   </a>
-  </div>
  </div>
 
  <p class="st-fine-print">Exclusive $35 pricing through Jazzy D Studios. Fresno Fright Nights runs 11 nights in October 2026. / Precio exclusivo de $35 a través de Jazzy D Studios. Fresno Fright Nights abre 11 noches en octubre de 2026.</p>
