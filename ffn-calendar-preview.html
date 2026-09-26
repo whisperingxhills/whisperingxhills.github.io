@@ -9,11 +9,11 @@ html, body { margin: 0; padding: 0; overflow-x: hidden; background: #0A0708; }
 body { width: 100%; }
 
 #ffn-calendar .ffn-tag--opening { background: #FF6B00; color: #1A0A00; }
+#ffn-calendar .ffn-buy-btn--alt { display:none; margin-top:8px; background:#1f2937; color:#fff; border:1px solid #4b5563; }
+#ffn-calendar .ffn-buy-btn--alt:hover { background:#374151; }
+#ffn-calendar .ffn-tag--strangertides { background: linear-gradient(135deg,#E8611A,#4B0082); color: #FFF; box-shadow: 0 0 10px rgba(232,97,26,0.5); }
 #ffn-calendar .ffn-tag--fresnoween { background: linear-gradient(135deg,#7E3FF2,#B026FF); color: #FFF; box-shadow: 0 0 10px rgba(176,38,255,0.55); }
 #ffn-calendar .ffn-tag--halloween { background: #8B0000; color: #FFD9D9; box-shadow: 0 0 8px rgba(193,18,31,0.5); }
-#ffn-calendar .ffn-soon { display:block; width: calc(100% - 48px); margin: 0 24px; padding: 14px; background: rgba(255,107,0,0.12); border: 1px solid rgba(255,107,0,0.45); border-radius: 10px; color: #FF6B00; font-size: 14px; font-weight: 800; letter-spacing: 1.5px; text-align: center; font-family: 'Inter', sans-serif; }
-#ffn-calendar .ffn-soon-inline { color: #FF6B00 !important; font-weight: 800; letter-spacing: 1px; }
-@media (max-width: 640px) { #ffn-calendar .ffn-soon { width: calc(100% - 32px); margin: 0 16px; font-size: 12px; padding: 12px; } }
 </style>
 </head>
 <body>
@@ -50,6 +50,9 @@ body { width: 100%; }
 #ffn-calendar .ffn-nav-dots { display: flex; gap: 6px; justify-content: center; margin-top: 8px; }
 #ffn-calendar .ffn-nav-dot { width: 6px; height: 6px; border-radius: 50%; background: rgba(255,255,255,0.2); transition: all 0.2s ease; cursor: pointer; }
 #ffn-calendar .ffn-nav-dot.active { background: var(--iw-blue); width: 18px; border-radius: 3px; }
+#ffn-calendar .ffn-helpbar { display: flex; gap: 8px; justify-content: center; padding: 8px 16px 10px; background: rgba(15,23,42,0.8); flex-shrink: 0; }
+#ffn-calendar .ffn-help-btn { background: rgba(255,107,0,0.12); border: 1px solid rgba(255,107,0,0.45); color: #FF9A4D; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+#ffn-calendar .ffn-help-btn:hover { background: rgba(255,107,0,0.22); color: #FFB77A; }
 #ffn-calendar .ffn-legend { display: flex; flex-wrap: wrap; gap: 6px 12px; justify-content: center; padding: 10px 16px; background: rgba(15,23,42,0.8); flex-shrink: 0; }
 #ffn-calendar .ffn-legend-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: rgba(255,255,255,0.7); font-weight: 500; }
 #ffn-calendar .ffn-legend-dot { width: 11px; height: 11px; border-radius: 2px; flex-shrink: 0; }
@@ -118,7 +121,10 @@ body { width: 100%; }
  #ffn-calendar .ffn-day-num { font-size: 11px; }
  #ffn-calendar .ffn-day-hours { font-size: 8px; }
  #ffn-calendar .ffn-tag { font-size: 7px; padding: 1px 3px; }
- #ffn-calendar .ffn-legend { padding: 6px 12px; gap: 4px 8px; }
+ #ffn-calendar .ffn-helpbar { display: flex; gap: 8px; justify-content: center; padding: 8px 16px 10px; background: rgba(15,23,42,0.8); flex-shrink: 0; }
+#ffn-calendar .ffn-help-btn { background: rgba(255,107,0,0.12); border: 1px solid rgba(255,107,0,0.45); color: #FF9A4D; font-size: 11px; font-weight: 700; letter-spacing: 0.3px; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-family: inherit; white-space: nowrap; }
+#ffn-calendar .ffn-help-btn:hover { background: rgba(255,107,0,0.22); color: #FFB77A; }
+#ffn-calendar .ffn-legend { padding: 6px 12px; gap: 4px 8px; }
  #ffn-calendar .ffn-legend-item { font-size: 9px; }
  #ffn-calendar .ffn-buy-btn { width: calc(100% - 32px); margin: 0 16px; font-size: 14px; padding: 12px; }
  #ffn-calendar .ffn-buy-2for-btn { width: calc(100% - 32px); margin: 8px 16px 0; font-size: 13px; padding: 12px; }
@@ -145,6 +151,10 @@ body { width: 100%; }
  <button class="ffn-nav-btn" id="ffnNextBtn" aria-label="Next month">&#8250;</button>
  </div>
  <div class="ffn-legend" id="ffnLegend"></div>
+ <div class="ffn-helpbar">
+ <button class="ffn-help-btn" id="ffnHelpBtn" type="button">&#63; How To Buy Tickets</button>
+ <button class="ffn-help-btn" id="ffnContactBtn" type="button">&#9993; Contact Us</button>
+ </div>
 <div class="ffn-month-info" id="ffnMonthInfo"></div>
  <div class="ffn-dow-row">
  <div class="ffn-dow">Sun</div><div class="ffn-dow">Mon</div><div class="ffn-dow">Tue</div>
@@ -162,8 +172,8 @@ body { width: 100%; }
  <p id="ffnPopupSubtitle"></p>
  </div>
  <div class="ffn-popup-body" id="ffnPopupBody"></div>
- <button class="ffn-buy-btn" id="ffnBuyBtn" style="display:none;">🎟️ Buy Tickets</button>
- <div class="ffn-soon">TICKETS ON SALE MONDAY</div>
+ <button class="ffn-buy-btn" id="ffnBuyBtn">🎟️ Buy Tickets</button>
+ <button class="ffn-buy-btn ffn-buy-btn--alt" id="ffnCompanyBtn">🎟️ Purchase Company Code Tickets</button>
  <div style="height:12px"></div>
  <button class="ffn-popup-close" id="ffnPopupClose">Close</button>
  </div>
@@ -190,22 +200,23 @@ body { width: 100%; }
  var EVENT_TYPES = {
  'opening': { label: 'Opening Night', cls: 'ffn-tag--opening', emoji: '\u{1F383}', desc: 'Opening night of the 2026 season.' },
  'fresnoween': { label: 'FRESNOWEEN', cls: 'ffn-tag--fresnoween', emoji: '\u{1F383}', desc: 'FRESNOWEEN. Special event, gates open at 6:00 PM. Tickets sold through KLIN Events.' },
- 'halloween': { label: 'Halloween', cls: 'ffn-tag--halloween', emoji: '\u{1F387}', desc: 'Halloween night.' }
+ 'halloween': { label: 'Halloween', cls: 'ffn-tag--halloween', emoji: '\u{1F387}', desc: 'Halloween night.' },
+ 'strangertides': { label: 'STRANGER TIDES', cls: 'ffn-tag--strangertides', emoji: '\u{1F30A}', desc: 'Stranger Tides live stage show, presented by <a href="https://www.jazzydstudio.com/" target="_blank" rel="noopener noreferrer" style="color:#E8611A;font-weight:700;">Jazzy D Dance Studio</a>. Pirates, sea creatures, fire and light. Included with admission.' }
  };
 
  var AFTER_HOURS_RATES = {};
 
  var CALENDAR = [
- [9,2,'7:00 PM',['opening'],{}],
- [9,3,'7:00 PM',[],{}],
+ [9,2,'7:00 PM',['opening','strangertides'],{}],
+ [9,3,'7:00 PM',['strangertides'],{}],
  [9,9,'7:00 PM',[],{}],
- [9,10,'7:00 PM',[],{}],
- [9,16,'6:00 PM',['fresnoween'],{ticketUrl:'https://tickets.klinevents.com/e/fresnoween/tickets'}],
- [9,17,'7:00 PM',[],{}],
+ [9,10,'7:00 PM',['strangertides'],{}],
+ [9,16,'6:00 PM',['fresnoween','strangertides'],{ticketUrl:'https://tickets.klinevents.com/e/fresnoween/tickets'}],
+ [9,17,'7:00 PM',['strangertides'],{}],
  [9,23,'7:00 PM',[],{}],
  [9,24,'7:00 PM',[],{}],
  [9,25,'7:00 PM',[],{}],
- [9,30,'7:00 PM',[],{}],
+ [9,30,'7:00 PM',['strangertides'],{}],
  [9,31,'7:00 PM',['halloween'],{}]
  ];
 
@@ -253,7 +264,7 @@ body { width: 100%; }
  for (var d = 1; d <= daysInMonth; d++) {
  if (calLookup[monthNum + '-' + d]) openDays++;
  }
- document.getElementById('ffnMonthInfo').innerHTML = '<span class="ffn-month-stat"><span>' + openDays + '</span> NIGHTS OF TERROR</span><span class="ffn-month-stat ffn-soon-inline">TICKETS ON SALE MONDAY</span>';
+ document.getElementById('ffnMonthInfo').innerHTML = '<span class="ffn-month-stat"><span>' + openDays + '</span> NIGHTS OF TERROR</span>';
  }
 
  function buildGrid(grid, monthNum, firstDay, daysInMonth, today) {
@@ -353,9 +364,10 @@ body { width: 100%; }
  day: day
  };
 
- document.getElementById('ffnBuyBtn').style.display = 'none';
+ document.getElementById('ffnBuyBtn').style.display = (entry[4] && entry[4].noTickets) ? 'none' : 'block';
  selectedTicketUrl = (entry[4] && entry[4].ticketUrl) ? entry[4].ticketUrl : null;
  document.getElementById('ffnBuyBtn').textContent = selectedTicketUrl ? '\u{1F39F}\uFE0F Get FRESNOWEEN Tickets' : '\u{1F39F}\uFE0F Buy Tickets';
+ document.getElementById('ffnCompanyBtn').style.display = (selectedTicketUrl && !(entry[4] && entry[4].noTickets)) ? 'block' : 'none';
 
  overlay.classList.add('active');
  }
@@ -375,11 +387,32 @@ body { width: 100%; }
  try { if (window.parent !== window) window.parent.postMessage({ffn:'ticket-open'}, '*'); } catch(e) {}
  }
 
+ /* Waiver gate: nothing reaches checkout until a waiver is signed for this date.
+    If the gate script is absent for any reason, fall through so sales never stop. */
+ function ffnGate(action) {
+ if (!selectedCalDate) return;
+ if (window.FFNWaiverGate && typeof window.FFNWaiverGate.require === 'function') {
+ window.FFNWaiverGate.require(selectedCalDate, action);
+ } else {
+ action();
+ }
+ }
+
+ /* Company code tickets: standard RocketRez portal, same as every other night */
+ document.getElementById('ffnCompanyBtn').addEventListener('click', function() {
+ if (!selectedCalDate) return;
+ ffnGate(function() {
+ openTicketEngine('bNp', '', 'Company Code Tickets \u2014 ' + selectedCalDate.label);
+ });
+ });
+
  /* Buy Tickets (regular admission) */
  document.getElementById('ffnBuyBtn').addEventListener('click', function() {
  if (!selectedCalDate) return;
+ ffnGate(function() {
  if (selectedTicketUrl) { window.open(selectedTicketUrl, '_blank', 'noopener'); return; }
  openTicketEngine('bNp', '', 'Buy Tickets \u2014 ' + selectedCalDate.label);
+ });
  });
 
  function closeTicketOverlay() {
@@ -450,6 +483,13 @@ body { width: 100%; }
  var seen = false;
  try { seen = localStorage.getItem('ffnCalendarWelcomeSeen') === '1'; } catch(e) {}
  if (seen) return;
+ openHelpPanel(true);
+ }
+
+ /* Reusable help panel. markSeen=true only on the automatic first visit. */
+ function openHelpPanel(markSeen) {
+ var existing = document.getElementById('ffnWelcomeOverlay');
+ if (existing) existing.remove();
 
  var overlay = document.createElement('div');
  overlay.id = 'ffnWelcomeOverlay';
@@ -472,11 +512,24 @@ body { width: 100%; }
 
  document.getElementById('ffnWelcomeBtn').addEventListener('click', function() {
  overlay.remove();
- try { localStorage.setItem('ffnCalendarWelcomeSeen', '1'); } catch(e) {}
+ if (markSeen) { try { localStorage.setItem('ffnCalendarWelcomeSeen', '1'); } catch(e) {} }
+ });
+ overlay.addEventListener('click', function(e) {
+ if (e.target === overlay) {
+ overlay.remove();
+ if (markSeen) { try { localStorage.setItem('ffnCalendarWelcomeSeen', '1'); } catch(e) {} }
+ }
  });
  }
 
- 
+ document.getElementById('ffnHelpBtn').addEventListener('click', function() { openHelpPanel(false); });
+
+ document.getElementById('ffnContactBtn').addEventListener('click', function() {
+ window.location.href = 'mailto:info@fresnofrightnights.com'
+ + '?subject=' + encodeURIComponent('Fresno Fright Nights Question')
+ + '&body=' + encodeURIComponent('Hi Fresno Fright Nights,\n\n');
+ });
+
  (function buildLegend(){
    var el = document.getElementById('ffnLegend');
    if (!el) return;
@@ -496,5 +549,6 @@ body { width: 100%; }
 })();
 </script>
 
+<script src="ffn-waiver-gate.js"></script>
 </body>
 </html>
