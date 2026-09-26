@@ -387,17 +387,32 @@ body { width: 100%; }
  try { if (window.parent !== window) window.parent.postMessage({ffn:'ticket-open'}, '*'); } catch(e) {}
  }
 
+ /* Waiver gate: nothing reaches checkout until a waiver is signed for this date.
+    If the gate script is absent for any reason, fall through so sales never stop. */
+ function ffnGate(action) {
+ if (!selectedCalDate) return;
+ if (window.FFNWaiverGate && typeof window.FFNWaiverGate.require === 'function') {
+ window.FFNWaiverGate.require(selectedCalDate, action);
+ } else {
+ action();
+ }
+ }
+
  /* Company code tickets: standard RocketRez portal, same as every other night */
  document.getElementById('ffnCompanyBtn').addEventListener('click', function() {
  if (!selectedCalDate) return;
+ ffnGate(function() {
  openTicketEngine('bNp', '', 'Company Code Tickets \u2014 ' + selectedCalDate.label);
+ });
  });
 
  /* Buy Tickets (regular admission) */
  document.getElementById('ffnBuyBtn').addEventListener('click', function() {
  if (!selectedCalDate) return;
+ ffnGate(function() {
  if (selectedTicketUrl) { window.open(selectedTicketUrl, '_blank', 'noopener'); return; }
  openTicketEngine('bNp', '', 'Buy Tickets \u2014 ' + selectedCalDate.label);
+ });
  });
 
  function closeTicketOverlay() {
@@ -534,5 +549,6 @@ body { width: 100%; }
 })();
 </script>
 
+<script src="ffn-waiver-gate.js"></script>
 </body>
 </html>
