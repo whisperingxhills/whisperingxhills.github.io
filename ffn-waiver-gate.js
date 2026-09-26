@@ -113,7 +113,22 @@
 
   /* ---------- LEGAL TEXT ---------- */
   var LEGAL = [
-    '<h4>ATTRACTION CONDUCT:</h4>',
+    '<h4>RELEASE OF LIABILITY</h4>',
+    '<p>By purchasing a ticket and entering this haunted attraction, I acknowledge and agree to the following:</p>',
+    '<h4>ACKNOWLEDGMENT OF AGE AND RESPONSIBILITY:</h4>',
+    '<p>I acknowledge that I am at least 18 years of age and legally authorized to purchase tickets for myself and/or others. If I am purchasing tickets for minors or others under my care, I accept full responsibility for their participation and voluntarily assume all associated risks on their behalf, including those outlined in this waiver.</p>',
+    '<h4>I UNDERSTAND AND ACCEPT THAT:</h4>',
+    '<p>This attraction involves intense audio, lighting effects, strobe lights, fog, uneven surfaces, moving floors, sudden scares, and physically demanding environments.</p>',
+    '<p><strong>The attraction is NOT RECOMMENDED for:</strong></p>',
+    '<ul>',
+    '<li>Pregnant individuals</li>',
+    '<li>People with asthma, heart conditions, epilepsy, seizures, or respiratory issues</li>',
+    '<li>Individuals with mental health conditions (including anxiety, PTSD, or claustrophobia)</li>',
+    '<li>Children under 12 years of age without a parent or guardian</li>',
+    '<li>Persons under the influence of alcohol, drugs, or impairing medications</li>',
+    '<li>Persons wearing inappropriate footwear (no high heels or open toed shoes)</li>',
+    '</ul>',
+    '<h4>RULES OF CONDUCT:</h4>',
     '<p>I agree to:</p>',
     '<ul>',
     '<li>Not run, smoke, eat, drink, or touch props, actors, or other guests inside the attraction</li>',
@@ -128,9 +143,7 @@
     '<p>I voluntarily assume all risks and dangers associated with participation in this haunted attraction, including but not limited to personal injury, property loss, illness (including viral exposure), and death.</p>',
     '<p>I hereby release and hold harmless the attraction, its owners, operators, affiliates, landlords, employees, and contractors from any liability, harm, injury, damage, expense, or death that may occur before, during, or after my visit.</p>',
     '<h4>NO REFUNDS:</h4>',
-    '<p>I understand that there are no refunds for any reason, including dissatisfaction, early exit, fear, illness, injury, or weather-related closures. In the event of severe weather, rain checks may be honored for another date within the same operating season.</p>',
-    '<h4>MINORS:</h4>',
-    '<p>If I am signing on behalf of a guest under 18 years of age, I certify that I am the parent or legal guardian of that guest and I accept these terms on their behalf.</p>'
+    '<p>I understand that there are no refunds for any reason, including dissatisfaction, early exit, fear, illness, injury, or weather-related closures. In the event of severe weather, rain checks may be honored for another date within the same operating season.</p>'
   ].join('');
 
   /* ---------- STYLES ---------- */
@@ -208,7 +221,7 @@
             '<button class="wg-clear" id="wg-clear">Clear</button>' +
           '</div>' +
           '<label class="wg-chk"><input type="checkbox" id="wg-chk">' +
-            '<span>I have read and agree to the conduct rules, media release, assumption of risk, waiver of liability, and no-refund policy above. I am 18 or older, or signing as parent/guardian.</span>' +
+            '<span>I have read and agree to the Release of Liability above. I am at least 18 years of age, and if purchasing for minors or others in my care I accept full responsibility on their behalf.</span>' +
           '</label>' +
           '<div class="wg-err" id="wg-err"></div>' +
           '<button class="wg-go" id="wg-go">Sign &amp; Continue</button>' +
