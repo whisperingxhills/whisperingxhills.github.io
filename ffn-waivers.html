@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>FFN Waiver Lookup</title>
+<style>
+  *{box-sizing:border-box;}
+  body{margin:0;background:#0A0708;color:#EDE6E0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;-webkit-text-size-adjust:100%;}
+  .wrap{max-width:1000px;margin:0 auto;padding:18px 14px 60px;}
+  header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap;}
+  h1{color:#FF7A18;font-size:19px;margin:0;letter-spacing:.5px;}
+  .who{font-size:12px;color:#7E736D;}
+  .who button{background:none;border:none;color:#7E736D;text-decoration:underline;cursor:pointer;font-size:12px;padding:0 0 0 8px;}
+
+  /* login */
+  #login{max-width:360px;margin:60px auto;background:#140F11;border:1px solid #2A1F22;border-radius:12px;padding:22px;}
+  #login h2{margin:0 0 4px;font-size:17px;color:#FF7A18;}
+  #login p{margin:0 0 18px;font-size:13px;color:#8A7E78;line-height:1.5;}
+  label{display:block;font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:#8A7E78;margin:0 0 6px;}
+  input{width:100%;background:#0D090A;border:1px solid #2F2327;border-radius:8px;color:#EDE6E0;padding:12px;font-size:16px;margin-bottom:14px;font-family:inherit;}
+  input:focus{outline:none;border-color:#FF7A18;}
+  button.go{width:100%;background:linear-gradient(135deg,#FF7A18,#E03E1A);color:#fff;border:none;border-radius:8px;padding:14px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;}
+  button.go:disabled{opacity:.5;cursor:default;}
+  .err{background:#2A0F12;border:1px solid #6B2A2F;color:#FFA0A6;padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:14px;line-height:1.5;}
+
+  /* controls */
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;}
+  .bar input{margin:0;flex:1;min-width:150px;}
+  .bar select{background:#0D090A;border:1px solid #2F2327;border-radius:8px;color:#EDE6E0;padding:12px;font-size:15px;font-family:inherit;min-width:150px;}
+  .bar button{background:#241A1D;border:1px solid #3A2A2E;color:#EDE6E0;border-radius:8px;padding:12px 16px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;}
+  .bar button.primary{background:linear-gradient(135deg,#FF7A18,#E03E1A);border:none;color:#fff;}
+
+  .count{font-size:13px;color:#8A7E78;margin-bottom:10px;}
+  .count strong{color:#FF7A18;font-size:15px;}
+
+  /* rows */
+  .row{background:#140F11;border:1px solid #241A1D;border-radius:10px;padding:13px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;}
+  .row:hover{border-color:#4A3339;}
+  .nm{font-size:15px;font-weight:700;}
+  .meta{font-size:12px;color:#8A7E78;margin-top:3px;}
+  .pill{font-size:11px;font-weight:800;letter-spacing:.5px;color:#FF7A18;background:rgba(255,122,24,.12);border:1px solid rgba(255,122,24,.35);border-radius:999px;padding:4px 10px;white-space:nowrap;}
+  .empty{text-align:center;color:#6E635D;padding:40px 10px;font-size:14px;line-height:1.6;}
+
+  /* signature modal */
+  #sigOv{position:fixed;inset:0;background:rgba(0,0,0,.88);display:none;align-items:center;justify-content:center;padding:16px;z-index:999;}
+  #sigOv.on{display:flex;}
+  .sig{background:#140F11;border:1px solid #2A1F22;border-radius:12px;max-width:520px;width:100%;padding:20px;max-height:92vh;overflow:auto;}
+  .sig h3{margin:0 0 2px;font-size:18px;color:#FF7A18;}
+  .sig .sub{font-size:12px;color:#8A7E78;margin-bottom:16px;line-height:1.6;}
+  .sig img{width:100%;background:#fff;border-radius:8px;display:block;margin-bottom:16px;}
+  .kv{font-size:13px;color:#C9BFB9;line-height:1.9;border-top:1px solid #241A1D;padding-top:12px;margin-bottom:16px;}
+  .kv b{color:#8A7E78;font-weight:600;display:inline-block;min-width:110px;}
+  @media (max-width:520px){ .row{flex-direction:column;align-items:flex-start;gap:6px;} }
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h2>FFN Waiver Lookup</h2>
+  <p>Staff access only. Sign in with the account you were given.</p>
+  <div class="err" id="loginErr" style="display:none;"></div>
+  <form id="loginForm">
+    <label for="em">Email</label>
+    <input id="em" type="email" autocomplete="username" required>
+    <label for="pw">Password</label>
+    <input id="pw" type="password" autocomplete="current-password" required>
+    <button class="go" id="loginBtn" type="submit">Sign In</button>
+  </form>
+</div>
+
+<div class="wrap" id="app" style="display:none;">
+  <header>
+    <h1>FFN WAIVER LOOKUP</h1>
+    <div class="who"><span id="whoTxt"></span><button id="out">sign out</button></div>
+  </header>
+
+  <div class="bar">
+    <input id="q" type="search" placeholder="Search name…" autocomplete="off">
+    <select id="dateSel"><option value="">All nights</option></select>
+    <button class="primary" id="refresh">Refresh</button>
+    <button id="csv">Export CSV</button>
+  </div>
+
+  <div class="count" id="count"></div>
+  <div id="list"></div>
+</div>
+
+<div id="sigOv"><div class="sig" id="sigBox"></div></div>
+
+<script>
+(function(){
+  var URL_BASE = 'https://xvtkintjtfrsexalqbcs.supabase.co';
+  var ANON     = 'sb_publishable_aj9fAYj98S3vZ7zcTBhmdg_3T5KN56s';
+  var TOKEN_KEY= 'ffn_staff_token_v1';
+
+  var token = null, email = null, rows = [];
+
+  function el(id){ return document.getElementById(id); }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
+
+  /* ---------- auth ---------- */
+  function saveSession(t, e){
+    token = t; email = e;
+    try { sessionStorage.setItem(TOKEN_KEY, JSON.stringify({t:t,e:e})); } catch(err){}
+  }
+  function loadSession(){
+    try {
+      var raw = sessionStorage.getItem(TOKEN_KEY);
+      if (!raw) return false;
+      var o = JSON.parse(raw);
+      if (!o || !o.t) return false;
+      token = o.t; email = o.e; return true;
+    } catch(err){ return false; }
+  }
+  function clearSession(){
+    token = null; email = null;
+    try { sessionStorage.removeItem(TOKEN_KEY); } catch(err){}
+  }
+
+  el('loginForm').addEventListener('submit', function(ev){
+    ev.preventDefault();
+    var btn = el('loginBtn'), errBox = el('loginErr');
+    btn.disabled = true; btn.textContent = 'Signing in…';
+    errBox.style.display = 'none';
+
+    fetch(URL_BASE + '/auth/v1/token?grant_type=password', {
+      method:'POST',
+      headers:{ 'apikey': ANON, 'Content-Type':'application/json' },
+      body: JSON.stringify({ email: el('em').value.trim(), password: el('pw').value })
+    })
+    .then(function(r){ return r.json().then(function(j){ return {ok:r.ok, j:j}; }); })
+    .then(function(res){
+      if (!res.ok || !res.j.access_token) {
+        throw new Error(res.j.error_description || res.j.msg || res.j.error || 'Sign in failed');
+      }
+      saveSession(res.j.access_token, el('em').value.trim());
+      el('pw').value = '';
+      showApp();
+    })
+    .catch(function(e){
+      errBox.textContent = e.message;
+      errBox.style.display = 'block';
+    })
+    .then(function(){ btn.disabled = false; btn.textContent = 'Sign In'; });
+  });
+
+  el('out').addEventListener('click', function(){
+    clearSession();
+    el('app').style.display='none';
+    el('login').style.display='block';
+  });
+
+  /* ---------- data ---------- */
+  function query(path){
+    return fetch(URL_BASE + '/rest/v1/' + path, {
+      headers: { 'apikey': ANON, 'Authorization': 'Bearer ' + token, 'Accept':'application/json' }
+    }).then(function(r){
+      if (r.status === 401 || r.status === 403) {
+        clearSession();
+        el('app').style.display='none';
+        el('login').style.display='block';
+        el('loginErr').textContent = 'Session expired. Sign in again.';
+        el('loginErr').style.display='block';
+        throw new Error('expired');
+      }
+      if (!r.ok) return r.text().then(function(t){ throw new Error(t.slice(0,160)); });
+      return r.json();
+    });
+  }
+
+  function load(){
+    var q = el('q').value.trim();
+    var d = el('dateSel').value;
+    var p = 'waivers?select=id,first_name,last_name,event_name,event_date,party_size,admission_number,signed_at&order=signed_at.desc&limit=1000';
+    if (d) p += '&event_date=eq.' + encodeURIComponent(d);
+    if (q) {
+      var safe = q.replace(/[,()*%]/g,'');
+      p += '&or=(first_name.ilike.*' + encodeURIComponent(safe) + '*,last_name.ilike.*' + encodeURIComponent(safe) + '*)';
+    }
+    el('count').textContent = 'Loading…';
+    query(p).then(render).catch(function(e){
+      if (e.message !== 'expired') el('count').textContent = 'Error: ' + e.message;
+    });
+  }
+
+  function render(data){
+    rows = data || [];
+    el('count').innerHTML = '<strong>' + rows.length + '</strong> waiver' + (rows.length===1?'':'s') +
+      (rows.length===1000 ? ' (showing first 1000)' : '');
+    if (!rows.length){
+      el('list').innerHTML = '<div class="empty">No waivers match.<br>Try clearing the search or picking a different night.</div>';
+      return;
+    }
+    var html = '';
+    rows.forEach(function(w, i){
+      var when = '';
+      try { when = new Date(w.signed_at).toLocaleString(); } catch(e){ when = w.signed_at; }
+      html += '<div class="row" data-i="'+i+'">' +
+                '<div>' +
+                  '<div class="nm">' + esc(w.first_name) + ' ' + esc(w.last_name) + '</div>' +
+                  '<div class="meta">' + esc(w.event_date) + ' &middot; guest ' + esc(w.admission_number) +
+                    ' of ' + esc(w.party_size) + ' &middot; signed ' + esc(when) + '</div>' +
+                '</div>' +
+                '<div class="pill">VIEW SIGNATURE</div>' +
+              '</div>';
+    });
+    el('list').innerHTML = html;
+  }
+
+  el('list').addEventListener('click', function(ev){
+    var row = ev.target.closest('.row');
+    if (!row) return;
+    var w = rows[+row.getAttribute('data-i')];
+    if (!w) return;
+    el('sigBox').innerHTML = '<h3>' + esc(w.first_name) + ' ' + esc(w.last_name) + '</h3>' +
+                             '<div class="sub">Loading signature…</div>';
+    el('sigOv').classList.add('on');
+    query('waivers?id=eq.' + encodeURIComponent(w.id) + '&select=*').then(function(d){
+      var f = d && d[0];
+      if (!f) { el('sigBox').innerHTML = '<h3>Not found</h3>'; return; }
+      var when = '';
+      try { when = new Date(f.signed_at).toLocaleString(); } catch(e){ when = f.signed_at; }
+      el('sigBox').innerHTML =
+        '<h3>' + esc(f.first_name) + ' ' + esc(f.last_name) + '</h3>' +
+        '<div class="sub">' + esc(f.event_name) + ' &middot; ' + esc(f.event_date) + '</div>' +
+        '<img src="' + esc(f.signature) + '" alt="signature">' +
+        '<div class="kv">' +
+          '<div><b>Signed</b>' + esc(when) + '</div>' +
+          '<div><b>Guest</b>' + esc(f.admission_number) + ' of ' + esc(f.party_size) + '</div>' +
+          '<div><b>Party ID</b>' + esc(String(f.group_id).slice(0,8)) + '</div>' +
+          '<div><b>Record ID</b>' + esc(String(f.id).slice(0,8)) + '</div>' +
+        '</div>' +
+        '<button class="go" id="sigClose">Close</button>';
+      el('sigClose').addEventListener('click', closeSig);
+    }).catch(function(e){
+      if (e.message !== 'expired') el('sigBox').innerHTML = '<h3>Error</h3><div class="sub">' + esc(e.message) + '</div>';
+    });
+  });
+
+  function closeSig(){ el('sigOv').classList.remove('on'); }
+  el('sigOv').addEventListener('click', function(ev){ if (ev.target === el('sigOv')) closeSig(); });
+  document.addEventListener('keydown', function(ev){ if (ev.key === 'Escape') closeSig(); });
+
+  /* CSV: names and times only, no signature images */
+  el('csv').addEventListener('click', function(){
+    if (!rows.length) return;
+    var out = 'Last Name,First Name,Event Date,Guest,Party Size,Signed At\n';
+    rows.forEach(function(w){
+      out += '"'+String(w.last_name).replace(/"/g,'""')+'",' +
+             '"'+String(w.first_name).replace(/"/g,'""')+'",' +
+             w.event_date + ',' + w.admission_number + ',' + w.party_size + ',' + w.signed_at + '\n';
+    });
+    var a = document.createElement('a');
+    a.href = window.URL.createObjectURL(new Blob([out], {type:'text/csv'}));
+    a.download = 'ffn-waivers-' + (el('dateSel').value || 'all') + '.csv';
+    a.click();
+  });
+
+  /* ---------- boot ---------- */
+  function fillDates(){
+    var nights = ['2026-10-02','2026-10-03','2026-10-09','2026-10-10','2026-10-16',
+                  '2026-10-17','2026-10-23','2026-10-24','2026-10-25','2026-10-30','2026-10-31'];
+    var sel = el('dateSel');
+    nights.forEach(function(d){
+      var o = document.createElement('option');
+      o.value = d;
+      var p = d.split('-');
+      o.textContent = new Date(+p[0], +p[1]-1, +p[2]).toLocaleDateString(undefined,
+        {weekday:'short', month:'short', day:'numeric'});
+      sel.appendChild(o);
+    });
+  }
+
+  function showApp(){
+    el('login').style.display='none';
+    el('app').style.display='block';
+    el('whoTxt').textContent = email || '';
+    load();
+  }
+
+  var t;
+  el('q').addEventListener('input', function(){ clearTimeout(t); t = setTimeout(load, 350); });
+  el('dateSel').addEventListener('change', load);
+  el('refresh').addEventListener('click', load);
+
+  fillDates();
+  if (loadSession()) showApp();
+})();
+</script>
+</body>
+</html>
