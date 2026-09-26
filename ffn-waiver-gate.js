@@ -386,6 +386,11 @@
     var ov = document.getElementById('wg-ov');
     if (ov) ov.classList.remove('on');
     document.body.style.overflow = '';
+    /* Only release the parent frame if the guest bailed out.
+       On a completed waiver the checkout opens next and needs to stay fullscreen. */
+    if (signedIdx < partyCount) {
+      try { if (window.parent !== window) window.parent.postMessage({ffn:'ticket-close'}, '*'); } catch (e) {}
+    }
   }
 
   /* ---------- PARTY SIZE PROMPT ---------- */
