@@ -406,10 +406,15 @@ body { width: 100%; }
  try { if (window.parent !== window) window.parent.postMessage({ffn:'ticket-open'}, '*'); } catch(e) {}
  }
 
+ /* Nights we cannot open. Buttons stay visible and unchanged, they simply
+    do nothing. Remove a date from this list to turn selling back on. */
+ var FFN_SALES_DISABLED = ['2026-10-02', '2026-10-03'];
+
  /* Waiver gate: nothing reaches checkout until a waiver is signed for this date.
     If the gate script is absent for any reason, fall through so sales never stop. */
  function ffnGate(action) {
  if (!selectedCalDate) return;
+ if (FFN_SALES_DISABLED.indexOf(selectedCalDate.iso) !== -1) return;
  if (window.FFNWaiverGate && typeof window.FFNWaiverGate.require === 'function') {
  window.FFNWaiverGate.require(selectedCalDate, action);
  } else {
