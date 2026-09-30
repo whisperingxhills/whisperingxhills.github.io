@@ -149,6 +149,28 @@ body { padding: 24px 16px; }
  #lb-landing .lb-engine-wrap iframe { height: 1350px; }
 }
 
+#lb-landing .lb-coming-soon {
+ display: flex;
+ align-items: center;
+ justify-content: center;
+ text-align: center;
+ padding: 64px 24px;
+ background: #fff;
+}
+
+#lb-landing .lb-coming-soon-text {
+ font-size: 24px;
+ font-weight: 800;
+ letter-spacing: 1.5px;
+ line-height: 1.4;
+ color: #0F172A;
+}
+
+@media (max-width: 900px) {
+ #lb-landing .lb-coming-soon { padding: 48px 18px; }
+ #lb-landing .lb-coming-soon-text { font-size: 19px; letter-spacing: 1px; }
+}
+
 #lb-landing .lb-stations {
  border: 1px solid #E2E8F0;
  border-top: none;
@@ -250,11 +272,9 @@ body { padding: 24px 16px; }
  </div>
 
  <div class="lb-engine-wrap">
-  <iframe id="lbTicketFrame"
-          src="https://secure.rocket-rez.com/RocketWeb2/92e112b433ba4850/item/2/13"
-          title="Buy Fresno Fright Nights tickets"
-          allow="payment"
-          scrolling="yes"></iframe>
+  <div class="lb-coming-soon">
+   <div class="lb-coming-soon-text">LOTUS RADIO SPECIAL TICKETS COMING SOON</div>
+  </div>
  </div>
 
  <div class="lb-stations">
