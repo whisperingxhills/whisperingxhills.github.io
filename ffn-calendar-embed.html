@@ -217,9 +217,7 @@ body { width: 100%; }
  var FFN_BASE_PRICE = '$49';
 
  var CALENDAR = [
- [9,2,'7:00 PM',['opening','strangertides'],{}],
- [9,3,'7:00 PM',['strangertides'],{}],
- [9,9,'7:00 PM',[],{}],
+ [9,9,'7:00 PM',['opening'],{}],
  [9,10,'7:00 PM',['strangertides'],{}],
  [9,16,'6:00 PM',['fresnoween','strangertides'],{ticketUrl:'https://tickets.klinevents.com/e/fresnoween/tickets'}],
  [9,17,'7:00 PM',['strangertides'],{}],
@@ -408,7 +406,7 @@ body { width: 100%; }
 
  /* Nights we cannot open. Buttons stay visible and unchanged, they simply
     do nothing. Remove a date from this list to turn selling back on. */
- var FFN_SALES_DISABLED = ['2026-10-02', '2026-10-03'];
+ var FFN_SALES_DISABLED = [];
 
  /* Waiver gate: nothing reaches checkout until a waiver is signed for this date.
     If the gate script is absent for any reason, fall through so sales never stop. */
