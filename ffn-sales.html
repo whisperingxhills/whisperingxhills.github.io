@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>FFN Sales Dashboard</title>
+<style>
+  :root{
+    --bg:#0A0708; --panel:#15100E; --panel2:#1C1512; --line:#2C211C;
+    --ink:#F2E9E2; --dim:#9C8F85; --faint:#6B5D56;
+    --orange:#E8611A; --green:#3FA66A; --red:#C4452F; --amber:#D99A2B;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+       padding:18px 14px 40px;}
+  .wrap{max-width:1100px;margin:0 auto}
+  header{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;
+         border-bottom:3px solid var(--orange);padding-bottom:10px;margin-bottom:18px}
+  h1{font-size:21px;margin:0;letter-spacing:.5px;text-transform:uppercase}
+  .sub{color:var(--dim);font-size:12px}
+  .spacer{flex:1}
+  button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);
+         border-radius:7px;padding:7px 13px;font-size:12px;cursor:pointer}
+  button:hover{background:#271d18}
+
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:11px;margin-bottom:22px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 14px}
+  .card .lab{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.7px}
+  .card .val{font-size:25px;font-weight:700;margin-top:5px;line-height:1.1}
+  .card .note{color:var(--faint);font-size:10.5px;margin-top:3px}
+  .accent{color:var(--orange)}
+
+  h2{font-size:12.5px;text-transform:uppercase;letter-spacing:1px;color:var(--dim);
+     margin:24px 0 9px;border-bottom:1px solid var(--line);padding-bottom:6px}
+
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th{text-align:left;color:var(--dim);font-weight:600;font-size:10.5px;
+     text-transform:uppercase;letter-spacing:.6px;padding:7px 9px;border-bottom:1px solid var(--line)}
+  td{padding:8px 9px;border-bottom:1px solid #191311}
+  tr:hover td{background:#17110F}
+  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .past{color:var(--faint)}
+  .today td{background:#201510}
+  .today .d{color:var(--orange);font-weight:700}
+
+  .bar{height:7px;background:#241A16;border-radius:4px;overflow:hidden;min-width:60px}
+  .bar i{display:block;height:100%;background:var(--orange)}
+
+  .tag{font-size:9.5px;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;
+       text-transform:uppercase;letter-spacing:.5px}
+  .t-today{background:var(--orange);color:#140C07}
+  .t-soon{background:#3A2A1A;color:var(--amber)}
+  .t-low{background:#3A1E18;color:#E88A72}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  @media(max-width:760px){.two{grid-template-columns:1fr}}
+
+  .foot{color:var(--faint);font-size:11px;margin-top:26px;line-height:1.6;
+        border-top:1px solid var(--line);padding-top:12px}
+  .err{background:#2A1512;border:1px solid var(--red);color:#F0B5A8;
+       padding:11px 13px;border-radius:8px;margin-bottom:16px;font-size:13px}
+  .loading{color:var(--dim);padding:30px 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Fresno Fright Nights <span class="accent">Sales</span></h1>
+    <div class="spacer"></div>
+    <span class="sub" id="stamp">loading…</span>
+    <button id="refresh">Refresh</button>
+  </header>
+
+  <div id="err"></div>
+  <div id="body"><div class="loading">Pulling from RocketRez…</div></div>
+
+  <div class="foot">
+    <strong>What this shows.</strong> Live RocketRez order data for Fresno Fright Nights
+    (company 239), season to date. Refreshes on load; the server caches for 5 minutes.<br>
+    <strong>Admissions</strong> counts dated ticket line items on active orders. Voided and
+    cancelled orders are excluded.<br>
+    <strong>Not counted:</strong> Groupon inventory placeholder rows (entered as large qty at
+    $0) are excluded from attendance — they are stock records, not people.<br>
+    <strong>Revenue</strong> is line-item subtotal and excludes fees and tax. Gross is the sum
+    of active order totals.<br>
+    <span style="color:#8a6a4a">Walk-up cash sales that never get an event date attached will
+    not appear by night.</span>
+  </div>
+</div>
+
+<script>
+const API = 'https://casting.whisperingxhills.com/api/ffn-sales';
+const $ = s => document.querySelector(s);
+const money = n => '$' + (n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+const money2 = n => '$' + (n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const todayISO = () => new Date().toLocaleDateString('en-CA',{timeZone:'America/Los_Angeles'});
+
+function dow(iso){
+  return new Date(iso+'T12:00:00Z').toLocaleDateString('en-US',{weekday:'short',timeZone:'UTC'});
+}
+function pretty(iso){
+  return new Date(iso+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'});
+}
+
+function render(d){
+  const T = d.totals, today = todayISO();
+  const dates = Object.keys(d.byDate).filter(x=>d.byDate[x].admits>0).sort();
+  const upcoming = dates.filter(x=>x>=today);
+  const maxAd = Math.max(1, ...dates.map(x=>d.byDate[x].admits));
+
+  const avg = T.admits ? T.admissionRevenue/T.admits : 0;
+  const futureAdmits = upcoming.reduce((s,x)=>s+d.byDate[x].admits,0);
+  const futureRev = upcoming.reduce((s,x)=>s+d.byDate[x].rev,0);
+
+  let h = `<div class="cards">
+    <div class="card"><div class="lab">Gross Revenue</div>
+      <div class="val accent">${money(T.grossRevenue)}</div>
+      <div class="note">all active orders</div></div>
+    <div class="card"><div class="lab">Admissions Sold</div>
+      <div class="val">${T.admits.toLocaleString()}</div>
+      <div class="note">${money(T.admissionRevenue)} ticket revenue</div></div>
+    <div class="card"><div class="lab">Avg Ticket</div>
+      <div class="val">${money2(avg)}</div>
+      <div class="note">across all channels</div></div>
+    <div class="card"><div class="lab">Still To Come</div>
+      <div class="val">${futureAdmits.toLocaleString()}</div>
+      <div class="note">${money(futureRev)} on ${upcoming.length} remaining night${upcoming.length===1?'':'s'}</div></div>
+    <div class="card"><div class="lab">Merch</div>
+      <div class="val">${money(T.merchRevenue)}</div>
+      <div class="note">shirts, hoodies, novelty</div></div>
+    <div class="card"><div class="lab">Add-ons</div>
+      <div class="val">${money(T.addonRevenue)}</div>
+      <div class="note">Séance, VIP cabins, lane</div></div>
+  </div>`;
+
+  h += `<h2>By Night</h2><table><thead><tr>
+    <th>Date</th><th>Day</th><th class="num">Admits</th><th style="width:26%"></th>
+    <th class="num">Revenue</th><th class="num">Avg</th></tr></thead><tbody>`;
+  for (const iso of dates){
+    const b = d.byDate[iso];
+    const isToday = iso === today;
+    const isPast = iso < today;
+    const a = b.admits ? b.rev/b.admits : 0;
+    let tag = '';
+    if (isToday) tag = '<span class="tag t-today">tonight</span>';
+    else if (!isPast && b.admits < 25) tag = '<span class="tag t-low">thin</span>';
+    h += `<tr class="${isToday?'today':''}">
+      <td class="d ${isPast?'past':''}">${pretty(iso)}${tag}</td>
+      <td class="${isPast?'past':''}">${dow(iso)}</td>
+      <td class="num">${b.admits.toLocaleString()}</td>
+      <td><div class="bar"><i style="width:${Math.round(100*b.admits/maxAd)}%"></i></div></td>
+      <td class="num">${money(b.rev)}</td>
+      <td class="num ${isPast?'past':''}">${b.admits?money2(a):'—'}</td></tr>`;
+  }
+  h += `</tbody></table>`;
+
+  h += `<div class="two"><div><h2>Channel</h2><table><thead><tr>
+    <th>Source</th><th class="num">Qty</th><th class="num">Revenue</th></tr></thead><tbody>`;
+  Object.entries(d.byChannel).sort((a,b)=>b[1].rev-a[1].rev).forEach(([k,v])=>{
+    h += `<tr><td>${k}</td><td class="num">${v.qty.toLocaleString()}</td>
+          <td class="num">${money(v.rev)}</td></tr>`;
+  });
+  h += `</tbody></table></div>`;
+
+  h += `<div><h2>Top Products</h2><table><thead><tr>
+    <th>Product</th><th class="num">Qty</th><th class="num">Revenue</th></tr></thead><tbody>`;
+  Object.entries(d.byProduct).filter(([,v])=>v.rev>0)
+    .sort((a,b)=>b[1].rev-a[1].rev).slice(0,12).forEach(([k,v])=>{
+    h += `<tr><td>${k.replace(/\s+/g,' ').trim()}</td><td class="num">${v.qty.toLocaleString()}</td>
+          <td class="num">${money(v.rev)}</td></tr>`;
+  });
+  h += `</tbody></table></div></div>`;
+
+  if (T.groupPlaceholdersExcluded > 0){
+    h += `<h2>Excluded</h2><div style="color:var(--faint);font-size:12px">
+      ${T.groupPlaceholdersExcluded.toLocaleString()} Groupon inventory placeholder units
+      excluded from attendance (bulk rows at $0, stock records not guests).
+      ${d.orders.voided} voided or cancelled order${d.orders.voided===1?'':'s'} excluded.</div>`;
+  }
+
+  $('#body').innerHTML = h;
+  const when = new Date(d.cachedAt || d.generatedAt);
+  $('#stamp').textContent = 'updated ' + when.toLocaleString('en-US',
+    {timeZone:'America/Los_Angeles', month:'short', day:'numeric',
+     hour:'numeric', minute:'2-digit'}) + ' PT';
+}
+
+async function load(){
+  $('#err').innerHTML = '';
+  $('#body').innerHTML = '<div class="loading">Pulling from RocketRez…</div>';
+  try{
+    const r = await fetch(API + '?t=' + Date.now());
+    if(!r.ok) throw new Error('HTTP ' + r.status);
+    const d = await r.json();
+    if(d.error) throw new Error(d.detail || d.error);
+    render(d);
+  }catch(e){
+    $('#err').innerHTML = '<div class="err"><strong>Could not load sales data.</strong><br>' +
+      String(e.message||e) + '<br><span style="color:#b98a7c">The numbers below may be stale or missing. ' +
+      'This does not affect ticket sales.</span></div>';
+    $('#body').innerHTML = '';
+  }
+}
+$('#refresh').addEventListener('click', load);
+load();
+setInterval(load, 5*60*1000);
+</script>
+</body>
+</html>
