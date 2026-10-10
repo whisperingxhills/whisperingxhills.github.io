@@ -70,6 +70,17 @@
   .c-other{background:#2A2320;color:#A89488}
   .c-waiver{background:#201A30;color:#8E86C4}
 
+  .pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(265px,1fr));gap:12px;margin-bottom:6px}
+  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 14px}
+  .pcard h3{margin:0 0 3px;font-size:13.5px;letter-spacing:.3px}
+  .pcard .pr{color:var(--orange);font-size:19px;font-weight:700}
+  .pcard .pm{color:var(--dim);font-size:11px;margin-top:2px}
+  .pcard .pl{margin-top:9px;border-top:1px solid var(--line);padding-top:7px}
+  .pcard .pl div{display:flex;justify-content:space-between;gap:9px;font-size:11px;
+                 color:var(--faint);padding:2px 0}
+  .pcard .pl div span:last-child{white-space:nowrap;color:var(--dim)}
+  .alt{display:inline-block;background:#1E2A33;color:#8FBEDC;font-size:9px;padding:2px 6px;
+       border-radius:4px;letter-spacing:.4px;text-transform:uppercase;margin-left:6px}
   .two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
   @media(max-width:860px){.two{grid-template-columns:1fr}}
   .scroll{max-height:none}
@@ -193,6 +204,54 @@ function render(d){
     They always total $0. 148 orders this season contain nothing but a waiver.</div>
     </div></div>`;
 
+  /* ---- CONSIGNMENT / PARTNERS ---- */
+  const P=d.partners||{};
+  const pk=Object.keys(P).sort((a,b)=>(P[b].used||0)-(P[a].used||0));
+  if(pk.length){
+    const totUsed=pk.reduce((s,k)=>s+P[k].used,0);
+    const totRev=pk.reduce((s,k)=>s+P[k].rev,0);
+    const totAll=pk.reduce((s,k)=>s+P[k].allotted,0);
+    h+=`<h2>Consignment &amp; Partner Tickets
+      <span class="hint">${pk.length} sources · ${totUsed.toLocaleString()} tickets moved · ${m0(totRev)}</span></h2>
+      <div class="pgrid">`;
+    for(const k of pk){
+      const v=P[k];
+      h+=`<div class="pcard"><h3>${esc(k)}${v.allotted?`<span class="alt">${v.allotted.toLocaleString()} allotted</span>`:''}</h3>
+        <div class="pr">${v.used.toLocaleString()} <span style="font-size:12px;color:var(--dim)">tickets</span></div>
+        <div class="pm">${v.rev?m0(v.rev)+' revenue · '+m2(v.rev/v.used)+' each':'no ticket revenue (comp / redemption)'}</div>
+        <div class="pl">`;
+      Object.entries(v.items).sort((a,b)=>b[1].qty-a[1].qty).forEach(([n,i])=>{
+        const lbl=esc(n.replace(/\s+/g,' ').trim());
+        if(i.qty>0) h+=`<div><span>${lbl}</span><span>${i.qty.toLocaleString()} · ${i.rev?m0(i.rev):'$0'}</span></div>`;
+        else if(i.allot>0) h+=`<div><span>${lbl}</span><span style="color:#5A8FB8">${i.allot.toLocaleString()} loaded, 0 used</span></div>`;
+      });
+      const dk=Object.keys(v.dates||{}).sort();
+      if(dk.length) h+=`<div style="margin-top:5px;border-top:1px solid #241A16;padding-top:5px">
+        <span>nights</span><span>${dk.map(x=>pretty(x)+' ('+v.dates[x]+')').join(', ')}</span></div>`;
+      h+=`</div></div>`;
+    }
+    h+=`</div>`;
+    h+=`<table style="margin-top:12px"><thead><tr><th>Source</th>
+      <th class="num">Allotted</th><th class="num">Used</th><th class="num">Unused</th>
+      <th class="num">Revenue</th><th class="num">Avg</th></tr></thead><tbody id="ptnbody">`;
+    for(const k of pk){ const v=P[k];
+      const unused = v.allotted ? (v.allotted - v.used) : null;
+      h+=`<tr><td>${esc(k)}</td>
+        <td class="num ${v.allotted?'':'past'}">${v.allotted?v.allotted.toLocaleString():'—'}</td>
+        <td class="num">${v.used.toLocaleString()}</td>
+        <td class="num ${unused===null?'past':''}">${unused===null?'—':unused.toLocaleString()}</td>
+        <td class="num ${v.rev?'':'past'}">${v.rev?m0(v.rev):'$0'}</td>
+        <td class="num ${v.rev?'':'past'}">${v.rev?m2(v.rev/v.used):'—'}</td></tr>`;}
+    h+=`</tbody><tfoot><tr><td>TOTAL · ${pk.length} sources</td>
+      <td class="num">${totAll.toLocaleString()}</td><td class="num">${totUsed.toLocaleString()}</td>
+      <td class="num">${(totAll-totUsed).toLocaleString()}</td>
+      <td class="num">${m0(totRev)}</td><td class="num">${totUsed?m2(totRev/totUsed):'—'}</td>
+      </tr></tfoot></table>
+      <div class="warn">"Allotted" is bulk inventory loaded into RocketRez (Groupon vouchers,
+      Boca comps). "Used" is tickets actually sold or redeemed. Sources with no allotment
+      number sell straight through our online store under their own product code.</div>`;
+  }
+
   /* ---- ALL PRODUCTS ---- */
   h+=`<h2>Every Product <span class="hint" id="pcount"></span></h2>
     <table id="ptab"><thead><tr>
@@ -243,6 +302,7 @@ function render(d){
    through the gate but carry no ticket revenue.<br>
    <strong>Excluded.</strong> ${T.groupPlaceholdersExcluded.toLocaleString()} Groupon inventory
    placeholder units (bulk rows at $0 with no event date) are stock records, not guests.<br>
+   <strong>Consignment.</strong> Partner tickets are identified by product name (Fox 26, Univision, iHeart, Lotus, Jazzy D, Groupon, Discount Tire, Boca). A partner that ever sells under a product name without its own label will not be picked up here.<br>
    <strong>Revenue</strong> is line-item subtotal and excludes fees and tax. Gross is the sum of
    active order totals, so it includes fees.<br>
    <span style="color:#8a6a4a"><strong>Known gaps.</strong> Fresnoween (Oct 16) is sold by KLIN
