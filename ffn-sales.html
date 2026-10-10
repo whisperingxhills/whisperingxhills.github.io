@@ -6,62 +6,82 @@
 <meta name="robots" content="noindex, nofollow">
 <title>FFN Sales Dashboard</title>
 <style>
-  :root{
-    --bg:#0A0708; --panel:#15100E; --panel2:#1C1512; --line:#2C211C;
-    --ink:#F2E9E2; --dim:#9C8F85; --faint:#6B5D56;
-    --orange:#E8611A; --green:#3FA66A; --red:#C4452F; --amber:#D99A2B;
-  }
+  :root{--bg:#0A0708;--panel:#15100E;--panel2:#1C1512;--line:#2C211C;
+    --ink:#F2E9E2;--dim:#9C8F85;--faint:#6B5D56;
+    --orange:#E8611A;--green:#3FA66A;--red:#C4452F;--amber:#D99A2B;--blue:#5A8FB8;}
   *{box-sizing:border-box}
   body{margin:0;background:var(--bg);color:var(--ink);
-       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
-       padding:18px 14px 40px;}
-  .wrap{max-width:1100px;margin:0 auto}
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    padding:18px 14px 50px;}
+  .wrap{max-width:1180px;margin:0 auto}
   header{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;
-         border-bottom:3px solid var(--orange);padding-bottom:10px;margin-bottom:18px}
+    border-bottom:3px solid var(--orange);padding-bottom:10px;margin-bottom:18px}
   h1{font-size:21px;margin:0;letter-spacing:.5px;text-transform:uppercase}
-  .sub{color:var(--dim);font-size:12px}
   .spacer{flex:1}
+  .sub{color:var(--dim);font-size:12px}
   button{background:var(--panel2);color:var(--ink);border:1px solid var(--line);
-         border-radius:7px;padding:7px 13px;font-size:12px;cursor:pointer}
+    border-radius:7px;padding:7px 13px;font-size:12px;cursor:pointer}
   button:hover{background:#271d18}
+  button.on{background:var(--orange);color:#140C07;border-color:var(--orange)}
 
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:11px;margin-bottom:22px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:11px;margin-bottom:8px}
   .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:13px 14px}
   .card .lab{color:var(--dim);font-size:10.5px;text-transform:uppercase;letter-spacing:.7px}
-  .card .val{font-size:25px;font-weight:700;margin-top:5px;line-height:1.1}
+  .card .val{font-size:24px;font-weight:700;margin-top:5px;line-height:1.1}
   .card .note{color:var(--faint);font-size:10.5px;margin-top:3px}
   .accent{color:var(--orange)}
 
   h2{font-size:12.5px;text-transform:uppercase;letter-spacing:1px;color:var(--dim);
-     margin:24px 0 9px;border-bottom:1px solid var(--line);padding-bottom:6px}
+    margin:26px 0 9px;border-bottom:1px solid var(--line);padding-bottom:6px;
+    display:flex;align-items:center;gap:10px}
+  h2 .hint{text-transform:none;letter-spacing:0;color:var(--faint);font-size:11px;font-weight:400}
 
   table{width:100%;border-collapse:collapse;font-size:13px}
-  th{text-align:left;color:var(--dim);font-weight:600;font-size:10.5px;
-     text-transform:uppercase;letter-spacing:.6px;padding:7px 9px;border-bottom:1px solid var(--line)}
-  td{padding:8px 9px;border-bottom:1px solid #191311}
+  th{text-align:left;color:var(--dim);font-weight:600;font-size:10.5px;text-transform:uppercase;
+    letter-spacing:.6px;padding:7px 9px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th.sortable{cursor:pointer;user-select:none}
+  th.sortable:hover{color:var(--ink)}
+  td{padding:8px 9px;border-bottom:1px solid #191311;vertical-align:middle}
   tr:hover td{background:#17110F}
-  .num{text-align:right;font-variant-numeric:tabular-nums}
+  .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
   .past{color:var(--faint)}
   .today td{background:#201510}
   .today .d{color:var(--orange);font-weight:700}
+  tfoot td{border-top:2px solid var(--line);border-bottom:none;font-weight:700;padding-top:9px}
 
-  .bar{height:7px;background:#241A16;border-radius:4px;overflow:hidden;min-width:60px}
+  .bar{height:7px;background:#241A16;border-radius:4px;overflow:hidden;min-width:50px}
   .bar i{display:block;height:100%;background:var(--orange)}
+  .bar i.comp{background:var(--blue)}
+  .barsplit{display:flex;height:7px;background:#241A16;border-radius:4px;overflow:hidden;min-width:50px}
+  .barsplit i{display:block;height:100%}
+  .barsplit .p{background:var(--orange)} .barsplit .c{background:#3C5A70}
 
-  .tag{font-size:9.5px;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;
-       text-transform:uppercase;letter-spacing:.5px}
+  .tag{font-size:9px;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle;
+    text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
   .t-today{background:var(--orange);color:#140C07}
-  .t-soon{background:#3A2A1A;color:var(--amber)}
   .t-low{background:#3A1E18;color:#E88A72}
+  .t-ext{background:#1E2E3A;color:#8FBEDC}
 
-  .two{display:grid;grid-template-columns:1fr 1fr;gap:22px}
-  @media(max-width:760px){.two{grid-template-columns:1fr}}
+  .pill{font-size:9px;padding:2px 7px;border-radius:9px;text-transform:uppercase;letter-spacing:.5px}
+  .c-admission{background:#3A2410;color:#F0A867}
+  .c-merch{background:#2A1E38;color:#B89BD9}
+  .c-addon{background:#13302A;color:#6FC9A8}
+  .c-fnb{background:#36301A;color:#D9C46B}
+  .c-other{background:#2A2320;color:#A89488}
+  .c-waiver{background:#201A30;color:#8E86C4}
 
-  .foot{color:var(--faint);font-size:11px;margin-top:26px;line-height:1.6;
-        border-top:1px solid var(--line);padding-top:12px}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+  @media(max-width:860px){.two{grid-template-columns:1fr}}
+  .scroll{max-height:none}
+
+  .foot{color:var(--faint);font-size:11px;margin-top:30px;line-height:1.65;
+    border-top:1px solid var(--line);padding-top:13px}
+  .foot strong{color:var(--dim)}
   .err{background:#2A1512;border:1px solid var(--red);color:#F0B5A8;
-       padding:11px 13px;border-radius:8px;margin-bottom:16px;font-size:13px}
-  .loading{color:var(--dim);padding:30px 0;text-align:center}
+    padding:11px 13px;border-radius:8px;margin-bottom:16px;font-size:13px}
+  .loading{color:var(--dim);padding:40px 0;text-align:center}
+  .warn{background:#2A2110;border:1px solid #6B5320;color:#E0C07A;
+    padding:9px 12px;border-radius:7px;font-size:12px;margin:10px 0 0}
 </style>
 </head>
 <body>
@@ -72,140 +92,212 @@
     <span class="sub" id="stamp">loading…</span>
     <button id="refresh">Refresh</button>
   </header>
-
   <div id="err"></div>
   <div id="body"><div class="loading">Pulling from RocketRez…</div></div>
-
-  <div class="foot">
-    <strong>What this shows.</strong> Live RocketRez order data for Fresno Fright Nights
-    (company 239), season to date. Refreshes on load; the server caches for 5 minutes.<br>
-    <strong>Admissions</strong> counts dated ticket line items on active orders. Voided and
-    cancelled orders are excluded.<br>
-    <strong>Not counted:</strong> Groupon inventory placeholder rows (entered as large qty at
-    $0) are excluded from attendance — they are stock records, not people.<br>
-    <strong>Revenue</strong> is line-item subtotal and excludes fees and tax. Gross is the sum
-    of active order totals.<br>
-    <span style="color:#8a6a4a">Walk-up cash sales that never get an event date attached will
-    not appear by night.</span>
-  </div>
+  <div class="foot" id="foot"></div>
 </div>
 
 <script>
-const API = 'https://casting.whisperingxhills.com/api/ffn-sales';
-const $ = s => document.querySelector(s);
-const money = n => '$' + (n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
-const money2 = n => '$' + (n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-const todayISO = () => new Date().toLocaleDateString('en-CA',{timeZone:'America/Los_Angeles'});
+const API='https://casting.whisperingxhills.com/api/ffn-sales';
+const $=s=>document.querySelector(s);
+const m0=n=>'$'+(n||0).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:0});
+const m2=n=>'$'+(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+const todayISO=()=>new Date().toLocaleDateString('en-CA',{timeZone:'America/Los_Angeles'});
+const dow=i=>new Date(i+'T12:00:00Z').toLocaleDateString('en-US',{weekday:'short',timeZone:'UTC'});
+const pretty=i=>new Date(i+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
-function dow(iso){
-  return new Date(iso+'T12:00:00Z').toLocaleDateString('en-US',{weekday:'short',timeZone:'UTC'});
-}
-function pretty(iso){
-  return new Date(iso+'T12:00:00Z').toLocaleDateString('en-US',{month:'short',day:'numeric',timeZone:'UTC'});
-}
+let DATA=null, psort={k:'rev',dir:-1};
 
 function render(d){
-  const T = d.totals, today = todayISO();
-  const dates = Object.keys(d.byDate).filter(x=>d.byDate[x].admits>0).sort();
-  const upcoming = dates.filter(x=>x>=today);
-  const maxAd = Math.max(1, ...dates.map(x=>d.byDate[x].admits));
+  DATA=d;
+  const T=d.totals, C=d.categories, today=todayISO();
+  const dates=Object.keys(d.byDate).filter(x=>d.byDate[x].admits>0).sort();
+  const upcoming=dates.filter(x=>x>=today);
+  const maxAd=Math.max(1,...dates.map(x=>d.byDate[x].admits));
+  const avg=T.admits?T.admissionRevenue/T.admits:0;
+  const futA=upcoming.reduce((s,x)=>s+d.byDate[x].admits,0);
+  const futR=upcoming.reduce((s,x)=>s+d.byDate[x].rev,0);
+  const totalComp=dates.reduce((s,x)=>s+d.byDate[x].comp,0);
+  const totalPaid=dates.reduce((s,x)=>s+d.byDate[x].paid,0);
 
-  const avg = T.admits ? T.admissionRevenue/T.admits : 0;
-  const futureAdmits = upcoming.reduce((s,x)=>s+d.byDate[x].admits,0);
-  const futureRev = upcoming.reduce((s,x)=>s+d.byDate[x].rev,0);
-
-  let h = `<div class="cards">
-    <div class="card"><div class="lab">Gross Revenue</div>
-      <div class="val accent">${money(T.grossRevenue)}</div>
-      <div class="note">all active orders</div></div>
-    <div class="card"><div class="lab">Admissions Sold</div>
-      <div class="val">${T.admits.toLocaleString()}</div>
-      <div class="note">${money(T.admissionRevenue)} ticket revenue</div></div>
-    <div class="card"><div class="lab">Avg Ticket</div>
-      <div class="val">${money2(avg)}</div>
-      <div class="note">across all channels</div></div>
-    <div class="card"><div class="lab">Still To Come</div>
-      <div class="val">${futureAdmits.toLocaleString()}</div>
-      <div class="note">${money(futureRev)} on ${upcoming.length} remaining night${upcoming.length===1?'':'s'}</div></div>
-    <div class="card"><div class="lab">Merch</div>
-      <div class="val">${money(T.merchRevenue)}</div>
-      <div class="note">shirts, hoodies, novelty</div></div>
-    <div class="card"><div class="lab">Add-ons</div>
-      <div class="val">${money(T.addonRevenue)}</div>
-      <div class="note">Séance, VIP cabins, lane</div></div>
+  let h=`<div class="cards">
+   <div class="card"><div class="lab">Gross Revenue</div><div class="val accent">${m0(T.grossRevenue)}</div>
+     <div class="note">${d.orders.transactions} transactions</div></div>
+   <div class="card"><div class="lab">Admissions</div><div class="val">${T.admits.toLocaleString()}</div>
+     <div class="note">${totalPaid} paid · ${totalComp} comp</div></div>
+   <div class="card"><div class="lab">Ticket Revenue</div><div class="val">${m0(T.admissionRevenue)}</div>
+     <div class="note">${m2(avg)} avg per admit</div></div>
+   <div class="card"><div class="lab">Still To Come</div><div class="val">${futA.toLocaleString()}</div>
+     <div class="note">${m0(futR)} · ${upcoming.length} night${upcoming.length===1?'':'s'} left</div></div>
+   <div class="card"><div class="lab">Merch</div><div class="val">${m0(C.merch.rev)}</div>
+     <div class="note">${C.merch.qty} items</div></div>
+   <div class="card"><div class="lab">Add-ons</div><div class="val">${m0(C.addon.rev)}</div>
+     <div class="note">${C.addon.qty} sold</div></div>
+   <div class="card"><div class="lab">Food &amp; Bev</div><div class="val">${m0(C.fnb.rev)}</div>
+     <div class="note">${C.fnb.qty} items</div></div>
+   <div class="card"><div class="lab">Other</div><div class="val">${m0(C.other.rev)}</div>
+     <div class="note">${C.other.qty} items</div></div>
   </div>`;
 
-  h += `<h2>By Night</h2><table><thead><tr>
-    <th>Date</th><th>Day</th><th class="num">Admits</th><th style="width:26%"></th>
-    <th class="num">Revenue</th><th class="num">Avg</th></tr></thead><tbody>`;
-  for (const iso of dates){
-    const b = d.byDate[iso];
-    const isToday = iso === today;
-    const isPast = iso < today;
-    const a = b.admits ? b.rev/b.admits : 0;
-    let tag = '';
-    if (isToday) tag = '<span class="tag t-today">tonight</span>';
-    else if (!isPast && b.admits < 25) tag = '<span class="tag t-low">thin</span>';
-    h += `<tr class="${isToday?'today':''}">
-      <td class="d ${isPast?'past':''}">${pretty(iso)}${tag}</td>
-      <td class="${isPast?'past':''}">${dow(iso)}</td>
+  /* ---- BY NIGHT ---- */
+  h+=`<h2>Every Night <span class="hint">orange = paid · blue = comp/redemption</span></h2>
+   <table><thead><tr><th>Date</th><th>Day</th><th class="num">Paid</th><th class="num">Comp</th>
+   <th class="num">Total</th><th style="width:22%"></th><th class="num">Revenue</th>
+   <th class="num">Avg paid</th></tr></thead><tbody>`;
+  let sP=0,sC=0,sA=0,sR=0;
+  for(const iso of dates){
+    const b=d.byDate[iso], isT=iso===today, isP=iso<today;
+    const avgPaid=b.paid?b.rev/b.paid:0;
+    sP+=b.paid; sC+=b.comp; sA+=b.admits; sR+=b.rev;
+    let tag='';
+    if(isT) tag='<span class="tag t-today">tonight</span>';
+    else if(!isP&&b.admits<25) tag='<span class="tag t-low">thin</span>';
+    if(iso==='2026-10-16') tag+='<span class="tag t-ext">KLIN</span>';
+    const pw=Math.round(100*b.paid/maxAd), cw=Math.round(100*b.comp/maxAd);
+    h+=`<tr class="${isT?'today':''}">
+      <td class="d ${isP?'past':''}">${pretty(iso)}${tag}</td>
+      <td class="${isP?'past':''}">${dow(iso)}</td>
+      <td class="num">${b.paid.toLocaleString()}</td>
+      <td class="num ${b.comp?'':'past'}">${b.comp?b.comp.toLocaleString():'—'}</td>
       <td class="num">${b.admits.toLocaleString()}</td>
-      <td><div class="bar"><i style="width:${Math.round(100*b.admits/maxAd)}%"></i></div></td>
-      <td class="num">${money(b.rev)}</td>
-      <td class="num ${isPast?'past':''}">${b.admits?money2(a):'—'}</td></tr>`;
+      <td><div class="barsplit"><i class="p" style="width:${pw}%"></i><i class="c" style="width:${cw}%"></i></div></td>
+      <td class="num">${m0(b.rev)}</td>
+      <td class="num ${isP?'past':''}">${b.paid?m2(avgPaid):'—'}</td></tr>`;
   }
-  h += `</tbody></table>`;
+  h+=`</tbody><tfoot><tr><td colspan="2">TOTAL · ${dates.length} nights</td>
+    <td class="num">${sP.toLocaleString()}</td><td class="num">${sC.toLocaleString()}</td>
+    <td class="num">${sA.toLocaleString()}</td><td></td><td class="num">${m0(sR)}</td>
+    <td class="num">${sP?m2(sR/sP):'—'}</td></tr></tfoot></table>`;
 
-  h += `<div class="two"><div><h2>Channel</h2><table><thead><tr>
-    <th>Source</th><th class="num">Qty</th><th class="num">Revenue</th></tr></thead><tbody>`;
+  /* ---- CHANNEL + CATEGORY ---- */
+  h+=`<div class="two"><div><h2>Channel <span class="hint">admissions only</span></h2>
+    <table><thead><tr><th>Source</th><th class="num">Admits</th><th class="num">Revenue</th>
+    <th class="num">Avg</th></tr></thead><tbody>`;
   Object.entries(d.byChannel).sort((a,b)=>b[1].rev-a[1].rev).forEach(([k,v])=>{
-    h += `<tr><td>${k}</td><td class="num">${v.qty.toLocaleString()}</td>
-          <td class="num">${money(v.rev)}</td></tr>`;
-  });
-  h += `</tbody></table></div>`;
+    h+=`<tr><td>${esc(k)}</td><td class="num">${v.qty.toLocaleString()}</td>
+      <td class="num">${m0(v.rev)}</td><td class="num">${v.qty?m2(v.rev/v.qty):'—'}</td></tr>`;});
+  h+=`</tbody></table></div>`;
 
-  h += `<div><h2>Top Products</h2><table><thead><tr>
-    <th>Product</th><th class="num">Qty</th><th class="num">Revenue</th></tr></thead><tbody>`;
-  Object.entries(d.byProduct).filter(([,v])=>v.rev>0)
-    .sort((a,b)=>b[1].rev-a[1].rev).slice(0,12).forEach(([k,v])=>{
-    h += `<tr><td>${k.replace(/\s+/g,' ').trim()}</td><td class="num">${v.qty.toLocaleString()}</td>
-          <td class="num">${money(v.rev)}</td></tr>`;
-  });
-  h += `</tbody></table></div></div>`;
+  h+=`<div><h2>Revenue by Category</h2><table><thead><tr><th>Category</th>
+    <th class="num">Qty</th><th class="num">Revenue</th></tr></thead><tbody>`;
+  const order=['admission','addon','merch','fnb','other','waiver'];
+  const label={admission:'Admissions',addon:'Add-ons',merch:'Merch',fnb:'Food & Bev',
+               other:'Other / uncategorised',waiver:'Waiver records'};
+  order.forEach(k=>{const v=C[k]; if(!v) return;
+    h+=`<tr><td><span class="pill c-${k}">${label[k]}</span></td>
+      <td class="num">${v.qty.toLocaleString()}</td>
+      <td class="num">${v.rev?m0(v.rev):'$0'}</td></tr>`;});
+  h+=`</tbody></table>
+    <div class="warn">Waiver records are signed-waiver entries, not a product.
+    They always total $0. 148 orders this season contain nothing but a waiver.</div>
+    </div></div>`;
 
-  if (T.groupPlaceholdersExcluded > 0){
-    h += `<h2>Excluded</h2><div style="color:var(--faint);font-size:12px">
-      ${T.groupPlaceholdersExcluded.toLocaleString()} Groupon inventory placeholder units
-      excluded from attendance (bulk rows at $0, stock records not guests).
-      ${d.orders.voided} voided or cancelled order${d.orders.voided===1?'':'s'} excluded.</div>`;
+  /* ---- ALL PRODUCTS ---- */
+  h+=`<h2>Every Product <span class="hint" id="pcount"></span></h2>
+    <table id="ptab"><thead><tr>
+    <th class="sortable" data-k="name">Product</th>
+    <th class="sortable" data-k="cat">Category</th>
+    <th class="sortable num" data-k="qty">Qty</th>
+    <th class="sortable num" data-k="rev">Revenue</th>
+    <th class="sortable num" data-k="unit">Unit</th>
+    </tr></thead><tbody id="pbody"></tbody><tfoot id="pfoot"></tfoot></table>`;
+
+  /* ---- ORDER DAY ---- */
+  const ods=Object.keys(d.byOrderDay).sort();
+  h+=`<h2>Sales Activity <span class="hint">by the day the order was placed</span></h2>
+    <table><thead><tr><th>Order date</th><th>Day</th><th class="num">Orders</th>
+    <th style="width:34%"></th><th class="num">Revenue</th></tr></thead><tbody>`;
+  const maxOR=Math.max(1,...ods.map(x=>d.byOrderDay[x].rev));
+  let tOrd=0,tRev=0;
+  for(const iso of ods){const b=d.byOrderDay[iso]; tOrd+=b.orders; tRev+=b.rev;
+    h+=`<tr><td>${pretty(iso)}</td><td>${dow(iso)}</td>
+      <td class="num">${b.orders}</td>
+      <td><div class="bar"><i style="width:${Math.round(100*b.rev/maxOR)}%"></i></div></td>
+      <td class="num">${m0(b.rev)}</td></tr>`;}
+  h+=`</tbody><tfoot><tr><td colspan="2">TOTAL</td><td class="num">${tOrd}</td><td></td>
+    <td class="num">${m0(tRev)}</td></tr></tfoot></table>`;
+
+  $('#body').innerHTML=h;
+  renderProducts();
+  document.querySelectorAll('#ptab th.sortable').forEach(th=>{
+    th.addEventListener('click',()=>{
+      const k=th.dataset.k;
+      psort = (psort.k===k) ? {k,dir:-psort.dir} : {k,dir:(k==='name'||k==='cat')?1:-1};
+      renderProducts();
+    });
+  });
+
+  const when=new Date(d.cachedAt||d.generatedAt);
+  $('#stamp').textContent='updated '+when.toLocaleString('en-US',
+    {timeZone:'America/Los_Angeles',month:'short',day:'numeric',hour:'numeric',minute:'2-digit'})+' PT';
+
+  $('#foot').innerHTML=`
+   <strong>Source.</strong> Live RocketRez Orders for Fresno Fright Nights (company 239),
+   ${d.seasonStart} to now. Server caches 5 minutes; page re-checks every 5 minutes.<br>
+   <strong>Orders.</strong> ${d.orders.total} order records · ${d.orders.transactions} real
+   transactions · ${d.orders.waiverOnly} waiver-only records · ${d.orders.voided} voided or
+   cancelled (excluded from all figures).<br>
+   <strong>Comp vs paid.</strong> "Comp" counts admissions that came through at $0 — season
+   pass redemptions, Groupon redemptions, employee and trade admissions. They are real people
+   through the gate but carry no ticket revenue.<br>
+   <strong>Excluded.</strong> ${T.groupPlaceholdersExcluded.toLocaleString()} Groupon inventory
+   placeholder units (bulk rows at $0 with no event date) are stock records, not guests.<br>
+   <strong>Revenue</strong> is line-item subtotal and excludes fees and tax. Gross is the sum of
+   active order totals, so it includes fees.<br>
+   <span style="color:#8a6a4a"><strong>Known gaps.</strong> Fresnoween (Oct 16) is sold by KLIN
+   Events and those sales never enter this system. Walk-up sales rung without an event date
+   attached will not appear in the nightly table, though they do count in gross.</span>`;
+}
+
+function renderProducts(){
+  const P=DATA.products;
+  let rows=Object.entries(P).map(([name,v])=>({name,...v,unit:v.qty?v.rev/v.qty:0}));
+  const k=psort.k,dir=psort.dir;
+  rows.sort((a,b)=>{
+    let x=a[k],y=b[k];
+    if(k==='name'||k==='cat'){x=String(x).toLowerCase();y=String(y).toLowerCase();
+      return x<y?-dir:x>y?dir:0;}
+    return (x-y)*dir;
+  });
+  const label={admission:'Admission',addon:'Add-on',merch:'Merch',fnb:'F&B',
+               other:'Other',waiver:'Waiver'};
+  let h='';
+  for(const r of rows){
+    h+=`<tr><td>${esc(r.name.replace(/\s+/g,' ').trim())}</td>
+      <td><span class="pill c-${r.cat}">${label[r.cat]}</span></td>
+      <td class="num">${r.qty.toLocaleString()}</td>
+      <td class="num ${r.rev?'':'past'}">${r.rev?m0(r.rev):'$0'}</td>
+      <td class="num ${r.rev?'':'past'}">${r.rev?m2(r.unit):'—'}</td></tr>`;
   }
-
-  $('#body').innerHTML = h;
-  const when = new Date(d.cachedAt || d.generatedAt);
-  $('#stamp').textContent = 'updated ' + when.toLocaleString('en-US',
-    {timeZone:'America/Los_Angeles', month:'short', day:'numeric',
-     hour:'numeric', minute:'2-digit'}) + ' PT';
+  document.getElementById('pbody').innerHTML=h;
+  const tq=rows.reduce((s,r)=>s+r.qty,0), tr2=rows.reduce((s,r)=>s+r.rev,0);
+  document.getElementById('pfoot').innerHTML=
+    `<tr><td colspan="2">TOTAL · ${rows.length} products</td>
+     <td class="num">${tq.toLocaleString()}</td><td class="num">${m0(tr2)}</td><td></td></tr>`;
+  document.getElementById('pcount').textContent=
+    `${rows.length} products, nothing hidden — click any header to sort`;
 }
 
 async function load(){
-  $('#err').innerHTML = '';
-  $('#body').innerHTML = '<div class="loading">Pulling from RocketRez…</div>';
+  $('#err').innerHTML='';
+  if(!DATA) $('#body').innerHTML='<div class="loading">Pulling from RocketRez…</div>';
   try{
-    const r = await fetch(API + '?t=' + Date.now());
-    if(!r.ok) throw new Error('HTTP ' + r.status);
-    const d = await r.json();
-    if(d.error) throw new Error(d.detail || d.error);
+    const r=await fetch(API+'?t='+Date.now());
+    if(!r.ok) throw new Error('HTTP '+r.status);
+    const d=await r.json();
+    if(d.error) throw new Error(d.detail||d.error);
     render(d);
   }catch(e){
-    $('#err').innerHTML = '<div class="err"><strong>Could not load sales data.</strong><br>' +
-      String(e.message||e) + '<br><span style="color:#b98a7c">The numbers below may be stale or missing. ' +
+    $('#err').innerHTML='<div class="err"><strong>Could not load sales data.</strong><br>'+
+      esc(e.message||e)+'<br><span style="color:#b98a7c">Figures below may be stale. '+
       'This does not affect ticket sales.</span></div>';
-    $('#body').innerHTML = '';
+    if(!DATA) $('#body').innerHTML='';
   }
 }
-$('#refresh').addEventListener('click', load);
+$('#refresh').addEventListener('click',load);
 load();
-setInterval(load, 5*60*1000);
+setInterval(load,5*60*1000);
 </script>
 </body>
 </html>
