@@ -252,6 +252,51 @@ function render(d){
       number sell straight through our online store under their own product code.</div>`;
   }
 
+  /* ---- SHIPWRECK VIP CABINS ---- */
+  (function(){
+    const CB=d.cabins;
+    if(!CB) return;
+    const nights=Object.keys(CB.byNight).sort();
+    const allNights=Object.keys(d.byDate).filter(x=>x>='2026-10-01').sort();
+    h+=`<h2>Shipwreck VIP Cabins <span class="hint">premium add-on · booked by night</span></h2>
+      <div id="cabwrap" class="pgrid" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
+        <div class="pcard"><h3>Cabins Sold</h3>
+          <div class="pr">${CB.total.toLocaleString()}</div>
+          <div class="pm">across ${nights.length} night${nights.length===1?'':'s'}</div></div>
+        <div class="pcard"><h3>Revenue</h3>
+          <div class="pr">${m0(CB.revenue)}</div>
+          <div class="pm">${CB.total?m2(CB.revenue/CB.total):'—'} per cabin</div></div>
+        <div class="pcard"><h3>Nights With None</h3>
+          <div class="pr">${allNights.filter(x=>!CB.byNight[x]).length}</div>
+          <div class="pm">of ${allNights.length} October nights</div></div>
+      </div>`;
+
+    if(CB.lines.length){
+      h+=`<table style="margin-top:12px"><thead><tr>
+        <th>Night booked</th><th>Day</th><th class="num">Cabins</th>
+        <th class="num">Revenue</th><th>Purchased</th><th>Channel</th>
+        </tr></thead><tbody>`;
+      CB.lines.forEach(L=>{
+        const n=L.night;
+        h+=`<tr><td>${n?pretty(n):'<span class="past">no date</span>'}</td>
+          <td>${n?dow(n):'—'}</td>
+          <td class="num">${L.qty}</td>
+          <td class="num">${m0(L.rev)}</td>
+          <td>${L.purchased?pretty(L.purchased):'—'}</td>
+          <td>${esc(L.channel||'—')}</td></tr>`;
+      });
+      h+=`</tbody><tfoot><tr><td colspan="2">TOTAL</td>
+        <td class="num">${CB.total}</td><td class="num">${m0(CB.revenue)}</td>
+        <td colspan="2"></td></tr></tfoot></table>`;
+    }
+
+    const empty=allNights.filter(x=>!CB.byNight[x]);
+    if(empty.length){
+      h+=`<div class="warn">No cabins booked yet for:
+        ${empty.map(x=>pretty(x)+' ('+dow(x)+')').join(' · ')}</div>`;
+    }
+  })();
+
   /* ---- MESSAGES FROM BEYOND (Seance Experience) ---- */
   (function(){
     const MFB=/s[\u00e9e]ance/i;
