@@ -252,6 +252,39 @@ function render(d){
       number sell straight through our online store under their own product code.</div>`;
   }
 
+  /* ---- MESSAGES FROM BEYOND (Seance Experience) ---- */
+  (function(){
+    const MFB=/s[\u00e9e]ance/i;
+    const lines=Object.entries(d.products).filter(([n])=>MFB.test(n));
+    if(!lines.length) return;
+    const tq=lines.reduce((a,[,v])=>a+v.qty,0);
+    const tr=lines.reduce((a,[,v])=>a+v.rev,0);
+    const admits=d.totals.admits||1;
+    h+=`<h2>Messages From Beyond <span class="hint">Séance Experience · in-park add-on</span></h2>
+      <div id="mfbwrap" class="pgrid" style="grid-template-columns:repeat(auto-fit,minmax(190px,1fr))">
+        <div class="pcard"><h3>Tickets Sold</h3>
+          <div class="pr">${tq.toLocaleString()}</div>
+          <div class="pm">across ${lines.length} sales channel${lines.length===1?'':'s'}</div></div>
+        <div class="pcard"><h3>Revenue</h3>
+          <div class="pr">${m0(tr)}</div>
+          <div class="pm">${tq?m2(tr/tq):'—'} per ticket</div></div>
+        <div class="pcard"><h3>Attach Rate</h3>
+          <div class="pr">${(100*tq/admits).toFixed(1)}%</div>
+          <div class="pm">${tq} of ${admits.toLocaleString()} admissions</div></div>
+      </div>
+      <table style="margin-top:12px"><thead><tr><th>Channel</th>
+      <th class="num">Qty</th><th class="num">Revenue</th><th class="num">Unit</th>
+      </tr></thead><tbody>`;
+    lines.sort((a,b)=>b[1].rev-a[1].rev).forEach(([n,v])=>{
+      h+=`<tr><td>${esc(n.replace(/\s+/g,' ').trim())}</td>
+        <td class="num">${v.qty.toLocaleString()}</td>
+        <td class="num">${m0(v.rev)}</td>
+        <td class="num">${v.qty?m2(v.rev/v.qty):'—'}</td></tr>`;
+    });
+    h+=`</tbody><tfoot><tr><td>TOTAL</td><td class="num">${tq.toLocaleString()}</td>
+      <td class="num">${m0(tr)}</td><td class="num">${tq?m2(tr/tq):'—'}</td></tr></tfoot></table>`;
+  })();
+
   /* ---- ALL PRODUCTS ---- */
   h+=`<h2>Every Product <span class="hint" id="pcount"></span></h2>
     <table id="ptab"><thead><tr>
