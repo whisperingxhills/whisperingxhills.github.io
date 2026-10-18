@@ -189,9 +189,9 @@ function render(d){
                   midway:'Midway Only',cabin:'Shipwreck VIP Cabins',other:'Other'};
     const bCls={ga:'admission',vip:'addon',consignment:'merch',seance:'fnb',
                 pass:'addon',comp:'other',midway:'other',cabin:'addon',other:'other'};
-    const state = ON.live
+    const state = (ON.live && ON.isOpen)
       ? '<span class="tag t-today">gates open</span>'
-      : '<span class="hint">last operating night</span>';
+      : (ON.isOpen ? '<span class="hint">last operating night</span>' : '');
 
     h+=`<h2>Tonight &middot; ${pretty(ON.date)} ${dow(ON.date)} ${state}
       <span class="hint">tickets for this night &middot; night runs 7pm&ndash;3am</span></h2>`;
