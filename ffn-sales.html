@@ -181,6 +181,171 @@ function render(d){
     <td class="num">${sA.toLocaleString()}</td><td></td><td class="num">${m0(sR)}</td>
     <td class="num">${sP?m2(sR/sP):'—'}</td></tr></tfoot></table>`;
 
+  /* ---- OPERATING NIGHT: tickets by type ---- */
+  if(d.operatingNight){
+    const ON=d.operatingNight, N=d.nightly?d.nightly[ON.date]:null;
+    const bLabel={ga:'General Admission',vip:'VIP',consignment:'Consignment / Partner',
+                  seance:'Messages From Beyond',pass:'Season Pass',comp:'Comp / Trade',
+                  midway:'Midway Only',cabin:'Shipwreck VIP Cabins',other:'Other'};
+    const bCls={ga:'admission',vip:'addon',consignment:'merch',seance:'fnb',
+                pass:'addon',comp:'other',midway:'other',cabin:'addon',other:'other'};
+    const state = ON.live
+      ? '<span class="tag t-today">gates open</span>'
+      : '<span class="hint">last operating night</span>';
+
+    h+=`<h2>Tonight &middot; ${pretty(ON.date)} ${dow(ON.date)} ${state}
+      <span class="hint">tickets for this night &middot; night runs 7pm&ndash;3am</span></h2>`;
+
+    if(!N || !N.admits){
+      h+=`<table><tbody><tr><td style="color:var(--faint);padding:14px 9px">
+        No tickets on the books for ${pretty(ON.date)}. Park is dark tonight.
+        </td></tr></tbody></table>`;
+    } else {
+      const B=N.buckets;
+      h+=`<div class="cards">
+        <div class="card"><div class="lab">Total Attendance</div>
+          <div class="val accent">${N.admits.toLocaleString()}</div>
+          <div class="note">${N.paid} paid &middot; ${N.comp} comp &middot; ${m0(N.revenue)}</div></div>
+        <div class="card"><div class="lab">General Admission</div>
+          <div class="val">${B.ga.qty.toLocaleString()}</div>
+          <div class="note">${m0(B.ga.rev)}</div></div>
+        <div class="card"><div class="lab">VIP</div>
+          <div class="val">${B.vip.qty.toLocaleString()}</div>
+          <div class="note">${m0(B.vip.rev)}</div></div>
+        <div class="card"><div class="lab">Consignment</div>
+          <div class="val">${B.consignment.qty.toLocaleString()}</div>
+          <div class="note">${Object.keys(N.partners).length} partner${Object.keys(N.partners).length===1?'':'s'} &middot; ${m0(B.consignment.rev)}</div></div>
+        <div class="card"><div class="lab">Messages From Beyond</div>
+          <div class="val">${B.seance.qty.toLocaleString()}</div>
+          <div class="note">${m0(B.seance.rev)}${N.admits?` &middot; ${(100*B.seance.qty/N.admits).toFixed(0)}% attach`:''}</div></div>
+        <div class="card"><div class="lab">Comp / Trade</div>
+          <div class="val">${(B.comp.qty+B.midway.qty).toLocaleString()}</div>
+          <div class="note">${B.comp.qty} comp &middot; ${B.midway.qty} midway</div></div>
+      </div>`;
+
+      const bOrder=['ga','vip','consignment','pass','comp','midway','seance','cabin','other'];
+      const maxB=Math.max(1,...bOrder.map(k=>(B[k]||{qty:0}).qty));
+      h+=`<div class="two">
+        <div><h2>Tonight by Ticket Type</h2>
+        <table><thead><tr><th>Type</th><th class="num">Qty</th>
+        <th style="width:24%"></th><th class="num">Revenue</th></tr></thead><tbody>`;
+      bOrder.forEach(k=>{const v=B[k]; if(!v||!v.qty) return;
+        const addon=(k==='seance'||k==='cabin');
+        h+=`<tr><td><span class="pill c-${bCls[k]}">${bLabel[k]}</span>${addon?'<span class="hint" style="margin-left:6px">add-on</span>':''}</td>
+          <td class="num">${v.qty.toLocaleString()}</td>
+          <td><div class="bar"><i style="width:${Math.round(100*v.qty/maxB)}%"></i></div></td>
+          <td class="num">${m0(v.rev)}</td></tr>`;});
+      h+=`</tbody><tfoot><tr><td>ATTENDANCE <span class="hint">add-ons excluded</span></td>
+        <td class="num">${N.admits.toLocaleString()}</td><td></td>
+        <td class="num">${m0(N.revenue)}</td></tr></tfoot></table></div>`;
+
+      h+=`<div><h2>Tonight&rsquo;s Consignment <span class="hint">by partner</span></h2>`;
+      const prt=Object.entries(N.partners).sort((a,b)=>b[1].qty-a[1].qty);
+      if(!prt.length){
+        h+=`<table><tbody><tr><td style="color:var(--faint)">No consignment tickets tonight.</td></tr></tbody></table>`;
+      } else {
+        h+=`<table><thead><tr><th>Partner</th><th class="num">Tickets</th>
+          <th class="num">Revenue</th></tr></thead><tbody>`;
+        let pq=0,pr=0;
+        prt.forEach(([k,v])=>{pq+=v.qty;pr+=v.rev;
+          h+=`<tr><td>${esc(k)}</td><td class="num">${v.qty.toLocaleString()}</td>
+            <td class="num">${v.rev?m0(v.rev):'<span class="past">free</span>'}</td></tr>`;});
+        h+=`</tbody><tfoot><tr><td>TOTAL</td><td class="num">${pq.toLocaleString()}</td>
+          <td class="num">${m0(pr)}</td></tr></tfoot></table>`;
+      }
+      h+=`</div></div>`;
+
+      const pl=Object.entries(N.products).sort((a,b)=>b[1].qty-a[1].qty);
+      h+=`<h2>Tonight Line by Line <span class="hint">${pl.length} ticket type${pl.length===1?'':'s'}</span></h2>
+        <table><thead><tr><th>Product</th><th>Bucket</th>
+        <th class="num">Qty</th><th class="num">Revenue</th></tr></thead><tbody>`;
+      pl.forEach(([k,v])=>{
+        h+=`<tr><td>${esc(k)}</td>
+          <td><span class="pill c-${bCls[v.bucket]}">${esc(v.label)}</span></td>
+          <td class="num">${v.qty.toLocaleString()}</td>
+          <td class="num">${v.rev?m0(v.rev):'<span class="past">free</span>'}</td></tr>`;});
+      h+=`</tbody></table>`;
+    }
+  }
+
+  /* ---- TODAY'S NUMBERS ---- */
+  if(d.today){
+    const TD=d.today, S=TD.sold, G=TD.gate, SC=S.categories;
+    const catOrder=['admission','addon','merch','fnb','other'];
+    const catLabel={admission:'Admissions',addon:'Add-ons',merch:'Merch',
+                    fnb:'Food & Bev',other:'Other'};
+    const maxCat=Math.max(1,...catOrder.map(k=>(SC[k]||{rev:0}).rev));
+    h+=`<h2>Today &middot; ${pretty(TD.date)} ${dow(TD.date)}
+      <span class="hint">money taken in today &middot; Pacific business day</span></h2>
+     <div class="cards">
+       <div class="card"><div class="lab">Taken In Today</div>
+         <div class="val accent">${m0(S.gross)}</div>
+         <div class="note">${S.orders} order${S.orders===1?'':'s'} &middot; ${S.items} items</div></div>
+       <div class="card"><div class="lab">Tonight At The Gate</div>
+         <div class="val">${G.admits.toLocaleString()}</div>
+         <div class="note">${G.paid} paid &middot; ${G.comp} comp &middot; ${m0(G.revenue)}</div></div>
+       <div class="card"><div class="lab">Tickets Sold Today</div>
+         <div class="val">${(SC.admission||{qty:0}).qty.toLocaleString()}</div>
+         <div class="note">${S.forTonight.qty} for tonight &middot; ${S.forFuture.qty} future night${S.forFuture.qty===1?'':'s'}</div></div>
+       <div class="card"><div class="lab">Food &amp; Bev</div>
+         <div class="val">${m0((SC.fnb||{rev:0}).rev)}</div>
+         <div class="note">${(SC.fnb||{qty:0}).qty} items</div></div>
+       <div class="card"><div class="lab">Merch</div>
+         <div class="val">${m0((SC.merch||{rev:0}).rev)}</div>
+         <div class="note">${(SC.merch||{qty:0}).qty} items</div></div>
+       <div class="card"><div class="lab">Add-ons</div>
+         <div class="val">${m0((SC.addon||{rev:0}).rev)}</div>
+         <div class="note">${(SC.addon||{qty:0}).qty} sold</div></div>
+     </div>`;
+
+    if(S.orders===0){
+      h+=`<table><tbody><tr><td style="color:var(--faint)">
+        No orders recorded yet for ${pretty(TD.date)}.</td></tr></tbody></table>`;
+    } else {
+      h+=`<div class="two">
+        <div><h2>Today by Category</h2>
+         <table><thead><tr><th>Category</th><th class="num">Qty</th>
+         <th class="num">Revenue</th><th style="width:26%"></th></tr></thead><tbody>`;
+      catOrder.forEach(k=>{
+        const v=SC[k]||{qty:0,rev:0};
+        if(!v.qty && !v.rev) return;
+        h+=`<tr><td><span class="pill c-${k}">${catLabel[k]}</span></td>
+          <td class="num">${v.qty.toLocaleString()}</td>
+          <td class="num">${m2(v.rev)}</td>
+          <td><div class="bar"><i style="width:${Math.round(100*v.rev/maxCat)}%"></i></div></td></tr>`;
+      });
+      h+=`</tbody><tfoot><tr><td>LINE TOTAL</td>
+        <td class="num">${S.items.toLocaleString()}</td>
+        <td class="num">${m2(S.revenue)}</td><td></td></tr></tfoot></table>
+        <div class="note" style="color:var(--faint);font-size:10.5px;margin-top:6px">
+          Line total excludes fees and tax. Taken In Today (${m0(S.gross)}) is order totals.</div>
+        </div>`;
+
+      h+=`<div><h2>Today by Register <span class="hint">where it rang up</span></h2>
+        <table><thead><tr><th>Source</th><th class="num">Orders</th>
+        <th class="num">Qty</th><th class="num">Revenue</th></tr></thead><tbody>`;
+      const chs=Object.entries(S.channels).sort((a,b)=>b[1].rev-a[1].rev);
+      chs.forEach(([k,v])=>{
+        h+=`<tr><td>${esc(k)}</td><td class="num">${v.orders.toLocaleString()}</td>
+          <td class="num">${v.qty.toLocaleString()}</td>
+          <td class="num">${m2(v.rev)}</td></tr>`;});
+      h+=`</tbody></table></div></div>`;
+
+      const tl=Object.entries(S.lines).sort((a,b)=>b[1].rev-a[1].rev);
+      h+=`<h2>Today Line by Line <span class="hint">${tl.length} product${tl.length===1?'':'s'} sold today</span></h2>
+        <table><thead><tr><th>Product</th><th>Category</th>
+        <th class="num">Qty</th><th class="num">Revenue</th></tr></thead><tbody>`;
+      tl.forEach(([k,v])=>{
+        h+=`<tr><td>${esc(k)}</td>
+          <td><span class="pill c-${v.cat}">${catLabel[v.cat]||v.cat}</span></td>
+          <td class="num">${v.qty.toLocaleString()}</td>
+          <td class="num">${m2(v.rev)}</td></tr>`;});
+      h+=`</tbody><tfoot><tr><td colspan="2">TOTAL</td>
+        <td class="num">${S.items.toLocaleString()}</td>
+        <td class="num">${m2(S.revenue)}</td></tr></tfoot></table>`;
+    }
+  }
+
   /* ---- CHANNEL + CATEGORY ---- */
   h+=`<div class="two"><div><h2>Channel <span class="hint">admissions only</span></h2>
     <table><thead><tr><th>Source</th><th class="num">Admits</th><th class="num">Revenue</th>
