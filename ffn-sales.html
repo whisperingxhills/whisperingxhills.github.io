@@ -218,24 +218,28 @@ function render(d){
         <div class="card"><div class="lab">Messages From Beyond</div>
           <div class="val">${B.seance.qty.toLocaleString()}</div>
           <div class="note">${m0(B.seance.rev)}${N.admits?` &middot; ${(100*B.seance.qty/N.admits).toFixed(0)}% attach`:''}</div></div>
-        <div class="card"><div class="lab">Comp / Trade</div>
-          <div class="val">${(B.comp.qty+B.midway.qty).toLocaleString()}</div>
-          <div class="note">${B.comp.qty} comp &middot; ${B.midway.qty} midway</div></div>
+        <div class="card"><div class="lab">Comp Admissions</div>
+          <div class="val">${N.comp.toLocaleString()}</div>
+          <div class="note">every $0 admit &middot; ${N.admits?(100*N.comp/N.admits).toFixed(0):0}% of tonight</div></div>
       </div>`;
 
       const bOrder=['ga','vip','consignment','pass','comp','midway','seance','cabin','other'];
       const maxB=Math.max(1,...bOrder.map(k=>(B[k]||{qty:0}).qty));
       h+=`<div class="two">
         <div><h2>Tonight by Ticket Type</h2>
-        <table><thead><tr><th>Type</th><th class="num">Qty</th>
-        <th style="width:24%"></th><th class="num">Revenue</th></tr></thead><tbody>`;
+        <table><thead><tr><th>Type</th><th class="num">Paid</th><th class="num">Comp</th><th class="num">Qty</th>
+        <th style="width:18%"></th><th class="num">Revenue</th></tr></thead><tbody>`;
       bOrder.forEach(k=>{const v=B[k]; if(!v||!v.qty) return;
         const addon=(k==='seance'||k==='cabin');
+        const fr=v.free||0, pd=(v.paid!==undefined?v.paid:v.qty-fr);
         h+=`<tr><td><span class="pill c-${bCls[k]}">${bLabel[k]}</span>${addon?'<span class="hint" style="margin-left:6px">add-on</span>':''}</td>
+          <td class="num ${pd?'':'past'}">${pd?pd.toLocaleString():'—'}</td>
+          <td class="num ${fr?'':'past'}">${fr?fr.toLocaleString():'—'}</td>
           <td class="num">${v.qty.toLocaleString()}</td>
           <td><div class="bar"><i style="width:${Math.round(100*v.qty/maxB)}%"></i></div></td>
           <td class="num">${m0(v.rev)}</td></tr>`;});
       h+=`</tbody><tfoot><tr><td>ATTENDANCE <span class="hint">add-ons excluded</span></td>
+        <td class="num">${N.paid.toLocaleString()}</td><td class="num">${N.comp.toLocaleString()}</td>
         <td class="num">${N.admits.toLocaleString()}</td><td></td>
         <td class="num">${m0(N.revenue)}</td></tr></tfoot></table></div>`;
 
@@ -258,14 +262,60 @@ function render(d){
       const pl=Object.entries(N.products).sort((a,b)=>b[1].qty-a[1].qty);
       h+=`<h2>Tonight Line by Line <span class="hint">${pl.length} ticket type${pl.length===1?'':'s'}</span></h2>
         <table><thead><tr><th>Product</th><th>Bucket</th>
+        <th class="num">Paid</th><th class="num">Comp</th>
         <th class="num">Qty</th><th class="num">Revenue</th></tr></thead><tbody>`;
       pl.forEach(([k,v])=>{
+        const fr=v.free||0, pd=(v.paid!==undefined?v.paid:v.qty-fr);
         h+=`<tr><td>${esc(k)}</td>
           <td><span class="pill c-${bCls[v.bucket]}">${esc(v.label)}</span></td>
+          <td class="num ${pd?'':'past'}">${pd?pd.toLocaleString():'—'}</td>
+          <td class="num ${fr?'':'past'}">${fr?fr.toLocaleString():'—'}</td>
           <td class="num">${v.qty.toLocaleString()}</td>
           <td class="num">${v.rev?m0(v.rev):'<span class="past">free</span>'}</td></tr>`;});
       h+=`</tbody></table>`;
     }
+  }
+
+  /* ---- SEASON COMP BREAKDOWN ---- */
+  if(d.compBreakdown){
+    const CB=d.compBreakdown;
+    const bLab={ga:'General Admission',vip:'VIP',consignment:'Consignment / Partner',
+                pass:'Season Pass',comp:'Comp / Trade',midway:'Midway Only',other:'Other'};
+    const bCl={ga:'admission',vip:'addon',consignment:'merch',pass:'addon',
+               comp:'other',midway:'other',other:'other'};
+    const bOrd=['ga','vip','consignment','pass','comp','midway','other'];
+    const tot=CB.totalComp+CB.totalPaid;
+    h+=`<h2>Comp Admissions <span class="hint">every $0 admission this season &middot; where they sit</span></h2>
+      <div class="cards">
+       <div class="card"><div class="lab">Comp Admissions</div>
+         <div class="val accent">${CB.totalComp.toLocaleString()}</div>
+         <div class="note">${tot?(100*CB.totalComp/tot).toFixed(1):0}% of all admissions</div></div>
+       <div class="card"><div class="lab">Paid Admissions</div>
+         <div class="val">${CB.totalPaid.toLocaleString()}</div>
+         <div class="note">${tot?(100*CB.totalPaid/tot).toFixed(1):0}% of all admissions</div></div>
+      </div>`;
+    const maxF=Math.max(1,...bOrd.map(k=>(CB.byBucket[k]||{free:0}).free));
+    h+=`<div class="two">
+      <div><h2>Comp by Category</h2>
+      <table><thead><tr><th>Category</th><th class="num">Comp</th>
+      <th style="width:22%"></th><th class="num">Paid</th></tr></thead><tbody>`;
+    bOrd.forEach(k=>{const v=CB.byBucket[k]; if(!v||(!v.free&&!v.paid))return;
+      h+=`<tr><td><span class="pill c-${bCl[k]}">${bLab[k]}</span></td>
+        <td class="num ${v.free?'':'past'}">${v.free?v.free.toLocaleString():'—'}</td>
+        <td><div class="bar"><i class="comp" style="width:${Math.round(100*v.free/maxF)}%"></i></div></td>
+        <td class="num ${v.paid?'':'past'}">${v.paid?v.paid.toLocaleString():'—'}</td></tr>`;});
+    h+=`</tbody><tfoot><tr><td>TOTAL</td><td class="num">${CB.totalComp.toLocaleString()}</td>
+      <td></td><td class="num">${CB.totalPaid.toLocaleString()}</td></tr></tfoot></table></div>`;
+    const cp=Object.entries(CB.byProduct);
+    h+=`<div><h2>Comp by Product <span class="hint">${cp.length} source${cp.length===1?'':'s'}</span></h2>
+      <table><thead><tr><th>Product</th><th>Category</th><th class="num">Comp</th></tr></thead><tbody>`;
+    let cs=0;
+    cp.forEach(([nm,v])=>{cs+=v.qty;
+      h+=`<tr><td>${esc(nm)}</td>
+        <td><span class="pill c-${bCl[v.bucket]}">${bLab[v.bucket]||esc(v.label)}</span></td>
+        <td class="num">${v.qty.toLocaleString()}</td></tr>`;});
+    h+=`</tbody><tfoot><tr><td colspan="2">TOTAL</td>
+      <td class="num">${cs.toLocaleString()}</td></tr></tfoot></table></div></div>`;
   }
 
   /* ---- TODAY'S NUMBERS ---- */
@@ -540,9 +590,11 @@ function render(d){
    <strong>Orders.</strong> ${d.orders.total} order records · ${d.orders.transactions} real
    transactions · ${d.orders.waiverOnly} waiver-only records · ${d.orders.voided} voided or
    cancelled (excluded from all figures).<br>
-   <strong>Comp vs paid.</strong> "Comp" counts admissions that came through at $0 — season
-   pass redemptions, Groupon redemptions, employee and trade admissions. They are real people
-   through the gate but carry no ticket revenue.<br>
+   <strong>Comp vs paid.</strong> "Comp" is a money test and nothing else: any admission that
+   came through at $0. Most comps are not in the Comp / Trade category — the bulk are Groupon
+   redemptions and IWP season pass holders. The Comp Admissions section breaks down every one
+   by category and by product, and those totals add up to the headline number exactly. A ticket
+   that carries any dollar amount is never counted as comp, no matter what it is named.<br>
    <strong>Excluded.</strong> ${T.groupPlaceholdersExcluded.toLocaleString()} Groupon inventory
    placeholder units (bulk rows at $0 with no event date) are stock records, not guests.<br>
    <strong>Consignment.</strong> Partner tickets are identified by product name (Fox 26, Univision, iHeart, Lotus, Jazzy D, Groupon, Discount Tire, Boca). A partner that ever sells under a product name without its own label will not be picked up here.<br>
